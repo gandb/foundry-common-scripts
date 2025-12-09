@@ -1,8 +1,7 @@
  
 Hooks.on("ready",   () => {
 	console.log("Loading Region Utils V1.1.1");
- 
-	
+  	
 	  document.regionUtils = {
 		  sendMessageToChat : (senderid,message)=>{
 		  
@@ -50,4 +49,3 @@ Hooks.on("ready",   () => {
 		
    });
    
-  

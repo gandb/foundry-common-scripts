@@ -1,9 +1,12 @@
- 
+//alert(`TODO: `);
+
 const commonModule = {
 	name:"common-assets",
 	properties:{version:"version"},
 	version:"",
 	startVersion:"",
+	prefix:"CA",
+	debugMode:false,
   
 	async addReadyCommonAssetsChanges (){
 		this.log("Criando botão de ajuda de rolagem");
@@ -98,24 +101,36 @@ const commonModule = {
 	 
 	  this.log(`Módulo Common Assets ${this.version} carregado com sucesso!`); 
 	},
+	debugMode(debugLog){
+		commonModule.debugMode =debugLog ||false;
+	},
+	logPrefix(newPrefixValue){
+		commonModule.prefix = newPrefixValue || "CA:";
+	},
 	log (...args)  {
-		console.log("CA:",...args);
+		console.log(commonModule.prefix,...args);
 	},
 	error  (...args){
-		console.error("CA:",...args);
+		console.error(commonModule.prefix,...args);
 	},
 	warn (...args) {
-		console.warn("CA:",...args);
-	}
+		console.warn(commonModule.prefix,...args);
+	},
+	debug (...args) {
+		if(!commonModule.debugMode) return;
+		console.debug(commonModule.prefix,...args);
+	} 
 };
 
-  
  
+
 Hooks.once("init", async () => {
+	/*
 	commonModule.log("Módulo Common Assets inicalizando...") ;
 	const modulo = game.modules.get(commonModule.name);
 	await commonModule.startModule(modulo);
 	await commonModule.addInitCommonAssetsChanges();
+	*/
 });
 
 Hooks.once("ready", async () => {
@@ -129,13 +144,13 @@ Hooks.once("ready", async () => {
   const instalatedVersion  = game.settings.get(commonModule.name,commonModule.version);
 
 
-  let nextVersionUpdated = "0.0.5";  
+  let nextVersionUpdated = "0.0.5";
   
   await commonModule.addReadyCommonAssetsChanges();
-   
 
+ 
   if (instalatedVersion === nextVersionUpdated) {
-    commonModule.log("Módulo Common Assets carregado com sucesso!") ;
+    commonModule.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`) ;
     return;
   }
   
