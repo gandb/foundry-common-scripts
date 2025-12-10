@@ -16,13 +16,13 @@ Hooks.on("ready", async  () => {
  * @param {string} newBaseUrl - A nova base da URL (sem o nome do arquivo).
  * */
   
-async function updateNpcImageBaseUrl(newBaseUrl) {
+async function updateNpcImageBaseUrl(newBaseUrl:any) {
   // Remove barra final se houver
   if (newBaseUrl.endsWith("/")) {
     newBaseUrl = newBaseUrl.slice(0, -1);
   }
 
-  const npcs = game.actors.filter(actor => actor.type === "npc");
+  const npcs = game.actors.filter((actor:any) => actor.type === "npc");
 
   if (npcs.length === 0) {
     ui.notifications.warn("Nenhum NPC encontrado.");

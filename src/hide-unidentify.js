@@ -1,4 +1,5 @@
- 
+const commonModule = document.COMMON_MODULE;
+
 commonModule.hideUnidentify = {
   removeButtonsFromItemContext: (item,buttons)=>
    {

@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    // Linguagem/alvo
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+
+    // Módulos: ESM moderno, não CommonJS
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+
+    // Strict mode do TypeScript + "use strict" no JS gerado
+    "strict": true,
+    "alwaysStrict": true,
+
+    "typeRoots": ["types"],
+
+    // Saída
+    "sourceMap": true,
+    "outDir": "./bin/",
+
+    // Qualidade de tipos / compatibilidade
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

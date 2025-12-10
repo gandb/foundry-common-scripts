@@ -1,15 +1,18 @@
 //alert(`TODO: `);
-
-const commonModule = {
+const COMMON_REGISTERED_NAMES = {
+	MODULE_NAME : "common-assets",
+	MODULE_VERSION : "common-assets-version",
+	TOOGLE_VISIBILITY :  "common-assets-toogle-visibility-regions"
+};
+const COMMON_MODULE = {
 	name:"common-assets",
-	properties:{version:"version"},
-	version:"",
+	version:"0.0.0",
 	startVersion:"",
-	prefix:"CA",
-	debugMode:false,
+	prefix:"CA:",
+	_debugMode:false,
   
 	async addReadyCommonAssetsChanges (){
-		this.log("Criando botão de ajuda de rolagem");
+		this.debug("Criando botão de ajuda de rolagem");
 		const el = document.getElementById("roll-privacy");
 		
 		if(!el){
@@ -32,26 +35,26 @@ const commonModule = {
 		});
 
 		el.appendChild(botao);
-		this.log("Botão de ajuda de rolagem criado");
+		this.debug("Botão de ajuda de rolagem criado");
 	  
 	},
 	registerNewSettings(){
-		this.log("registerNewSettings:10,module_name:",this.name,",version=",this.version);
-		game.settings.register(this.name,this.version,{ 
+		this.debug("registerNewSettings:10,module_name:",this.name,",version=",this.version);
+		game.settings.register(COMMON_REGISTERED_NAMES.MODULE_NAME,COMMON_REGISTERED_NAMES.MODULE_VERSION,{ 
 		  scope: 'world',   
 		  config: false,      
 		  type: String,
 		  default: "",
 		});
-		this.log("registerNewSettings:20,module_name:",this.name,",version=",this.version);
+		this.debug("registerNewSettings:20,module_name:",this.name,",version=",this.version);
 
 	},
 
 
 	async addInitCommonAssetsChanges (){
-		this.log("addInitCommonAssetsChanges:10.1");
+		this.debug("addInitCommonAssetsChanges:10.1");
 		this.registerNewSettings(); 
-		this.log("addInitCommonAssetsChanges:20");
+		this.debug("addInitCommonAssetsChanges:20");
 	},
 
 	async updateVersions (instalatedVersion,nextVersionUpdated) {
@@ -63,7 +66,7 @@ const commonModule = {
 		//code...
 		 
 		instalatedVersion=nextVersionUpdated;
-		game.settings.set(this.name,this.version,instalatedVersion); 
+		game.settings.set(COMMON_REGISTERED_NAMES.MODULE_VERSION,instalatedVersion); 
 	  }
 
 	 
@@ -76,7 +79,7 @@ const commonModule = {
 		//code...
 		 
 		instalatedVersion=nextVersionUpdated;
-		game.settings.set(this.name,this.version,instalatedVersion); 
+		game.settings.set(COMMON_REGISTERED_NAMES.MODULE_VERSION,instalatedVersion); 
 	  } 
 
 	  */
@@ -87,6 +90,50 @@ const commonModule = {
 	  this.log(`Atualizando para a versão ${lastVersion}`);
 	},
 
+	async toggleVisibilityRegions(){
+		document.COMMON_MODULE.debug("toggleVisibilityRegions called");
+		const activeScene = game.scenes.current;
+		if(!activeScene)
+		{
+			document.COMMON_MODULE.log("No scene active");
+			return;
+		}
+
+		
+		activeScene.regions.forEach((region)=>{
+
+				document.COMMON_MODULE.debug("region",region);
+				
+				region.update({
+					visibility: !region.visibility  
+				});
+			
+		});
+
+	},
+
+	async registerKeybindings(modulo){
+		game.keybindings.register(COMMON_REGISTERED_NAMES.MODULE_NAME,COMMON_REGISTERED_NAMES.TOOGLE_VISIBILITY, {
+			name: "Alternar visão das regiões da cena",
+			hint: "Liga/desliga visibilidade das regiões da cena atual.",
+			editable: [
+			{
+				key: "KeyG",
+				modifiers: ["Shift"]
+			}
+			],
+			onDown: async () => {
+				document.COMMON_MODULE.debug("onDown will be called");
+	
+				document.COMMON_MODULE.toggleVisibilityRegions(); 
+			},
+			restricted: true,   // true = só GM
+			reservedModifiers: [], // normalmente vazio
+			precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+		}); 
+
+	},
+
 	async startModule (modulo) {
 	   if (!modulo) {
 		return false;
@@ -94,74 +141,82 @@ const commonModule = {
 		
 	  this.version = modulo.version; 
 	  this.log(`Common Assets versão: ${this.version}`); 
+	  await this.registerKeybindings(modulo);
+	
 	},
 
 	async endModuleAfterUpdate (){
-	  await game.settings.set(this.name, this.properties.version,this.version);  
+	  await game.settings.set(COMMON_REGISTERED_NAMES.MODULE_VERSION,this.version);  
 	 
 	  this.log(`Módulo Common Assets ${this.version} carregado com sucesso!`); 
 	},
 	debugMode(debugLog){
-		commonModule.debugMode =debugLog ||false;
+		if(debugLog===undefined)
+		{
+			return COMMON_MODULE._debugMode;
+		}
+		COMMON_MODULE._debugMode =debugLog ||false;
 	},
 	logPrefix(newPrefixValue){
-		commonModule.prefix = newPrefixValue || "CA:";
+		COMMON_MODULE.prefix = newPrefixValue || "CA:";
 	},
 	log (...args)  {
-		console.log(commonModule.prefix,...args);
+		console.log(COMMON_MODULE.prefix,...args);
 	},
 	error  (...args){
-		console.error(commonModule.prefix,...args);
+		console.error(COMMON_MODULE.prefix,...args);
 	},
 	warn (...args) {
-		console.warn(commonModule.prefix,...args);
+		console.warn(COMMON_MODULE.prefix,...args);
 	},
 	debug (...args) {
-		if(!commonModule.debugMode) return;
-		console.debug(commonModule.prefix,...args);
+		if(!COMMON_MODULE.debugMode()) return;
+		console.debug(COMMON_MODULE.prefix,...args);
 	} 
 };
 
  
 
 Hooks.once("init", async () => {
-	/*
-	commonModule.log("Módulo Common Assets inicalizando...") ;
-	const modulo = game.modules.get(commonModule.name);
-	await commonModule.startModule(modulo);
-	await commonModule.addInitCommonAssetsChanges();
-	*/
+	COMMON_MODULE.log("Módulo Common Assets inicalizando...") ;
+	const modulo = game.modules.get(COMMON_MODULE.name);
+	await COMMON_MODULE.startModule(modulo);
+	await COMMON_MODULE.addInitCommonAssetsChanges();
+
 });
 
 Hooks.once("ready", async () => {
    
-  if(!commonModule.version) {
-    commonModule.error("Módulo Common Assets não está instalado ou não foi iniciado corretamente.");
+  if(!COMMON_MODULE.version) {
+    COMMON_MODULE.error("Módulo Common Assets não está instalado ou não foi iniciado corretamente.");
     return;
   }
 
   //ATUALIZAÇÃO DE VERSÃO 
-  const instalatedVersion  = game.settings.get(commonModule.name,commonModule.version);
+  const instalatedVersion  = game.settings.get(COMMON_REGISTERED_NAMES.MODULE_VERSION,COMMON_MODULE.version);
 
 
   let nextVersionUpdated = "0.0.5";
   
-  await commonModule.addReadyCommonAssetsChanges();
+  await COMMON_MODULE.addReadyCommonAssetsChanges();
 
  
   if (instalatedVersion === nextVersionUpdated) {
-    commonModule.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`) ;
+    COMMON_MODULE.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`) ;
     return;
   }
   
   
   
-  await commonModule.updateVersions(instalatedVersion,nextVersionUpdated);
+  await COMMON_MODULE.updateVersions(instalatedVersion,nextVersionUpdated);
 
   //FIM DE ATUALIZAÇÃO DE VERSÃO
 
-  if(!await commonModule.endModuleAfterUpdate()){
-      commonModule.error("Módulo Common Assets não finalizou corretamente ver logs anteriores.");
+  if(!await COMMON_MODULE.endModuleAfterUpdate()){
+      COMMON_MODULE.error("Módulo Common Assets não finalizou corretamente ver logs anteriores.");
       return;
   }
 });
+
+ 
+document.COMMON_MODULE = COMMON_MODULE;
