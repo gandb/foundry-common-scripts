@@ -7,7 +7,8 @@
     // Módulos: ESM moderno, não CommonJS
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "moduleDetection": "force",
+    "moduleDetection": "auto",
+    
 
     // Strict mode do TypeScript + "use strict" no JS gerado
     "strict": true,
@@ -22,7 +23,7 @@
     // Qualidade de tipos / compatibilidade
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "skipLibCheck": true
   },
   "include": ["src"],

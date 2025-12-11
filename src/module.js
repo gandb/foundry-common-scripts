@@ -163,6 +163,9 @@ const COMMON_MODULE = {
 	log (...args)  {
 		console.log(COMMON_MODULE.prefix,...args);
 	},
+	info (...args)  {
+		console.info(COMMON_MODULE.prefix,...args);
+	},
 	error  (...args){
 		console.error(COMMON_MODULE.prefix,...args);
 	},
@@ -182,41 +185,48 @@ Hooks.once("init", async () => {
 	const modulo = game.modules.get(COMMON_MODULE.name);
 	await COMMON_MODULE.startModule(modulo);
 	await COMMON_MODULE.addInitCommonAssetsChanges();
+	document.COMMON_MODULE = COMMON_MODULE;
+	Hooks.callAll("onInitCommonModule", { });
+
 
 });
 
 Hooks.once("ready", async () => {
    
-  if(!COMMON_MODULE.version) {
-    COMMON_MODULE.error("Módulo Common Assets não está instalado ou não foi iniciado corretamente.");
-    return;
-  }
-
-  //ATUALIZAÇÃO DE VERSÃO 
-  const instalatedVersion  = game.settings.get(COMMON_REGISTERED_NAMES.MODULE_VERSION,COMMON_MODULE.version);
+	if(!COMMON_MODULE.version) {
+	COMMON_MODULE.error("Módulo Common Assets não está instalado ou não foi iniciado corretamente.");
+	return;
+	}
 
 
-  let nextVersionUpdated = "0.0.5";
-  
-  await COMMON_MODULE.addReadyCommonAssetsChanges();
+	Hooks.callAll("onReadyCommonModule", { });
 
- 
-  if (instalatedVersion === nextVersionUpdated) {
-    COMMON_MODULE.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`) ;
-    return;
-  }
-  
-  
-  
-  await COMMON_MODULE.updateVersions(instalatedVersion,nextVersionUpdated);
+	//ATUALIZAÇÃO DE VERSÃO 
+	const instalatedVersion  = game.settings.get(COMMON_REGISTERED_NAMES.MODULE_VERSION,COMMON_MODULE.version);
 
-  //FIM DE ATUALIZAÇÃO DE VERSÃO
 
-  if(!await COMMON_MODULE.endModuleAfterUpdate()){
-      COMMON_MODULE.error("Módulo Common Assets não finalizou corretamente ver logs anteriores.");
-      return;
-  }
+	let nextVersionUpdated = "0.0.5";
+
+	await COMMON_MODULE.addReadyCommonAssetsChanges();
+
+
+
+	if (instalatedVersion === nextVersionUpdated) {
+	COMMON_MODULE.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`) ;
+	return;
+	}
+
+
+
+	await COMMON_MODULE.updateVersions(instalatedVersion,nextVersionUpdated);
+
+	//FIM DE ATUALIZAÇÃO DE VERSÃO
+
+	if(!await COMMON_MODULE.endModuleAfterUpdate()){
+		COMMON_MODULE.error("Módulo Common Assets não finalizou corretamente ver logs anteriores.");
+		return;
+	}
+
+
 });
 
- 
-document.COMMON_MODULE = COMMON_MODULE;
