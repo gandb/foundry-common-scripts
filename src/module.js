@@ -9,7 +9,7 @@ const COMMON_MODULE = {
 	version:"0.0.0",
 	startVersion:"",
 	prefix:"CA:",
-	_debugMode:false,
+	_debugMode:true,
   
 	async addReadyCommonAssetsChanges (){
 		this.debug("Criando botão de ajuda de rolagem");
@@ -90,58 +90,14 @@ const COMMON_MODULE = {
 	  this.log(`Atualizando para a versão ${lastVersion}`);
 	},
 
-	async toggleVisibilityRegions(){
-		document.COMMON_MODULE.debug("toggleVisibilityRegions called");
-		const activeScene = game.scenes.current;
-		if(!activeScene)
-		{
-			document.COMMON_MODULE.log("No scene active");
-			return;
-		}
-
-		
-		activeScene.regions.forEach((region)=>{
-
-				document.COMMON_MODULE.debug("region",region);
-				
-				region.update({
-					visibility: !region.visibility  
-				});
-			
-		});
-
-	},
-
-	async registerKeybindings(modulo){
-		game.keybindings.register(COMMON_REGISTERED_NAMES.MODULE_NAME,COMMON_REGISTERED_NAMES.TOOGLE_VISIBILITY, {
-			name: "Alternar visão das regiões da cena",
-			hint: "Liga/desliga visibilidade das regiões da cena atual.",
-			editable: [
-			{
-				key: "KeyG",
-				modifiers: ["Shift"]
-			}
-			],
-			onDown: async () => {
-				document.COMMON_MODULE.debug("onDown will be called");
-	
-				document.COMMON_MODULE.toggleVisibilityRegions(); 
-			},
-			restricted: true,   // true = só GM
-			reservedModifiers: [], // normalmente vazio
-			precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
-		}); 
-
-	},
-
+	 
 	async startModule (modulo) {
 	   if (!modulo) {
 		return false;
 	  }
 		
 	  this.version = modulo.version; 
-	  this.log(`Common Assets versão: ${this.version}`); 
-	  await this.registerKeybindings(modulo);
+	  this.log(`Common Assets versão: ${this.version}`);  
 	
 	},
 
