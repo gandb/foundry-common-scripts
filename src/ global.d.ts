@@ -6,16 +6,36 @@ declare const Hooks: {
   call(event: string, ...args: unknown[]): unknown;
   callAll(event:string, ...args: unknown[]): unknown;
 };
-
+ 
 declare const CONFIG = {
     debug:{
         hooks:boolean
     }
 };
 
+namespace CONST{
+    namespace KEYBINDING_PRECEDENCE{
+        var NORMAL:any;
+    }
+};
+
+namespace foundry {
+    namespace applications {
+      namespace api {
+        class DialogV2 {
+          constructor(options?: DialogV2Options);
+          public render(options:any);
+        
+        }
+        interface DialogV2Options {
+          // tipos das opções
+        }
+      }
+    }
+  }
 
 declare const ChatMessage:{
-    create( chatInfo: ChatInfo);
+    create( chatInfo: ChatInfo,options:any|undefined=undefined);
     getSpeaker( speakerInfo:SpeakerInfo):any;
 };
 
@@ -51,25 +71,8 @@ private  class PlayInfo{
     autoplay:boolean;
 }
 
-// Declara o valor global que o Foundry injeta em runtime
-declare const Hooks: {
-  on(event: string, callback: (...args: unknown[]) => void): number;
-  once(event: string, callback: (...args: unknown[]) => void): number;
-  off(event: string, callback: (...args: unknown[]) => void): number;
-  call(event: string, ...args: unknown[]): unknown;
-};
-
-declare const ChatMessage:{
-    create( chatInfo: ChatInfo);
-    getSpeaker( speakerInfo:SpeakerInfo):any;
-};
-
-declare const game:any|Game = new Game();
-
-
-
-declare const ui:any|Ui = new Ui();
-
+   
+ 
 declare const AudioHelper:{
     preloadSound(path:string):Promise<void>;
     play(playInfo:PlayInfo,autoplay:boolean):void;
@@ -80,6 +83,7 @@ declare class FoundryDocument extends Document{
 
 }
 
+ 
 
 declare class NPCDialog {
 
@@ -98,8 +102,6 @@ declare class NPCDialog {
 
 }  
 
-
-
 declare const docs:any|FoundryDocument ;
 
 declare class Module{}
@@ -110,38 +112,5 @@ private class Screen{
     public type:string;
     public callback:any;
 }
-
-private class DialogUtils{
-    public helpSubmit:string;
-    public createDialog(title:string,style:string,content:string,buttons:Array<any>, callback:any=undefined);
-    public createButton (action:string,label:string,defaultValue:boolean,type:"screen"|"screen-context"|"action",callback:any=undefined);
-
-}
  
-
-
-
-private class Game{
-}
-
-p
-private class Ui{
-}
-
-private class ChatInfo{
-    content:string;
-    speaker:Speaker;
-};
-
-private class SpeakerInfo{
-    alias:string;
-};
-
-private class Speaker{
-    
-};
-
-private  class PlayInfo{
-    src:string;
-    autoplay:boolean;
-}
+  

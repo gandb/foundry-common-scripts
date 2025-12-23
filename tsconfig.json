@@ -8,7 +8,6 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleDetection": "auto",
-    
 
     // Strict mode do TypeScript + "use strict" no JS gerado
     "strict": true,
@@ -18,12 +17,12 @@
 
     // Saída
     "sourceMap": true,
-    "outDir": "./bin/",
+    "outDir": "./",
 
     // Qualidade de tipos / compatibilidade
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": false,
+    "isolatedModules": true,
     "skipLibCheck": true
   },
   "include": ["src"],

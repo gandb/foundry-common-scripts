@@ -1,14 +1,17 @@
 {
-  "name": "forgotten-realms-common",
+  "name": "common-assets",
   "version": "1.0.0",
   "description": "",
   "main": "hooks.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && vite build",
+    "vite-version": "vite --version"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "typescript": "^5.9.2"
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "vite": "^7.3.0"
   }
 }
