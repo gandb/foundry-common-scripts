@@ -169,7 +169,7 @@ class CommonModule{
 		console.warn(doc.COMMON_MODULE.prefix,...args);
 	}
 
-	public debug (...args:Array<any>) {
+	public debug (...args:Array<any>) { 
 		if(!doc.COMMON_MODULE.debugMode()) return;
 		console.debug(doc.COMMON_MODULE.prefix,...args);
 	} 

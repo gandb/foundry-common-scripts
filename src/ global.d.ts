@@ -98,7 +98,8 @@ declare class NPCDialog {
 
     async callMinsc (frmModule:Module);
 
-    async warnAboutUpdate  (lastVersion:any);
+    async callBrizola (frmModule:Module);
+ 
 
 }  
 
