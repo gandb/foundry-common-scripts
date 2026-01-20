@@ -2,9 +2,6 @@
 'use strict';
 import { Button } from "./ui/button";
 
- 
- 
-
  export class DialogUtils{
 	public constructor(){
 		console.info("Dialog Utils loading");

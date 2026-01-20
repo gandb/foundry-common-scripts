@@ -84,6 +84,7 @@ declare class FoundryDocument extends Document{
 }
 
  
+declare const socketlib;  
 
 declare class NPCDialog {
 
