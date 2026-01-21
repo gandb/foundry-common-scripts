@@ -1,5 +1,6 @@
 import { DialogUtils } from "./dialog-utils";
-
+import { CommonSocket, commonSocket } from "./common-socket-socketlib";
+import { CommonSocketInterface } from "./common-socket";
 
 let socket:any;
 
@@ -18,10 +19,14 @@ class CommonModule{
 	public readonly startVersion:string="";
 	public DIALOG_UTILS:DialogUtils|undefined;
 	private prefix:string="CA:";
-	private _debugMode:boolean=true;
+	private _debugMode:boolean=true; 
+
+	constructor(){
+		
+	}
 
 
-	public async startModule(){
+	public async startModule(){ 
 		await doc.COMMON_MODULE.addInitCommonAssetsChanges(); 
 		Hooks.callAll("onInitCommonModule", { });
 	}
@@ -176,6 +181,10 @@ class CommonModule{
 		if(!doc.COMMON_MODULE.debugMode()) return;
 		console.debug(doc.COMMON_MODULE.prefix,...args);
 	} 
+
+	public teste(){
+
+	}
 }
 
 
@@ -184,126 +193,119 @@ doc.COMMON_MODULE = new CommonModule();
 
  
 
-Hooks.once("init", async () => {
-	const doc = document as FoundryDocument;
-	doc.COMMON_MODULE = new CommonModule();
+function startHooks(){
 
-	doc.COMMON_MODULE.log("Módulo Common Assets inicalizando...") ;
-	await doc.COMMON_MODULE.startModule();
+	Hooks.once("init", async () => {
+		const doc = document as FoundryDocument;
+		doc.COMMON_MODULE = new CommonModule();
 
-});
+		doc.COMMON_MODULE.log("Módulo Common Assets inicalizando...") ;
+		await doc.COMMON_MODULE.startModule();
 
 
-Hooks.once("socketlib.ready", () => {
 
-	doc.COMMON_MODULE.log("Socketlib ready");
+	});
 
-	const moduleName = COMMON_REGISTERED_NAMES.MODULE_NAME;
-	const module = game.modules.get(moduleName);
-	if (!module?.active) {
-		console.error(`socketlib | Someone tried to register module '${moduleName}', but no module with that name is active. As a result the registration request has been ignored.`);
-		return undefined;
-	}
+	Hooks.once("onReadyCommonSocket", async () => {
+		doc.COMMON_MODULE.debug("onReadyCommonSocket 20");
+		 
+		//configuration of socket
+		commonSocket.register("hello", showHelloMessage1);
+		doc.COMMON_MODULE.debug("Socketlib 20");
+		commonSocket.register("add", add);
+		doc.COMMON_MODULE.debug("Socketlib finish the register events");
 
-	//enable use of sockets
-	module.socket = true;
+
+		function showHelloMessage1(userName:string) {
+			doc.COMMON_MODULE.debug(`User ${userName} says hello 1!`);
+		}
+
+		
+		function add(a:number, b:number) {
+			doc.COMMON_MODULE.debug("The addition is performed on a GM client.");
+			return a + b;
+		} 
+
+
+
+		doc.COMMON_MODULE.log("Socketlib sending",socket);
+
+		try{
+			
+			//socket = (commonSocket as CommonSocket).originalSocket;
+			// Let's send a greeting to all other connected users.
+			// Functions can either be called by their given name...
+			commonSocket.executeForAll("hello", "gand");
+			// ...or by passing in the function that you'd like to call.
+			/* envio de funcao nao funcionou em nenhuma tentativa que fiz, mas nao precisamos disso
+			socket.executeForEveryone((userName:string)=>{
+				console.log(`User ${userName} says hello 1!`);
+			}, game.user.name);
+			*/
+			// The following function will be executed on a GM client.
+			// The return value will be sent back to us.
+			//const result = await socket.executeAsGM("add", 5, 3);
+			//const result = await commonSocket.executeAsGM("add", 5, 3);
+			//console.log(`The GM client calculated: ${result}`);
+		
+		}
+		catch(e)
+		{
+			doc.COMMON_MODULE.log("Socketlib error",e);
+		}
+
+		
+	});
 	
-	socket = socketlib.registerModule(moduleName);
-	if(socket==undefined)
-	{
-		throw new Error("socket not loaded");
-	}
-	doc.COMMON_MODULE.log("Socketlib 10",socket);
-	socket.register("hello", showHelloMessage1);
-	doc.COMMON_MODULE.log("Socketlib 20");
-	socket.register("add", add);
-	doc.COMMON_MODULE.log("Socketlib finish the register events");
 
-
-	function showHelloMessage1(userName:string) {
-		console.log(`User ${userName} says hello 1!`);
-	}
-
+	Hooks.once("ready", async () => {
 	
-	function add(a:number, b:number) {
-		console.log("The addition is performed on a GM client.");
-		return a + b;
-	}
-});
-
-
-Hooks.once("ready", async () => {
-   
-	if(!doc.COMMON_MODULE.version) {
-		doc.COMMON_MODULE.error("Módulo Common Assets não está instalado ou não foi iniciado corretamente.");
-		return;
-	}
-
-
-	//configuration of socket
+		if(!doc.COMMON_MODULE.version) {
+			doc.COMMON_MODULE.error("Módulo Common Assets não está instalado ou não foi iniciado corretamente.");
+			return;
+		}
 
 
 
-
-	doc.COMMON_MODULE.log("Módulo Common Assets call all onReadyCommonModule.");
-
-	const showHelloMessage2 = function(userName:string) {
-		console.log(`User ${userName} says hello 1!`);
-	};
-
-
-
-	doc.COMMON_MODULE.log("Socketlib sending",socket);
-
-	try{
-
-		// Let's send a greeting to all other connected users.
-		// Functions can either be called by their given name...
-		socket.executeForEveryone("hello", game.user.name);
-		// ...or by passing in the function that you'd like to call.
-		/* envio de funcao nao funcionou em nenhuma tentativa que fiz, mas nao precisamos disso
-		socket.executeForEveryone((userName:string)=>{
-			console.log(`User ${userName} says hello 1!`);
-		}, game.user.name);
-		*/
-		// The following function will be executed on a GM client.
-		// The return value will be sent back to us.
-		const result = await socket.executeAsGM("add", 5, 3);
-		console.log(`The GM client calculated: ${result}`);
-	
-	}
-	catch(e)
-	{
-		doc.COMMON_MODULE.log("Socketlib error",e);
-	}
-
-	doc.COMMON_MODULE.log("Módulo Common Assets sent the messages.");
-
-	Hooks.callAll("onReadyCommonModule", { });
-
-	doc.COMMON_MODULE.log("Módulo Common Assets launched onReadyCommonModule.");
-
-	doc.COMMON_MODULE.log(`Getting the old version with key:${COMMON_REGISTERED_NAMES.MODULE_VERSION}`) ;
-
-	const instalatedVersion  = await doc.COMMON_MODULE.getSettings(COMMON_REGISTERED_NAMES.MODULE_VERSION);
-
-
-	let nextVersionUpdated = "1.0.6";
-
-	await doc.COMMON_MODULE.addReadyCommonAssetsChanges();
-
-
-
-	if (instalatedVersion === nextVersionUpdated) {
-		doc.COMMON_MODULE.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`) ;
-		return;
-	}
- 
-	await doc.COMMON_MODULE.updateVersions(instalatedVersion,nextVersionUpdated);
-
-	//FIM DE ATUALIZAÇÃO DE VERSÃO
-  	doc.COMMON_MODULE.log(`Módulo Common Assets ${doc.COMMON_MODULE.version} carregado com sucesso!`); 
+		doc.COMMON_MODULE.log("Módulo Common Assets call all onReadyCommonModule.");
 
 	
-});
 
+		doc.COMMON_MODULE.log("Módulo Common Assets sent the messages.");
+
+		Hooks.callAll("onReadyCommonModule", { });
+
+		doc.COMMON_MODULE.log("Módulo Common Assets launched onReadyCommonModule.");
+
+		doc.COMMON_MODULE.log(`Getting the old version with key:${COMMON_REGISTERED_NAMES.MODULE_VERSION}`) ;
+
+		const instalatedVersion  = await doc.COMMON_MODULE.getSettings(COMMON_REGISTERED_NAMES.MODULE_VERSION);
+
+
+		let nextVersionUpdated = "1.0.6";
+
+		
+		await doc.COMMON_MODULE.addReadyCommonAssetsChanges();
+
+		console.log("aqui nao tem gm?");
+
+		const result = await commonSocket.executeAsGM("add", 5, 6);
+			console.log(`The GM client calculated: ${result}`);
+
+		if (instalatedVersion === nextVersionUpdated) {
+			doc.COMMON_MODULE.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`) ;
+			return;
+		}
+	
+		await doc.COMMON_MODULE.updateVersions(instalatedVersion,nextVersionUpdated);
+
+		//FIM DE ATUALIZAÇÃO DE VERSÃO
+		doc.COMMON_MODULE.log(`Módulo Common Assets ${doc.COMMON_MODULE.version} carregado com sucesso!`); 
+
+		
+	});
+
+
+}
+
+startHooks();

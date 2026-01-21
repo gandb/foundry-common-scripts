@@ -80,6 +80,7 @@ declare const AudioHelper:{
 
 declare class FoundryDocument extends Document{
     COMMON_MODULE:CommonModule;
+    private startHooks();
 
 }
 
