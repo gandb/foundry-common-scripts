@@ -231,22 +231,11 @@ function startHooks(){
 		doc.COMMON_MODULE.log("Socketlib sending",socket);
 
 		try{
-			
-			//socket = (commonSocket as CommonSocket).originalSocket;
-			// Let's send a greeting to all other connected users.
-			// Functions can either be called by their given name...
-			commonSocket.executeForAll("hello", "gand");
-			// ...or by passing in the function that you'd like to call.
-			/* envio de funcao nao funcionou em nenhuma tentativa que fiz, mas nao precisamos disso
-			socket.executeForEveryone((userName:string)=>{
-				console.log(`User ${userName} says hello 1!`);
-			}, game.user.name);
-			*/
-			// The following function will be executed on a GM client.
-			// The return value will be sent back to us.
-			//const result = await socket.executeAsGM("add", 5, 3);
-			//const result = await commonSocket.executeAsGM("add", 5, 3);
-			//console.log(`The GM client calculated: ${result}`);
+		 
+			commonSocket.executeForAll("hello", "gand"); 
+				//testar erro, gm nao esta pronto
+				const result = await commonSocket.executeAsGM("add", 5, 6);
+			console.log(`The GM client calculated: ${result}`);
 		
 		}
 		catch(e)
