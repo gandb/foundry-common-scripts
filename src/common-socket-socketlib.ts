@@ -46,11 +46,11 @@ export class CommonSocket implements CommonSocketInterface{
     }
     
     public async executeForAll (eventName:string,...data:any):Promise<any>{
-        return this._socketOriginal.executeForEveryone(eventName,data);
+        return this._socketOriginal.executeForEveryone(eventName,...data);
     }
 
      public async executeAsGM (eventName:string,...data:any):Promise<any>{
-         return this._socketOriginal.executeAsGM(eventName,data);
+         return this._socketOriginal.executeAsGM(eventName,...data);
     }
     
     public async register(eventName:string,callback:any):Promise<void>
