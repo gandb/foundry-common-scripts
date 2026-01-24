@@ -225,22 +225,25 @@ function startHooks(){
 			doc.COMMON_MODULE.debug("The addition is performed on a GM client.");
 			return a + b;
 		} 
-
-
-
+ 
 		doc.COMMON_MODULE.log("Socketlib sending",socket);
 
 		try{
 		 
-			commonSocket.executeForAll("hello", "gand"); 
+			if(commonSocket.isReadyToSendToGM())
+			{
+				commonSocket.executeForAll("hello", "gand"); 
 				//testar erro, gm nao esta pronto
 				const result = await commonSocket.executeAsGM("add", 5, 6);
-			console.log(`The GM client calculated: ${result}`);
-		
+				console.log(`The GM client calculated: ${result}`);
+			}
+			else{
+				doc.COMMON_MODULE.log("A minha implementacao notou que o gm nao foi carregado ainda",socket);
+			}
 		}
 		catch(e)
 		{
-			doc.COMMON_MODULE.log("Socketlib error",e);
+			doc.COMMON_MODULE.log("Socketlib error gm nao carregado",e);
 		}
 
 		

@@ -59,6 +59,10 @@ export class CommonSocket implements CommonSocketInterface{
         return this._socketOriginal.executeAsGM(eventName,...data);
     }
     
+    public isReadyToSendToGM ():boolean{
+        return game.user || game.users ; 
+    }
+
     public async register(eventName:string,callback:any):Promise<void>
     {
          this._socketOriginal.register(eventName, callback);
