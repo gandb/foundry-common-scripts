@@ -77,6 +77,7 @@ Hooks.on("renderDocumentSheetV2", async (sheet) => {
 			text-transform: uppercase;
 			color: rgb(159, 146, 117);
 			color-scheme: dark;
+			font-weight: bold; 
 			}
 		</style>
 		<label class="common-assets attribute">hero</label>
