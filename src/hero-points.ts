@@ -4,12 +4,15 @@
  * TODO:
  * 1-Alterar o Atributo Honrror to HERO-OK
  * 2-Remover habilidade Honrror para NPCS
- * 3-Melhorar o códiog
- * 3.1-Tentar alterar o atributo dinamicamente via objeto tanto quanto possível
- * 3.2-Adicionar a classe num arquivo CSS se possível
- * 3.3-Ao clicar no atributo, abrir uma janela explicando como usar, como ganhar e pra quele serve.
- * 3.4-Remover os logs indesejáveis.
- * 3.5-Somente chamar tudo isto depois que o componente common estiver criado pois ele chama varias funcoes de log do commons por isto tem que aguardar
+ * 3-Remover a edição para os jogadors
+ * 4-Melhorar o código
+ * 4.1-Tentar alterar o atributo dinamicamente via objeto tanto quanto possível
+ * 4.2-Adicionar a classe num arquivo CSS se possível
+ * 4.3-Ao clicar no atributo, abrir uma janela explicando como usar, como ganhar e pra quele serve.
+ * 4.4-Remover os logs indesejáveis.
+ * 4.5-Somente chamar tudo isto depois que o componente common estiver criado pois ele chama varias funcoes de log do commons por isto tem que aguardar
+ * 5-Ao clicar na caixa de texto surge a općão botão 1/2, + e cancelar em vez de ser editável pra facilitar pro GM. 
+ * 6-Se já não estiver, logar a informação no chat.
  */
 
 const doc :FoundryDocument = document as FoundryDocument;
