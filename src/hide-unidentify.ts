@@ -14,13 +14,11 @@ function createHideUnidentify(){
     {
         docHideUnidentify.COMMON_MODULE.debug("removeButtonsFromItemContext called");
         if (game.user.isGM) {
-          if(!docHideUnidentify.COMMON_MODULE.debugMode)
+          if(docHideUnidentify.COMMON_MODULE.debugMode)
           {
             docHideUnidentify.COMMON_MODULE.debug("is GM - not removing Identify button from Item Sheet context menu");
-            return;
           }
-          docHideUnidentify.COMMON_MODULE.debug("is GM in debug mode - removing Identify button from Item Sheet context menu");
-
+          return;
         }
         const identified = item.system.identified ;
         if (identified){
@@ -43,12 +41,12 @@ function createHideUnidentify(){
       
         if (game.user.isGM) 
         {
-          if(!docHideUnidentify.COMMON_MODULE.debugMode)
+          if(docHideUnidentify.COMMON_MODULE.debugMode)
           {
             docHideUnidentify.COMMON_MODULE.debug("removing Info from Item Sheet");
-            return;
+          
           }
-          docHideUnidentify.COMMON_MODULE.debug("is GM in debug mode - removing information from Item Sheet");
+          return;
         }
       
       
@@ -124,8 +122,7 @@ function createHideUnidentify(){
 
 
 }
-
-console.log("teste 123");
+ 
 
 Hooks.on("onReadyCommonModule", ( ) => { 
   docHideUnidentify.COMMON_MODULE.debug("onReadyCommonModule called"); 

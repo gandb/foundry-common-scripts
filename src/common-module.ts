@@ -19,7 +19,7 @@ class CommonModule{
 	public readonly startVersion:string="";
 	public DIALOG_UTILS:DialogUtils|undefined;
 	private prefix:string="CA:";
-	private _debugMode:boolean=true; 
+	private _debugMode:boolean=false;
 
 	constructor(){
 		
@@ -161,30 +161,61 @@ class CommonModule{
 		doc.COMMON_MODULE.prefix = newPrefixValue || "CA:";
 	}
 
-	public log (...args:Array<any>)  {
+	public log (...args:Array<any>)  { 
 		console.log(doc.COMMON_MODULE.prefix,...args);
+		if(!doc.COMMON_MODULE.debugMode()) return;
+		try{
+			throw new Error("Thread trache");
+		}
+		catch(e){
+			console.error("info debug:",e);
+		}
 	}
 
 	public info (...args:Array<any>)  {
 		console.info(doc.COMMON_MODULE.prefix,...args);
+		if(!doc.COMMON_MODULE.debugMode()) return;
+		try{
+			throw new Error("Thread trache");
+		}
+		catch(e){
+			console.error("info debug:",e);
+		}
 	}
 
 	public error  (...args:Array<any>){
 		console.error(doc.COMMON_MODULE.prefix,...args);
+		if(!doc.COMMON_MODULE.debugMode()) return;
+		try{
+			throw new Error("Thread trache");
+		}
+		catch(e){
+			console.error("info debug:",e);
+		}
 	}
 
 	public warn (...args:Array<any>) {
 		console.warn(doc.COMMON_MODULE.prefix,...args);
+		if(!doc.COMMON_MODULE.debugMode()) return;
+		try{
+			throw new Error("Thread trache");
+		}
+		catch(e){
+			console.error("info debug:",e);
+		}
 	}
 
 	public debug (...args:Array<any>) { 
 		if(!doc.COMMON_MODULE.debugMode()) return;
 		console.debug(doc.COMMON_MODULE.prefix,...args);
+		try{
+			throw new Error("Thread trache");
+		}
+		catch(e){
+			console.error("info debug:",e);
+		}
 	} 
-
-	public teste(){
-
-	}
+ 
 }
 
 
@@ -235,7 +266,7 @@ function startHooks(){
 				commonSocket.executeForAll("hello", "gand"); 
 				//testar erro, gm nao esta pronto
 				const result = await commonSocket.executeAsGM("add", 5, 6);
-				console.log(`The GM client calculated: ${result}`);
+				doc.COMMON_MODULE.log(`The GM client calculated: ${result}`);
 			}
 			else{
 				doc.COMMON_MODULE.log("A minha implementacao notou que o gm nao foi carregado ainda",socket);
@@ -249,7 +280,7 @@ function startHooks(){
 		
 	});
 	
-
+ 
 	Hooks.once("ready", async () => {
 	
 		if(!doc.COMMON_MODULE.version) {
@@ -279,10 +310,10 @@ function startHooks(){
 		
 		await doc.COMMON_MODULE.addReadyCommonAssetsChanges();
 
-		console.log("aqui nao tem gm?");
+		 
 
 		const result = await commonSocket.executeAsGM("add", 5, 6);
-			console.log(`The GM client calculated: ${result}`);
+			doc.COMMON_MODULE.log(`The GM client calculated: ${result}`);
 
 		if (instalatedVersion === nextVersionUpdated) {
 			doc.COMMON_MODULE.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`) ;
