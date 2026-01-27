@@ -5,7 +5,7 @@
  * 2-Remover habilidade Honrror para NPCS - OK
  * 3-Remover a edição para os jogadors - OK
  * 4-Melhorar o código (ver abaixo)
- * 4.1-Tentar alterar o atributo dinamicamente via objeto tanto quanto possível
+ * 4.1-Tentar alterar o atributo dinamicamente via objeto tanto quanto possível - OK (não tem como)
  * 4.2-Adicionar a classe num arquivo CSS se possível
  * 4.3-Ao clicar no atributo, abrir uma janela explicando como usar, como ganhar e pra quele serve.
  * 4.4-Remover os logs indesejáveis.
@@ -13,6 +13,7 @@
  * 5-Ao clicar na caixa de texto surge a općão botão 1/2, + e cancelar em vez de ser editável pra facilitar pro GM. 
  * 6-Se já não estiver, logar a informação no chat.
  * 7-implementar a funcao removeAttribute para remover dos npcs
+ * 8-Adicionar em configurações a opção de habilitar ou não esta feature
  */
 
 const doc :FoundryDocument = document as FoundryDocument;
