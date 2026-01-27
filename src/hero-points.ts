@@ -1,11 +1,10 @@
-"user strict";
-
+ 
 /**
  * TODO:
  * 1-Alterar o Atributo Honrror to HERO-OK
- * 2-Remover habilidade Honrror para NPCS
- * 3-Remover a edição para os jogadors
- * 4-Melhorar o código
+ * 2-Remover habilidade Honrror para NPCS - OK
+ * 3-Remover a edição para os jogadors - OK
+ * 4-Melhorar o código (ver abaixo)
  * 4.1-Tentar alterar o atributo dinamicamente via objeto tanto quanto possível
  * 4.2-Adicionar a classe num arquivo CSS se possível
  * 4.3-Ao clicar no atributo, abrir uma janela explicando como usar, como ganhar e pra quele serve.
@@ -13,6 +12,7 @@
  * 4.5-Somente chamar tudo isto depois que o componente common estiver criado pois ele chama varias funcoes de log do commons por isto tem que aguardar
  * 5-Ao clicar na caixa de texto surge a općão botão 1/2, + e cancelar em vez de ser editável pra facilitar pro GM. 
  * 6-Se já não estiver, logar a informação no chat.
+ * 7-implementar a funcao removeAttribute para remover dos npcs
  */
 
 const doc :FoundryDocument = document as FoundryDocument;
@@ -31,10 +31,21 @@ function cleanupEvents(element:Node) :HTMLElement{
   return newElement as HTMLElement;  
 }
 
+function removeAttribute(sheet:Sheet)
+{
 
+}
 
-Hooks.on("renderDocumentSheetV2", async (sheet) => {
+Hooks.on("renderDocumentSheetV2", async (data:any ) => {
+	const sheet :Sheet  = data as Sheet;
 	doc.COMMON_MODULE.debug(`Hability honror called  `,sheet);
+
+	if(sheet.actor.type!="character")
+	{
+		removeAttribute(sheet);
+		doc.COMMON_MODULE.debug(`Hability honror ignoreted sheet because isnt a player sheet, type:`,sheet.actor.type!);
+		return;
+	}
 	
 //data-ability="hon"
 	let htmldivs = document.querySelectorAll("div.ability-score.flipped[data-ability='hon'] a");
@@ -55,7 +66,27 @@ Hooks.on("renderDocumentSheetV2", async (sheet) => {
 		return;
 	}
 
-	const score:string = htmlScores.item(0).innerHTML;
+
+	let score:string = htmlScores.item(0).innerHTML;
+
+
+
+	if(!game.user.isGM){
+		let scoreInput = document.querySelectorAll("div.ability-score.flipped[data-ability='hon'] input");
+
+		if(scoreInput.length==0)
+		{
+			doc.COMMON_MODULE.warning(`Hability honror not enable to convert for hero, your cmpaing not use? Code error:03`);
+			return;
+		}
+
+		score = (scoreInput.item(0) as HTMLInputElement).value;
+	}
+
+
+	doc.COMMON_MODULE.debug(`Hability honror score: `,score);
+ 
+
 	let element :HTMLElement =  htmldivs.item(0) as HTMLElement;
 	const innerHTML:string = (element.parentElement as HTMLElement).innerHTML;
 	const parent = element.parentElement;

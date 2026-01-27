@@ -71,6 +71,14 @@ private  class PlayInfo{
     autoplay:boolean;
 }
 
+declare  class Sheet{
+    actor:Actor;
+}
+
+   
+declare  class Actor{
+    type:string;
+}
    
  
 declare const AudioHelper:{
