@@ -93,25 +93,6 @@ Hooks.on("renderDocumentSheetV2", async (data:any ) => {
 	const parent = element.parentElement;
  
 	(parent as HTMLElement).innerHTML  = `
-		<style>
-			LABEL.common-assets.attribute{
-			position: relative;
-			width: 64px;
-			height: 64px;
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-			align-items: center;
-			font-family: var(--dnd5e-font-roboto);
-			padding-top: 0px;
-			filter: drop-shadow(0 0 6px var(--dnd5e-shadow-45));
-			pointer-events: all;
-			text-transform: uppercase;
-			color: rgb(159, 146, 117);
-			color-scheme: dark;
-			font-weight: bold; 
-			}
-		</style>
 		<label class="common-assets attribute">hero</label>
 		<div class="mod">
             <span class="sign">+</span>0

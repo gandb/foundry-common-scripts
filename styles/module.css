@@ -1,0 +1,23 @@
+/*HELP DICE FEATURE*/
+.vertical .common-assets-help{
+	writing-mode: vertical-lr;
+	text-orientation: upright;
+}
+/*ATRIBUTE HERO POINTS FEATURE*/
+LABEL.common-assets.attribute{
+	position: relative;
+	width: 64px;
+	height: 64px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	font-family: var(--dnd5e-font-roboto);
+	padding-top: 0px;
+	filter: drop-shadow(0 0 6px var(--dnd5e-shadow-45));
+	pointer-events: all;
+	text-transform: uppercase;
+	color: rgb(159, 146, 117);
+	color-scheme: dark;
+	font-weight: bold; 
+	}
