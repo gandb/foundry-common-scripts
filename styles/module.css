@@ -20,4 +20,16 @@ LABEL.common-assets.attribute{
 	color: rgb(159, 146, 117);
 	color-scheme: dark;
 	font-weight: bold; 
-	}
+	cursor:pointer;
+}
+
+DIALOG.application.dialog
+{
+	margin-left: 0vw; 
+	width: 50vw;
+}
+img.heroic-action-img{
+	margin: 0.1vh;
+	height: auto;
+	width: auto;
+} 
