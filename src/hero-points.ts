@@ -7,13 +7,14 @@
  * 4-Melhorar o código (ver abaixo)
  * 4.1-Tentar alterar o atributo dinamicamente via objeto tanto quanto possível - OK (não tem como)
  * 4.2-Adicionar a classe num arquivo CSS se possível-OK
- * 4.3-Ao clicar no atributo, abrir uma janela explicando como usar, como ganhar e pra quele serve.
+ * 4.3-Ao clicar no atributo, abrir uma janela explicando como usar, como ganhar e pra quele serve. -OK
  * 4.4-Remover os logs indesejáveis.
  * 4.5-Somente chamar tudo isto depois que o componente common estiver criado pois ele chama varias funcoes de log do commons por isto tem que aguardar
  * 5-Ao clicar na caixa de texto surge a opção botão 1/2, + e cancelar em vez de ser editável pra facilitar pro GM. 
  * 6-Se já não estiver, logar a informação no chat.
  * 7-implementar a funcao removeAttribute para remover dos npcs
  * 8-Adicionar em configurações a opção de habilitar ou não esta feature
+ * 9-Se não corrigiu o item 2 corrigir....
  */
 
 const doc :FoundryDocument = document as FoundryDocument;
@@ -34,7 +35,15 @@ function cleanupEvents(element:Node) :HTMLElement{
 
 function removeAttribute(sheet:Sheet)
 {
-
+	doc.COMMON_MODULE.debug(`Hability honror starting removing, npc sheet detected`);
+	let htmldivs = document.querySelectorAll("div.ability-score[data-ability='hon']");
+	if(htmldivs.length==0)
+	{
+		doc.COMMON_MODULE.debug(`Hability honror: not found divs to remove for npc`);
+		return;
+	}
+	doc.COMMON_MODULE.debug(`Hability honror removed, npc sheet detected`);
+	htmldivs[0].remove();
 }
 
 Hooks.on("renderDocumentSheetV2", async (data:any ) => {
