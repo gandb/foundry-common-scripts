@@ -288,6 +288,11 @@ function startHooks(){
 			return;
 		}
 
+		if(game.user.isGM){ 
+			doc.COMMON_MODULE.log("GM detected, adding isGM class to body");
+			document.body.classList.add("isGM");
+		}
+
 
 
 		doc.COMMON_MODULE.log("Módulo Common Assets call all onReadyCommonModule.");

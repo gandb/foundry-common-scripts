@@ -23,11 +23,20 @@ LABEL.common-assets.attribute{
 	cursor:pointer;
 }
 
+div.ability-score .operator{
+	margin-right: 5px;
+}
+
+.isGM div.ability-score .operator{
+	cursor: pointer;
+}
+
 DIALOG.application.dialog
 {
 	margin-left: 0vw; 
 	width: 50vw;
 }
+
 img.heroic-action-img{
 	margin: 0.1vh;
 	height: auto;
