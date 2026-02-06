@@ -12,10 +12,13 @@
  * 4.5-Somente chamar tudo isto depois que o componente common estiver criado pois ele chama varias 
  * funcoes de log do commons por isto tem que aguardar - OK
  * 5-Ao clicar na caixa de texto surge a opção botão 1/2, + e cancelar em vez de ser editável pra 
- * facilitar pro GM. 
- * 6-Se já não estiver, logar a informação no chat (pode ser incorreto mesmo o texto, isso não se importo). 
- * 7-Adicionar em configurações a opção de habilitar ou não esta feature 
- * 8-Usar o conhecimento do item 7 pra habilitar ou não iniciar com o debug ligado.
+ * facilitar pro GM.  - OK
+ * 6-Adicionar tooltip no - e + explicando como funciona a adição e remoção de pontos. Vai ter que detectar o evento de abertura de edićão pois se não 
+ * ele nasce sem o tooltip e quando o gm for editar a tooltip não funciona - OK
+ * 7-melhorar pra nem tudo vir do doc, assim funciona pra mais de uma ficha ao mesmo tempo, alem de agilizar a renderizacao
+ * 8- Trocar onde tem erro, pra erros verdadeiros usando a api ui, e no caso dos demais logs ver se os warn e info precisam ser exibidos na ui ou só no console. 
+ * 9-Adicionar em configurações a opção de habilitar ou não esta feature 
+ * 10-Usar o conhecimento do item 7 pra habilitar ou não iniciar com o debug ligado.
  */
 
 
@@ -30,11 +33,12 @@ function removeAttribute(sheet:Sheet)
 	let htmldivs = document.querySelectorAll("div.ability-score[data-ability='hon']");
 	if(htmldivs.length==0)
 	{
-		doc.COMMON_MODULE.debug(`Hability hero: not found divs to remove for npc`);
+		ui.notifications.error(`Não foi encontrado `);
 		return;
 	}
 	doc.COMMON_MODULE.debug(`Hability hero removed, npc sheet detected`);
-	htmldivs[0].remove();
+	htmldivs.forEach(div=>div.remove());
+
 }
 
 function addEditButtonsToHeroPoints(parent:HTMLElement){
@@ -51,8 +55,24 @@ function addEditButtonsToHeroPoints(parent:HTMLElement){
 	let increment = elements.item(0) as HTMLElement;
 	increment.onclick = (e)=>{
 		e.preventDefault();
-		doc.COMMON_MODULE.info(`Hability hero increment hero points started`);
+		const scoreInputs = document.querySelectorAll("form.editable div.ability-score.flipped[data-ability='hon'] input");
+		if(scoreInputs.length!=1	)
+		{
+			doc.COMMON_MODULE.error(`Hability hero increment hero points not found input to increment ore found more then one, close others sheets before changing hero points`);
+			return;
+		}
+		const scoreInput:HTMLInputElement = scoreInputs.item(0) as HTMLInputElement;
+		if(scoreInput.value==undefined || scoreInput.value=="")
+		{
+			doc.COMMON_MODULE.error(`Hability hero increment hero points not found input value to increment`);
+			return;
+		}
+		const currentScore = parseInt(scoreInput.value,10);
+		const newScore = currentScore + 1;
+		scoreInput.value = newScore.toString();
+		doc.COMMON_MODULE.info(`Hability hero increment hero points to ${newScore}`);
 	};
+
 	elements  =  parent?.querySelectorAll("div.mod span.operator.reduce") as NodeList	;
 	if(elements.length==0)
 	{
@@ -62,7 +82,27 @@ function addEditButtonsToHeroPoints(parent:HTMLElement){
 	increment = elements.item(0) as HTMLElement;
 	increment.onclick = (e)=>{
 		e.preventDefault();
-		doc.COMMON_MODULE.info(`Hability hero decrement hero points started`);
+		const scoreInputs = document.querySelectorAll("form.editable div.ability-score.flipped[data-ability='hon'] input");
+		if(scoreInputs.length!=1	)
+		{
+			doc.COMMON_MODULE.error(`Hability hero increment hero points not found input to increment ore found more then one, close others sheets before changing hero points`);
+			return;
+		}
+		const scoreInput:HTMLInputElement = scoreInputs.item(0) as HTMLInputElement;
+		if(scoreInput.value==undefined || scoreInput.value=="")
+		{
+			doc.COMMON_MODULE.error(`Hability hero increment hero points not found input value to increment, close others sheets before changing hero points`);
+			return;
+		}
+		const currentScore = parseInt(scoreInput.value,10);
+		if(currentScore==0)
+		{
+			doc.COMMON_MODULE.error(`You haven´t hero points to decrement`);
+			return;
+		}
+		const newScore = Math.floor( currentScore / 2);
+		scoreInput.value = newScore.toString();
+		doc.COMMON_MODULE.info(`Hability hero decrement hero points to ${newScore}`);
 	}; 
 }
 
@@ -132,78 +172,92 @@ function createDialog(element: HTMLElement) {
 
 
 function changeHabilityHonrrorToHeroPoints(sheet:Sheet){
-	let htmldivs = document.querySelectorAll("div.ability-score.flipped[data-ability='hon'] a");
 
-	if(htmldivs.length==0)
+	const forms = doc.querySelectorAll("form.editable"); 
+	
+	
+	if(forms.length==0)
 	{
 
 		doc.COMMON_MODULE.error(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 01`);
 		return;
 	}
 
-	doc.COMMON_MODULE.debug(`Hability hero found : ` +  htmldivs.length);
+	doc.COMMON_MODULE.debug(`Hability hero found : ` +  forms.length);
 
-	let htmlScores = document.querySelectorAll("div.ability-score.flipped[data-ability='hon'] div.score");
+	forms.forEach(form=>{
+		const htmldivs = form.querySelectorAll("div.ability-score.flipped[data-ability='hon']");
 
-	if(htmlScores.length==0)
-	{
-		doc.COMMON_MODULE.error(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 02`);
-		return;
-	}
+		htmldivs.forEach(divElement=>{
+			const div:HTMLElement = divElement as HTMLElement;
 
+			let htmlScores = div.querySelectorAll("div.score");
 
-	let score:string = htmlScores.item(0).innerHTML;
-
-
-
-	if(!game.user.isGM){
-		let scoreInput = document.querySelectorAll("div.ability-score.flipped[data-ability='hon'] input");
-
-		if(scoreInput.length==0)
-		{
-			scoreInput = document.querySelectorAll("div.ability-score.flipped[data-ability='hon'] div.score");
-			if(scoreInput.length==0)
+			if(htmlScores.length!=0)
 			{
-				doc.COMMON_MODULE.error(`Hability hero not enable to convert for hero, your cmpaing not use? Code error:03`);
+				doc.COMMON_MODULE.error(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 02`);
 				return;
 			}
-			 
-			score = (scoreInput.item(0) as HTMLDivElement).innerHTML; 
-		}
-		else{
-			score = (scoreInput.item(0) as HTMLInputElement).value;
-		}
+	
+				
 
-	}
- 
+			let score:string = div.innerHTML;
 
-	doc.COMMON_MODULE.debug(`Hability hero score: `,score);
-
-	let element :HTMLElement =  htmldivs.item(0) as HTMLElement; 
-	const parent = element.parentElement;
-
-	(parent as HTMLElement).innerHTML  = `
-		<label class="common-assets attribute">hero</label>
-		<div class="mod">
-			<span class="operator reduce" >-</span>
-			<span class="operator increment" >+</span>
-		</div>
-		<div class="score">${score}</div>
-		`;
-
-	addEditButtonsToHeroPoints(parent as HTMLElement);
+			if(!game.user.isGM){
 
 
-	htmldivs = document.querySelectorAll("div.ability-score.flipped[data-ability='hon'] label");
+				let scoreInput = div.querySelectorAll("input");
 
-	if(htmldivs.length==0)
-	{
-		doc.COMMON_MODULE.warn(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 01`);
-		return;
-	}
-	element =   htmldivs.item(0) as HTMLElement;
+				if(scoreInput.length==0)
+				{
+					scoreInput = div.querySelectorAll("div.score");
+					if(scoreInput.length==0)
+					{
+						doc.COMMON_MODULE.error(`Hability hero not enable to convert for hero, your cmpaing not use? Code error:03`);
+						return;
+					}
+					
+					score = (scoreInput.item(0) as HTMLDivElement).innerHTML; 
+				}
+				else{
+					score = (scoreInput.item(0) as HTMLInputElement).value;
+				} 
 
-	createDialog(element); 
+			}
+		
+
+			doc.COMMON_MODULE.debug(`Hability hero score: `,score);
+
+			let element :HTMLElement =  htmldivs.item(0) as HTMLElement; 
+			const parent = element.parentElement; 
+
+			(parent as HTMLElement).innerHTML  = `
+				<label class="common-assets attribute" title="clique para mais informações">hero</label>
+				<div class="mod">
+					<span class="operator reduce" title"para editar, altere o personagem para o modo editável"></span>
+					<span class="operator increment" title"para editar, altere o personagem para o modo editável"></span>
+				</div>
+				<div class="score">${score}</div>
+				`;
+
+			addEditButtonsToHeroPoints(parent as HTMLElement);
+
+
+			const label = div.querySelectorAll("label");
+
+			if(label.length==0)
+			{
+				doc.COMMON_MODULE.warn(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 01`);
+				return;
+			}
+
+			createDialog(div); 
+
+		});
+
+	});
+
+	
 
 }
 
