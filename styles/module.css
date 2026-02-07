@@ -27,9 +27,23 @@ div.ability-score .operator{
 	margin-right: 5px;
 }
 
-.isGM div.ability-score .operator{
+div.ability-score .operator::after{
+	content:"*";
+}
+
+form.editable div.ability-score .operator.reduce::after{
+	content:"-";
+}
+form.editable div.ability-score .operator.increment::after{
+	content:"+";
+}
+
+
+.isGM form.editable div.ability-score .operator{
 	cursor: pointer;
 }
+
+
 
 DIALOG.application.dialog
 {

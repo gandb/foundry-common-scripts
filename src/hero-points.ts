@@ -21,11 +21,7 @@
  * 10-Usar o conhecimento do item 7 pra habilitar ou não iniciar com o debug ligado.
  */
 
-
-
 const doc :FoundryDocument = document as FoundryDocument;
- 
- 
 
 function removeAttribute(sheet:Sheet)
 {
@@ -155,13 +151,13 @@ function createDialog(element: HTMLElement) {
 			</p>
 
 			<p>
-				<strong>Ação Heróica (gasto):</strong> o ponto ganho pode ser gasto para realizar uma ação especial envolvendo dois personagens; 
+				<strong>Usando uma Ação Heróica (gastando pontos):</strong> o ponto ganho pode ser gasto para realizar uma ação especial envolvendo dois personagens; 
 				o alvo pode ser um jogador ou um NPC, aliado ou inimigo.
 			</p>
 
 			<p>
-				<strong>Como reduzir os pontos:</strong> os pontos não são gastos de 1 em 1 e apenas o Mestre pode reduzir ou aumentar o total. 
-				Quando os pontos são gastos, divide-se o total por 2 (arredondando para baixo), com mínimo de 1. 
+				<strong>Como reduzir os pontos:</strong> apenas o Mestre pode reduzir ou aumentar o valor total. Os pontos não são gastos de 1 em 1, quando os pontos são gastos, 
+				divide-se o total por 2 (arredondando para baixo). 
 				Exemplos: se você tem 5 pontos, passa a ter 2; se tem 3, passa a ter 1; se tem 1 ponto, passa a ter 0.
 			</p>
 		</div>
