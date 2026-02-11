@@ -237,6 +237,7 @@ function startHooks(){
 	});
 	Hooks.once("onReadyCommonSocket", async () => {
 		doc.COMMON_MODULE.debug("onReadyCommonSocket 20");
+
 		 
 		//configuration of socket
 		commonSocket.register("helloEveryOne", showHelloMessageEveryOne);
