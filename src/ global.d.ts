@@ -35,7 +35,7 @@ namespace foundry {
   }
 
 declare const ChatMessage:{
-    create( chatInfo: ChatInfo,options:any|undefined=undefined);
+    create( chatInfo: any,options:any|undefined=undefined);
     getSpeaker( speakerInfo:SpeakerInfo):any;
 };
 
