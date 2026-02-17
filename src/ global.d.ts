@@ -39,7 +39,7 @@ declare const ChatMessage:{
     getSpeaker( speakerInfo:SpeakerInfo):any;
 };
 
-declare const game:any|Game = new Game();
+declare const game:Game = new Game();
 
 declare const ui:any|Ui = new Ui();
 
@@ -49,8 +49,36 @@ declare const AudioHelper:{
 };
 
 private class Game{
+    users:Array<User>;
+    user:User;
+    modules:Map<string,Module>;
+    journal:Journal;
+    settings:Settings;
+    scenes:SceneList
+    keybindings:RegisterKeyBinding;
+    actors:Array<Actor>;
 }
+
+declare class RegisterKeyBinding implements Register{
+    public register(key:string,value:any,options:any);
+
+}
+
+private interface Register
+{
+    public register(key:string,value:any,options:any);
+}
+
 private class Ui{
+}
+
+private class SceneList extends Array{
+    current
+}
+
+private class Journal{
+    getName(value:string):Journal;
+    sheet:Sheet;
 }
 
 private class ChatInfo{
@@ -73,12 +101,35 @@ private  class PlayInfo{
 
 declare  class Sheet{
     actor:Actor;
+    render(value:boolean);
 }
 
    
 declare  class Actor{
     type:string;
+    img:string;
+    prototypeToken:PrototypeToken;
+    update(actor:any);
+    name:string;
 }
+
+declare class PrototypeToken{
+    texture?:Texture;
+    name:string;
+}
+   
+
+declare  class Texture{
+    src:string; 
+}
+
+declare  class User{
+    id:string;
+    isGM:boolean;
+}
+ 
+
+declare class RegionUtils{}
    
  
 declare const AudioHelper:{
@@ -115,7 +166,10 @@ declare class NPCDialog {
 
 declare const docs:any|FoundryDocument ;
 
-declare class Module{}
+declare class Module{
+    name:string;
+    active:?boolean;
+}
   
  
 private class Screen{

@@ -12,13 +12,17 @@ const COMMON_REGISTERED_NAMES = {
  
 let doc : FoundryDocument = document as FoundryDocument;
 
-class CommonModule{
+export class CommonModule{
 	public readonly name:string="common-assets";
 	public readonly version:string="1.0.0";
 	public readonly startVersion:string="";
-	public DIALOG_UTILS:DialogUtils|undefined;
+	public DIALOG_UTILS:DialogUtils|undefined;  
+    public REGION_UTILS:RegionUtils|undefined; 
+	public NPC_DIALOG:NPCDialog|undefined; 
+    
+
 	private prefix:string="CA:";
-	private _debugMode:boolean=true;
+	private _debugMode:boolean=false;
 
 	constructor(){
 		
@@ -26,7 +30,7 @@ class CommonModule{
 
 
 	public async startModule(){ 
-		await doc.COMMON_MODULE.addInitCommonAssetsChanges(); 
+		await this.addInitCommonAssetsChanges(); 
 		Hooks.callAll("onInitCommonModule", { });
 	}
   
@@ -149,10 +153,11 @@ class CommonModule{
 	public debugMode(debugLog:boolean|undefined=undefined):boolean{
 		if(debugLog===undefined)
 		{
-			return doc.COMMON_MODULE._debugMode as boolean;
+			return (doc.COMMON_MODULE as any)._debugMode as boolean;
 		}
-		doc.COMMON_MODULE._debugMode =debugLog ||false;
-		return doc.COMMON_MODULE._debugMode as boolean;
+
+		doc.COMMON_MODULE!._debugMode = debugLog;
+		return doc.COMMON_MODULE!._debugMode as boolean;
 	}
 
 	/*LOG FUNCTIONS*/
