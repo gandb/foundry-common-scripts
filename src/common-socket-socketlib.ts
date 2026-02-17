@@ -120,8 +120,8 @@ export class CommonSocket implements Socket{
             if(data.toGM && (!game.user || !game.user.isGM) )
             {
                 return;
-            }
-            data=data.slice(-1);
+            } 
+            data.shift();
             return await callback( ...data);
          });
     }
