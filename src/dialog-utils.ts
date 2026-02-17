@@ -2,20 +2,13 @@
 'use strict';
 import { Button } from "./ui/button";
 
+
+const docDialogUtils:FoundryDocument = document as FoundryDocument;
+
  export class DialogUtils{
 	public constructor(){
-		console.info("Dialog Utils loading");
+
 	}
-	public helpSubmit:string = `
-			Submit need be a function:
-			(action,label,defaultValue,callback)=>{
-				return result => {
-						if ( result === "minsc" ) console.log("User picked minsc options.");
-						else console.log("User picked option:  ", rsult );
-					}
-			}
-			`;	
-   
 	public createButton  (action:string,label:string,defaultValue:boolean=false,type:string="screen",callback:any):Button{
 		return new Button(
 				action,
@@ -25,21 +18,25 @@ import { Button } from "./ui/button";
 				callback
 		);
 	}
-	public createDialog   (title:string,style:string="",content:string,buttons:Array<any>,submit:Array<any>):foundry.applications.api.DialogV2{
+	public createDialog   (title:string,style:string="",content:string,buttons:Array<any>,submit:Array<any>,left:undefined|number=undefined,top:undefined|number=undefined, width:number|"auto",height:number|"auto"):foundry.applications.api.DialogV2{
 
+
+		docDialogUtils.COMMON_MODULE.debug("Dialog Utils creating dialog width: ",width," height: ",height	);
 		if(!buttons || !buttons.length || buttons.length===0)
 		{
 			throw new Error("DIALOG_UTILS.createDialog: buttons array must have at least one button");
 		}
 
 		const options = {
-			window: { title },
+			window: { title ,resizable: true},
 			content:  `<style>${style}</style>	
 					<div>${content}</div>`,
 			buttons,
-			submit
+			submit:submit,
+			position:{width: width, height,left, top},
 			};
 
+		docDialogUtils.COMMON_MODULE.debug("Dialog Utils dialog options: ",options	);
 		const ret =  new foundry.applications.api.DialogV2(options);
 		ret.render({ force: true });
 		return ret;
@@ -49,7 +46,6 @@ import { Button } from "./ui/button";
 }
   
  
-const docDialogUtils:FoundryDocument = document as FoundryDocument;
 
 
 Hooks.on("onReadyCommonModule", async (data) => {

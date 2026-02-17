@@ -26,7 +26,7 @@ const doc :FoundryDocument = document as FoundryDocument;
 function removeAttribute(sheet:Sheet)
 {
 	
-	let htmldivs = document.querySelectorAll("div.ability-score[data-ability='hon']");
+	let htmldivs = doc.querySelectorAll("div.ability-score[data-ability='hon']");
 	if(htmldivs.length==0)
 	{
 		ui.notifications.error(`Não foi encontrado `);
@@ -169,7 +169,8 @@ function createDialog(element: HTMLElement) {
 
 function changeHabilityHonrrorToHeroPoints(sheet:Sheet){
 
-	const forms = doc.querySelectorAll("form.editable"); 
+	const forms = doc.querySelectorAll("form.sheet"); 
+	const isEditable:boolean = forms.item(0)?.classList.contains("editable")??false;
 	
 	
 	if(forms.length==0)
@@ -185,49 +186,39 @@ function changeHabilityHonrrorToHeroPoints(sheet:Sheet){
 		const htmldivs = form.querySelectorAll("div.ability-score.flipped[data-ability='hon']");
 
 		htmldivs.forEach(divElement=>{
+
 			const div:HTMLElement = divElement as HTMLElement;
+
+
+			doc.COMMON_MODULE.debug(`found one hability ` +  div.innerHTML,",isEditable",isEditable);
 
 			let htmlScores = div.querySelectorAll("div.score");
 
-			if(htmlScores.length!=0)
+			if(htmlScores.length!=1)
 			{
 				doc.COMMON_MODULE.error(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 02`);
 				return;
 			}
-	
-				
 
-			let score:string = div.innerHTML;
+			let score:string = div.querySelectorAll("div.score").item(0)?.innerHTML ?? "0";
 
 			if(!game.user.isGM){
 
 
 				let scoreInput = div.querySelectorAll("input");
 
-				if(scoreInput.length==0)
+				if(isEditable)
 				{
-					scoreInput = div.querySelectorAll("div.score");
-					if(scoreInput.length==0)
-					{
-						doc.COMMON_MODULE.error(`Hability hero not enable to convert for hero, your cmpaing not use? Code error:03`);
-						return;
-					}
-					
-					score = (scoreInput.item(0) as HTMLDivElement).innerHTML; 
-				}
-				else{
 					score = (scoreInput.item(0) as HTMLInputElement).value;
-				} 
-
+				}  
 			}
+
 		
 
 			doc.COMMON_MODULE.debug(`Hability hero score: `,score);
+  
 
-			let element :HTMLElement =  htmldivs.item(0) as HTMLElement; 
-			const parent = element.parentElement; 
-
-			(parent as HTMLElement).innerHTML  = `
+			div.innerHTML  = `
 				<label class="common-assets attribute" title="clique para mais informações">hero</label>
 				<div class="mod">
 					<span class="operator reduce" title"para editar, altere o personagem para o modo editável"></span>
@@ -235,19 +226,20 @@ function changeHabilityHonrrorToHeroPoints(sheet:Sheet){
 				</div>
 				<div class="score">${score}</div>
 				`;
+ 
+		
+			addEditButtonsToHeroPoints(div);
 
-			addEditButtonsToHeroPoints(parent as HTMLElement);
 
-
-			const label = div.querySelectorAll("label");
-
-			if(label.length==0)
+			const label:HTMLElement = div.querySelectorAll("label")?.item(0) as HTMLElement;
+ 
+			if(label==undefined)
 			{
 				doc.COMMON_MODULE.warn(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 01`);
 				return;
 			}
 
-			createDialog(div); 
+			createDialog(label); 
 
 		});
 
@@ -261,7 +253,15 @@ function changeHabilityHonrrorToHeroPoints(sheet:Sheet){
 function initializeHabilityHero(){  
 	Hooks.on("renderDocumentSheetV2", async (data:any ) => {
 		const sheet :Sheet  = data as Sheet;
+		
+		if(!sheet.actor)
+		{
+			doc.COMMON_MODULE.debug(`Isnt a actor sheet`);
+			return;
+		}
+
 		doc.COMMON_MODULE.debug(`Hability hero called  `,sheet);
+		
 
 		if(sheet.actor.type!="character")
 		{
