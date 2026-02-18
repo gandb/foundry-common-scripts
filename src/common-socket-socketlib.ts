@@ -3,7 +3,7 @@ import { Socket } from "./common-socket";
 
 let doc : FoundryDocument = document as FoundryDocument;
 
-//socketlib Implementation
+//socketlib Implementation, documentation: https://github.com/farling42/foundryvtt-socketlib#api
 export class CommonSocket implements Socket{
 
     private _socketOriginal:any;
@@ -91,6 +91,7 @@ export class CommonSocket implements Socket{
     }
     
     public async executeForAll (eventName:string,...data:any):Promise<any>{
+        doc.COMMON_MODULE.debug("Socketlib executeForAll for event:",eventName, ',parameters: ',data,'...parameters',...data);
         return this._socketOriginal.executeForEveryone(eventName,...data);
     }
 
@@ -117,11 +118,13 @@ export class CommonSocket implements Socket{
     public async register(eventName:string,callback:any):Promise<void>
     {
          this._socketOriginal.register(eventName,async ( ...data: any)=>{
+             doc.COMMON_MODULE.debug("Socketlib new event:",eventName, ',parameters: ',data,'...parameters',...data);
             if(data.toGM && (!game.user || !game.user.isGM) )
             {
+                doc.COMMON_MODULE.debug("Evento pra gm e o usuário não é GM");
                 return;
             } 
-            data.shift();
+            
             return await callback( ...data);
          });
     }

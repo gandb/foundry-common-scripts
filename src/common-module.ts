@@ -22,7 +22,7 @@ export class CommonModule{
     
 
 	private prefix:string="CA:";
-	private _debugMode:boolean=false;
+	private _debugMode:boolean=true;
 
 	constructor(){
 		
@@ -117,17 +117,12 @@ export class CommonModule{
 		instalatedVersion=nextVersionUpdated;
 		await this.setSettings(COMMON_REGISTERED_NAMES.MODULE_VERSION,instalatedVersion); 
 	  }
-
-	 
-	 
 	}
  
 	public async  warnAboutUpdate (previousVersion:string,lastVersion:string){
 	  this.log(`Atualizando da versão : ${previousVersion} para a versão ${lastVersion}`);
 	}
-
-	 
-
+ 
 	public async  whaitFor (test:()=>boolean,timeout:number=60000):Promise<void>{
 		let totalTime = 0;
 		const ret:Promise<void>  = new Promise<void>((resolve,reject)=>{
