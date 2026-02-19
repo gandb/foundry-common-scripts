@@ -7,6 +7,8 @@ let doc : FoundryDocument = document as FoundryDocument;
 
 let commonModule:CommonModule;
 
+const CALLBACK_FUNCTION_EVENT_NAME:string = "onReadyCommonSocket";
+
 const flagName = 'common-assets';
 
 //socketlib Implementation
@@ -14,6 +16,7 @@ export class ChatSocket implements Socket{
  
     private _isReady:boolean = false;
     private _callbacks:Map<string,any> = new Map();
+    private _returns:Map<string,any> = new Map();
 
     constructor()
     {   
@@ -35,6 +38,10 @@ export class ChatSocket implements Socket{
          
 
         this._isReady = true;
+
+        this._callbacks.set("common.socket.chatmessage.callback",(data:any)=>{
+            this._returns.set(data.requestId,data);
+        });
 
         Hooks.callAll("onReadyCommonSocket", { });
     }
@@ -63,27 +70,33 @@ export class ChatSocket implements Socket{
                     return;                          
                 }
                 const payload:PayloadEvent=message.flags[flagName] as  PayloadEvent; 
+                
                 commonModule.debug('[|Common Socket Chat Message] Evento recebido:', payload); 
-                if(game.user.isGM )
+                if(game.user.isGM &&  payload.onlyPlayers)
                 {
-                    if( payload.fromGM)
-                    {
-                        return;
-                    }
+                    commonModule.debug('[|Common Socket Chat Message] Evento recebido para players e o receptor é GM, evento descartado :', payload); 
+                    return;
+                
                 }
-                else 
+                else if (!game.user.isGM &&  payload.toGM)
                 {
-                    if( payload.toGM)
-                    {
-                        return;
-                    }
+                    commonModule.debug('[|Common Socket Chat Message] Evento recebido é pro GM e o receptor não é GM, evento descartado :', payload); 
+                    return;
                 }
+                
                 const callback =  this._callbacks.get(payload.type);
                 if(!callback)
                 {
+                    commonModule.debug('[|Common Socket Chat Message] Evento recebido não registrado :', payload.type , " para o payload : " ,payload); 
                     return;
                 }
-                callback(... payload.data);
+                const ret = callback(... payload.data);
+                commonModule.log('createChatMessage:', ret);
+                this.register(CALLBACK_FUNCTION_EVENT_NAME,(data:any)=>{
+                    this._returns.set(data.originalRequestId,data.response);
+                });
+                this.sendMessage(CALLBACK_FUNCTION_EVENT_NAME,{response:ret,originalRequestId:payload.requestId},false,false,false,[payload.senderId]);
+                return;
 
             } catch (e) {
                 commonModule.error('[NPC Portrait] Erro ao processar evento:', e);
@@ -92,29 +105,40 @@ export class ChatSocket implements Socket{
  
     }
 
-    private  async sendMessage( eventName:string, data:any, broadcast:boolean,fromGM:boolean,toGM:boolean, userids:Array<string>|undefined=undefined){
+    private  async sendMessage( eventName:string, data:any, broadcast:boolean,onlyPlayers:boolean,toGM:boolean, userids:Array<string>|undefined=undefined){
 
         const whisper = (broadcast)? Array.from(game.users?.values() || []).map((u: any) => u.id):userids;
 
+        const requestId:string = (Math.random()*1000000).toString();
+
         const payload:PayloadEvent= {
+            requestId,
+            senderId:game.user.id,
 			type: eventName,
-            fromGM,
+            onlyPlayers,
             toGM,
 			data
 			};
 
-        return	await ChatMessage.create({
+        await ChatMessage.create({
 		content: 'Common Socket Event - Ignore this message', // Invisível pra maioria
 		whisper,
 		flags: {
-			'common-assets': {
-			type: eventName,
-            fromGM,
-            toGM,
-			data
-			}
+			'common-assets': payload
 		}
 		});
+
+        commonModule.whaitFor(()=>this._callbacks.has(requestId),60000);
+        
+        if(!this._callbacks.has(requestId))
+        {
+            commonModule.error('[Common Socket Chat] Timeout ao processar evento :', payload);
+        }
+        const ret = this._callbacks.get(requestId);
+
+        this._callbacks.delete(requestId);
+
+        return ret;
 	
     }
     
@@ -123,7 +147,7 @@ export class ChatSocket implements Socket{
     }
 
     public async executeForAll (eventName:string,...data:any):Promise<any>{
-        return this.sendMessage(eventName,data,true,false,true);
+        return this.sendMessage(eventName,data,true,false,false);
     }
 
      public async executeAsGM (eventName:string,...data:any):Promise<any>{
@@ -139,7 +163,7 @@ export class ChatSocket implements Socket{
        }
 
        
-       this.sendMessage(eventName,data,true,true,false);
+       this.sendMessage(eventName,data,true,false,false);
     
     }
     
@@ -162,13 +186,15 @@ export class ChatSocket implements Socket{
 };
 
 interface PayloadEvent{
+    requestId:string;
+    senderId:string;
 	type:string;
-    fromGM:boolean;
+    onlyPlayers:boolean;
     toGM:boolean;
 	data:any;
 }
 
-export const chatSocket:Socket = new ChatSocket();
+export const chatSocketImplementation:Socket = new ChatSocket();
 
 
 /*

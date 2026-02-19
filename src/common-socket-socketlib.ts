@@ -139,4 +139,4 @@ export class CommonSocket implements Socket{
 };
 
 
-export const commonSocket:Socket = new CommonSocket();
+export const socketLibImplementation:Socket = new CommonSocket();

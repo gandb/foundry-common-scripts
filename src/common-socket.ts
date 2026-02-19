@@ -8,5 +8,4 @@ export interface Socket{
     register(eventName:string,callback:any):Promise<void>;
     isReadyToSendToGM(): boolean;
 }
-
-export  {commonSocket} from "./common-socket-socketlib";
+ 
