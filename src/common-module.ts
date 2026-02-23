@@ -123,7 +123,7 @@ export class CommonModule{
 	  this.log(`Atualizando da versão : ${previousVersion} para a versão ${lastVersion}`);
 	}
  
-	public async  whaitFor (test:()=>boolean,timeout:number=60000):Promise<void>{
+	public async  whaitFor (test:()=>boolean,timeout:number=60000, sleep:number=100):Promise<void>{
 		let totalTime = 0;
 		const ret:Promise<void>  = new Promise<void>((resolve,reject)=>{
 			const handle = setInterval(()=>{
@@ -138,7 +138,7 @@ export class CommonModule{
 					reject(new Error("timeout while wait For in common module "));
 				}
 				totalTime+100;
-			},100); 
+			},sleep); 
 		});
 
 		return ret;

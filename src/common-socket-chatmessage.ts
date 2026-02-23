@@ -9,6 +9,8 @@ let commonModule:CommonModule;
 
 const CALLBACK_FUNCTION_EVENT_NAME:string = "onReadyCommonSocket";
 
+const CALLBACK_SYSTEM_CALLBACK : "common.socket.chatmessage.callback"="common.socket.chatmessage.callback";
+
 const flagName = 'common-assets';
 
 //socketlib Implementation
@@ -39,11 +41,14 @@ export class ChatSocket implements Socket{
 
         this._isReady = true;
 
-        this._callbacks.set("common.socket.chatmessage.callback",(data:any)=>{
-            this._returns.set(data.requestId,data);
+        this.register(CALLBACK_SYSTEM_CALLBACK,(data:any)=>{
+            console.debug("CA: ChatSocket adicionando o retorno na pilha de retorno : " , data) ;
+            this._returns.set(data.requestId,data.response);
+                                   
         });
+ 
 
-        Hooks.callAll("onReadyCommonSocket", { });
+        Hooks.callAll(CALLBACK_FUNCTION_EVENT_NAME, {});
     }
 
     private callHooks(){
@@ -69,7 +74,20 @@ export class ChatSocket implements Socket{
                 if (!eventReceived){
                     return;                          
                 }
+                
                 const payload:PayloadEvent=message.flags[flagName] as  PayloadEvent; 
+
+                const broadcast = payload.users.length==0;
+
+                if(!broadcast)
+                {
+                    const valid:boolean = payload.users.filter(id=>game.user.id).length==1;
+                    if(!valid)
+                    {
+                        commonModule.debug("Ignorado pois não é para este usuário") ;
+                        return;  
+                    } 
+                }
                 
                 commonModule.debug('[|Common Socket Chat Message] Evento recebido:', payload); 
                 if(game.user.isGM &&  payload.onlyPlayers)
@@ -90,12 +108,33 @@ export class ChatSocket implements Socket{
                     commonModule.debug('[|Common Socket Chat Message] Evento recebido não registrado :', payload.type , " para o payload : " ,payload); 
                     return;
                 }
-                const ret = callback(... payload.data);
-                commonModule.log('createChatMessage:', ret);
-                this.register(CALLBACK_FUNCTION_EVENT_NAME,(data:any)=>{
-                    this._returns.set(data.originalRequestId,data.response);
-                });
-                this.sendMessage(CALLBACK_FUNCTION_EVENT_NAME,{response:ret,originalRequestId:payload.requestId},false,false,false,[payload.senderId]);
+                commonModule.debug('[|Common Socket Chat Message] Chamando callback com dados :', payload); 
+
+                if(callback instanceof Function)
+                {
+                    commonModule.debug('[|Common Socket Chat Message] callback é uma função como esperado :', callback); 
+                }
+                else
+                {
+                    commonModule.debug('[|Common Socket Chat Message] algo deu erroad, callback não é uma função como esperado :', callback); 
+                }
+                if(payload.type == CALLBACK_SYSTEM_CALLBACK)
+                {
+                     commonModule.debug('[|Common Socket Chat Message] Retorno do sistema :', payload);  
+                     callback( {requestId: payload.data.originalRequestId ,response:payload.data.response});
+                     return;
+                }
+
+                let ret = callback(  ... payload.data);
+                commonModule.debug('[|Common Socket Chat Message] Retorno do callback :', payload,",ret:",ret); 
+                
+               
+                if(ret==undefined)
+                {
+                    ret = {common_socket_chat_message_system_empty:true};
+                }
+                commonModule.log('createChatMessage:', ret);  
+                this.sendMessage(CALLBACK_SYSTEM_CALLBACK,{response:ret,originalRequestId:payload.requestId},false,false,false,[payload.senderId]);
                 return;
 
             } catch (e) {
@@ -109,16 +148,21 @@ export class ChatSocket implements Socket{
 
         const whisper = (broadcast)? Array.from(game.users?.values() || []).map((u: any) => u.id):userids;
 
-        const requestId:string = (Math.random()*1000000).toString();
+        const requestId:string = Math.round( (Math.random()*1000000)).toString();
+
+        const users = (userids==undefined)?[]:userids;
 
         const payload:PayloadEvent= {
             requestId,
             senderId:game.user.id,
 			type: eventName,
+            users,
             onlyPlayers,
             toGM,
 			data
 			};
+            
+        commonModule.debug('[Common Socket Chat] Enviando mensagem com payload :', payload, ",time:",new Date());
 
         await ChatMessage.create({
 		content: 'Common Socket Event - Ignore this message', // Invisível pra maioria
@@ -128,15 +172,36 @@ export class ChatSocket implements Socket{
 		}
 		});
 
-        commonModule.whaitFor(()=>this._callbacks.has(requestId),60000);
-        
-        if(!this._callbacks.has(requestId))
+        if(eventName==CALLBACK_SYSTEM_CALLBACK)
         {
-            commonModule.error('[Common Socket Chat] Timeout ao processar evento :', payload);
+            commonModule.debug('[Common Socket Chat] Ignorando callback pois é mensagem de sistema :', payload);
+            return;
         }
-        const ret = this._callbacks.get(requestId);
 
-        this._callbacks.delete(requestId);
+        
+        commonModule.debug('[Common Socket Chat] Aguardando retorno do callback :', payload, ",time:",new Date());
+
+        await commonModule.whaitFor(()=>{
+            if(this._returns.has(requestId)){
+                commonModule.debug('Encontrado o resultado para requestId:' , requestId , " , returns:" , this._returns);
+                return true;
+            }
+            commonModule.debug('Ainda não encontrado o resultado para requestId:' , requestId , " , returns:" , this._returns);
+            
+            return false;
+            
+        },60000,1000);
+
+       
+
+        if(!this._returns.has(requestId))
+        {
+            commonModule.error('[Common Socket Chat] Timeout ao processar evento :', payload,",callbacks:",this._returns,",time:",new Date());
+            return;
+        }
+        const ret = this._returns.get(requestId);
+
+        this._returns.delete(requestId);
 
         return ret;
 	
@@ -163,7 +228,7 @@ export class ChatSocket implements Socket{
        }
 
        
-       this.sendMessage(eventName,data,true,false,false);
+       return this.sendMessage(eventName,data,true,false,false);
     
     }
     
@@ -190,9 +255,13 @@ interface PayloadEvent{
     senderId:string;
 	type:string;
     onlyPlayers:boolean;
+    users:Array<string>
     toGM:boolean;
 	data:any;
 }
+
+ 
+
 
 export const chatSocketImplementation:Socket = new ChatSocket();
 
