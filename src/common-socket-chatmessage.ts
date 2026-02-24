@@ -81,13 +81,15 @@ export class ChatSocket implements Socket{
 
                 if(!broadcast)
                 {
-                    const valid:boolean = payload.users.filter(id=>game.user.id).length==1;
+                    const valid:boolean = payload.users.filter(id=>game.user.id==id).length==1;
                     if(!valid)
                     {
-                        commonModule.debug("Ignorado pois não é para este usuário") ;
+                        commonModule.debug("Ignorado pois não é para este usuário :" , game.user.id , ",payload:",payload,", users:",payload.users, ",usersFiltered:", payload.users.filter(id=>game.user.id==id) );
                         return;  
                     } 
+                    
                 }
+                
                 
                 commonModule.debug('[|Common Socket Chat Message] Evento recebido:', payload); 
                 if(game.user.isGM &&  payload.onlyPlayers)
@@ -217,16 +219,10 @@ export class ChatSocket implements Socket{
 
      public async executeAsGM (eventName:string,...data:any):Promise<any>{
 
-       if(!this.isReadyToSendToGM)
-       {
-            throw new Error("Isnt ready to send to gm");
-       }
-
-       if(!game.user.isGM)
-       {
-             throw new Error("You arent GM");
-       }
-
+      if(!this.isReady || !this.isReadyToSendToGM ||  !game.user.isGM)
+      {
+         throw new Error("Isnt ready to send to gm or you arent GM");
+      }
        
        return this.sendMessage(eventName,data,true,false,false);
     
