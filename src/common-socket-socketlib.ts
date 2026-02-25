@@ -110,7 +110,10 @@ export class CommonSocket implements Socket{
         return this._socketOriginal.executeForEveryone(eventName,...data);
     }
 
-    
+    public async executeIn(eventName:string,users:Array<string>,...data:any):Promise<any>{
+        return undefined;
+    }
+
     public isReadyToSendToGM ():boolean{
         return (game.user as any) || (game.users as any) ; 
     }

@@ -1,4 +1,5 @@
  
+import { CacheReturnControl } from "./cache-returns-control";
 import { CommonModule } from "./common-module";
 import { Socket } from "./common-socket";
 
@@ -18,7 +19,7 @@ export class ChatSocket implements Socket{
  
     private _isReady:boolean = false;
     private _callbacks:Map<string,any> = new Map();
-    private _returns:Map<string,any> = new Map();
+    private _returns:CacheReturnControl<string,any> = new CacheReturnControl();
 
     constructor()
     {   
@@ -43,7 +44,12 @@ export class ChatSocket implements Socket{
 
         this.register(CALLBACK_SYSTEM_CALLBACK,(data:any)=>{
             console.debug("CA: ChatSocket adicionando o retorno na pilha de retorno : " , data) ;
-            this._returns.set(data.requestId,data.response);
+            const anotherUserAnswerBefore:boolean = this._returns.has(data.requestId);
+            if(anotherUserAnswerBefore)
+            {
+                return;
+            }
+            this._returns.add(data.requestId,data.response);
                                    
         });
  
@@ -136,7 +142,7 @@ export class ChatSocket implements Socket{
                     ret = {common_socket_chat_message_system_empty:true};
                 }
                 commonModule.log('createChatMessage:', ret);  
-                this.sendMessage(CALLBACK_SYSTEM_CALLBACK,{response:ret,originalRequestId:payload.requestId},false,false,false,[payload.senderId]);
+                this.sendMessage(CALLBACK_SYSTEM_CALLBACK,{response:ret,originalRequestId:payload.requestId},false,false,[payload.senderId]);
                 return;
 
             } catch (e) {
@@ -146,9 +152,9 @@ export class ChatSocket implements Socket{
  
     }
 
-    private  async sendMessage( eventName:string, data:any, broadcast:boolean,onlyPlayers:boolean,toGM:boolean, userids:Array<string>|undefined=undefined){
+    private  async sendMessage( eventName:string, data:any, onlyPlayers:boolean,toGM:boolean, userids:Array<string>|undefined=undefined){
 
-        const whisper = (broadcast)? Array.from(game.users?.values() || []).map((u: any) => u.id):userids;
+        const whisper = Array.from(game.users?.values());
 
         const requestId:string = Math.round( (Math.random()*1000000)).toString();
 
@@ -203,19 +209,21 @@ export class ChatSocket implements Socket{
         }
         const ret = this._returns.get(requestId);
 
-        this._returns.delete(requestId);
-
         return ret;
 	
     }
     
     public async executeToGM(eventName: string, ...data: any): Promise<any> {
-        return this.sendMessage(eventName,data,true,false,true);
+        return this.sendMessage(eventName,data,false,true);
     }
 
     public async executeForAll (eventName:string,...data:any):Promise<any>{
-        return this.sendMessage(eventName,data,true,false,false);
+        return this.sendMessage(eventName,data,false,false);
     }
+
+     public async executeIn(eventName:string,users:Array<string>,...data:any):Promise<any>{
+        return this.sendMessage(eventName,data,false,false,users);
+     }
 
      public async executeAsGM (eventName:string,...data:any):Promise<any>{
 
@@ -224,7 +232,7 @@ export class ChatSocket implements Socket{
          throw new Error("Isnt ready to send to gm or you arent GM");
       }
        
-       return this.sendMessage(eventName,data,true,false,false);
+       return this.sendMessage(eventName,data,false,false);
     
     }
     

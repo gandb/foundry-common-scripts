@@ -250,6 +250,9 @@ function startHooks(){
 
 		doc.COMMON_MODULE.debug("Socketlib 20");
 		commonSocket.register("add", add);
+
+		commonSocket.register("someusersadd", addWithError);
+
 		doc.COMMON_MODULE.debug("Socketlib finish the register events");
 
 
@@ -273,6 +276,12 @@ function startHooks(){
 			doc.COMMON_MODULE.debug("The addition is performed on a GM client.");
 			return a + b;
 		}  
+		
+		let error:number = 0;
+		function addWithError(a:number, b:number) {
+			doc.COMMON_MODULE.debug("The addition is performed on a GM client.");
+			return a + b + error++;
+		}  
 
 		try{
 
@@ -295,6 +304,14 @@ function startHooks(){
 			else{
 				doc.COMMON_MODULE.log("A minha implementacao notou que o gm nao foi carregado ainda 1");
 			}
+
+			//teste para varios users
+			const userids:Array<string> = [];
+			game.users.forEach(user=>{
+				userids.push(user.id);
+			});
+			const result = await commonSocket.executeAsGM("someusersadd", 5, 6);
+			doc.COMMON_MODULE.log(`The first user calculated: ${result}`);
 		}
 		catch(e)
 		{
