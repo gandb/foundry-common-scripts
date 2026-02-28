@@ -1,7 +1,7 @@
  
-import { CacheReturnControl } from "./cache-returns-control";
-import { CommonModule } from "./common-module";
-import { Socket } from "./common-socket";
+import { CacheReturnControl } from "../../cache-returns-control";
+import { CommonModule } from "../../common-module";
+import { Socket } from "../common-socket";
 
 
 let doc : FoundryDocument = document as FoundryDocument;
@@ -47,6 +47,7 @@ export class ChatSocket implements Socket{
             const anotherUserAnswerBefore:boolean = this._returns.has(data.requestId);
             if(anotherUserAnswerBefore)
             {
+                console.debug("CA: Já foi respondido antes : " , data) ;
                 return;
             }
             this._returns.add(data.requestId,data.response);

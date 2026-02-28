@@ -1,5 +1,5 @@
 import { DialogUtils } from "./dialog-utils";
-import { socketFactory } from "./socket-factory";
+import { socketFactory } from "./sockets/socket-factory";
 	
 const commonSocket = socketFactory.getSocket();
  
@@ -22,7 +22,7 @@ export class CommonModule{
     
 
 	private prefix:string="CA:";
-	private _debugMode:boolean=true;
+	private _debugMode:boolean=false;
 
 	constructor(){
 		
@@ -279,7 +279,7 @@ function startHooks(){
 		
 		let error:number = 0;
 		function addWithError(a:number, b:number) {
-			doc.COMMON_MODULE.debug("The addition is performed on a GM client.");
+			doc.COMMON_MODULE.debug("The addition is performed on a client of manys - addWithErrors.");
 			return a + b + error++;
 		}  
 

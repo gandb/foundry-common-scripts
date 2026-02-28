@@ -1,10 +1,10 @@
-import { Socket } from "./common-socket";
+import { Socket } from "../common-socket";
 
 
 let doc : FoundryDocument = document as FoundryDocument;
 
 //socketlib Implementation, documentation: https://github.com/farling42/foundryvtt-socketlib#api
-export class CommonSocket implements Socket{
+export class SocketLib implements Socket{
 
     private _socketOriginal:any;
     private _isReady:boolean = false;
@@ -142,4 +142,4 @@ export class CommonSocket implements Socket{
 };
 
 
-export const socketLibImplementation:Socket = new CommonSocket();
+export const socketLibImplementation:Socket = new SocketLib();
