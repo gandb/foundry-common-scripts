@@ -71,7 +71,9 @@ export function socketTest(){
                     }
                     //testar erro, gm nao esta pronto
                     const result = await commonSocket.executeAsGM("add", 5, 6);
-                    doc.COMMON_MODULE.log(`The GM client calculated: ${result}`);
+                    doc.COMMON_MODULE.log(`The player calculated: ${result}`);
+                    await commonSocket.executeAsGM("helloFromGM","Hello from ","GM"); //esta mensagem jamais deveria aparecer no GM
+                    
                 }
                 else{
                     doc.COMMON_MODULE.log("A minha implementacao notou que o gm nao foi carregado ainda 1");

@@ -134,16 +134,16 @@ export class ChatSocket implements Socket{
                      callback( {requestId: payload.data.originalRequestId ,response:payload.data.response});
                      return;
                 }
-
+ 
                 let ret = callback(  ... payload.data);
-                commonModule.debug('[|Common Socket Chat Message] Retorno do callback :', payload,",ret:",ret); 
+                commonModule.debug('[Common Socket Chat Message] Retorno do callback :', payload,",ret:",ret); 
                 
                
                 if(ret==undefined)
                 {
                     ret = {common_socket_chat_message_system_empty:true};
                 }
-                commonModule.log('createChatMessage:', ret);  
+                commonModule.log('createChatMessage, devolvendo pra quem pediu o retorno :', ret);  
                 this.sendMessage(CALLBACK_SYSTEM_CALLBACK,{response:ret,originalRequestId:payload.requestId},false,false,[payload.senderId]);
                 return;
 
@@ -234,7 +234,7 @@ export class ChatSocket implements Socket{
          throw new Error("Isnt ready to send to gm or you arent GM");
       }
        
-       return this.sendMessage(eventName,data,false,false);
+       return this.sendMessage(eventName,data,true,false);
     
     }
     
