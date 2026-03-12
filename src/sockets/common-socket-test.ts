@@ -14,7 +14,7 @@ export function socketTest(){
             //configuration of socket
             commonSocket.register("helloEveryOne", showHelloMessageEveryOne);
     
-            commonSocket.register("helloGM", showHelloMessageToGM);
+            commonSocket.register("heldebugM", showHelloMessageToGM);
             
             commonSocket.register("helloFromGM", showHelloMessageFromGM);
         
@@ -61,35 +61,56 @@ export function socketTest(){
             
                 if(commonSocket.isReadyToSendToGM())
                 { 
-                    commonSocket.executeForAll("helloEveryOne", "gand"); 
+                    doc.COMMON_MODULE.debug("Gm esta pronto pra receber mensagens");
+                    commonSocket.executeForAll("helloEveryOne", "teste1"); 
+                    doc.COMMON_MODULE.debug("Depois de usar executeForAll");
+
+                    
+
                     if(game.user.isGM)
                     {
-                        commonSocket.executeForAll("helloFromGM"); 
+                        
+                        let result = await commonSocket.executeAsGM("add", 5, 6);
+                        doc.COMMON_MODULE.debug(`The player calculated: ${result}`);
+                        await commonSocket.executeAsGM("helloFromGM","Hello from ","GM"); //esta mensagem jamais deveria aparecer no GM
+                        doc.COMMON_MODULE.debug("depois de helloFromGM 1");
                     }
                     else{
-                        commonSocket.executeForAll("helloGM", "gand");
+                        commonSocket.executeForAll("helloEveryOne", "teste2");
+                       doc.COMMON_MODULE.debug("Depois de heldebugM");
                     }
-                    //testar erro, gm nao esta pronto
-                    const result = await commonSocket.executeAsGM("add", 5, 6);
-                    doc.COMMON_MODULE.log(`The player calculated: ${result}`);
-                    await commonSocket.executeAsGM("helloFromGM","Hello from ","GM"); //esta mensagem jamais deveria aparecer no GM
-                    
+         
                 }
                 else{
-                    doc.COMMON_MODULE.log("A minha implementacao notou que o gm nao foi carregado ainda 1");
+                    doc.COMMON_MODULE.debug("A minha implementacao notou que o gm nao foi carregado ainda 1");
                 }
+                commonSocket.executeForAll("helloEveryOne","teste3"); 
+                doc.COMMON_MODULE.debug("depois de helloEveryOne 2");
 
-                //teste para varios users
-                const userids:Array<string> = [];
-                game.users.forEach(user=>{
-                    userids.push(user.id);
-                });
-                const result = await commonSocket.executeAsGM("someusersadd", 5, 6);
-                doc.COMMON_MODULE.log(`The first user calculated: ${result}`);
+               
+                let userids:string[] = game.users.map(u=>u.id);
+                
+                userids = userids.filter((id:string)=>{
+                    doc.COMMON_MODULE.debug("id recebido e meu user id", id,game.user.id);
+
+                    return id != game.user.id
+                } );
+
+                let randomNumber:number =  Math.round(1000 * Math.random() ) + 1000  ;
+                let randomIndex:number =  Math.round( userids.length * Math.random() )  ;
+                randomIndex = (randomIndex==userids.length)?randomIndex-1:randomIndex;
+                const userid:string = userids.at(randomIndex) as string;
+                doc.COMMON_MODULE.debug(`Sending to player random: ${userid} , I am userid: ${game.user.id} and number random is ${randomNumber}`);
+                let result = await commonSocket.executeIn("add",[userid], randomNumber, 1);
+                doc.COMMON_MODULE.debug(`The player random calculated: ${result}`);
+
+      
+                commonSocket.executeIn("helloEveryOne", userids,"teste4");
+                doc.COMMON_MODULE.debug(`Depois do teste4 seletivo: ${result}`);
             }
             catch(e)
             {
-                doc.COMMON_MODULE.log("Socketlib error gm nao carregado",e);
+                doc.COMMON_MODULE.debug("Common socket error",e);
             }
 
             
