@@ -29,7 +29,7 @@ function removeAttribute(sheet:Sheet)
 	let htmldivs = doc.querySelectorAll("div.ability-score[data-ability='hon']");
 	if(htmldivs.length==0)
 	{
-		ui.notifications.error(`Não foi encontrado `);
+		doc.COMMON_MODULE.debug(`This sheet not contain honrror field or system not enable honrror field`); 
 		return;
 	}
 	doc.COMMON_MODULE.debug(`Hability hero removed, npc sheet detected`);
