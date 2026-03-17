@@ -206,8 +206,8 @@ export class ChatSocket implements Socket{
 
         if(!this._returns.has(requestId))
         {
-            commonModule.error('[Common Socket Chat] Timeout ao processar evento :', payload,",callbacks:",this._returns,",time:",new Date());
-            return;
+            commonModule.debug('[Common Socket Chat] Timeout ao processar evento :', payload,",callbacks:",this._returns,",time:",new Date());
+            return undefined;
         }
         const ret = this._returns.get(requestId);
 

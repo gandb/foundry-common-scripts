@@ -151,6 +151,8 @@ export class CommonModule{
 		let totalTime = 0;
 		const ret:Promise<void>  = new Promise<void>((resolve,reject)=>{
 			const handle = setInterval(()=>{
+ 
+				doc.COMMON_MODULE.debug("Total time:",totalTime," for function ",test); 
 				if(test())
 				{
 					clearInterval(handle);
@@ -159,9 +161,11 @@ export class CommonModule{
 				}
 				if(totalTime>timeout)
 				{
-					reject(new Error("timeout while wait For in common module "));
+					doc.COMMON_MODULE.debug("Timeout for test:",test); 
+					clearInterval(handle);
+					reject(new Error("timeout while wait For in common module" ));
 				}
-				totalTime+100;
+				totalTime+=sleep;
 			},sleep); 
 		});
 
