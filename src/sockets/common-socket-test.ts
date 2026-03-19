@@ -87,7 +87,8 @@ export function socketTest(){
                 commonSocket.executeForAll("helloEveryOne","teste3"); 
                 doc.COMMON_MODULE.debug("depois de helloEveryOne 2");
 
-               
+               commonSocket.executeToGM("helloEveryOne", "esse-apenas-gm-deveria-receber");
+ 
                 let userids:string[] = game.users.map(u=>u.id);
                 
                 userids = userids.filter((id:string)=>{

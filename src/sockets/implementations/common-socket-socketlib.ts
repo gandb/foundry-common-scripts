@@ -106,8 +106,8 @@ export class SocketLib implements Socket{
     }
 
     public async executeToGM(eventName: string, ...data: any): Promise<any> {
-        data.toGM = true;
-        return this._socketOriginal.executeForEveryone(eventName,...data);
+        const newData = {data,toGM:true} 
+        return this._socketOriginal.executeForEveryone(eventName,newData);
     }
 
     public async executeIn(eventName:string,users:Array<string>,...data:any):Promise<any>{
@@ -122,12 +122,17 @@ export class SocketLib implements Socket{
     {
          this._socketOriginal.register(eventName,async ( ...data: any)=>{
              doc.COMMON_MODULE.debug("Socketlib new event:",eventName, ',parameters: ',data,'...parameters',...data);
-            if(data.toGM && (!game.user || !game.user.isGM) )
+            if(data instanceof Array && data.length == 1 && data[0].toGM)
             {
-                doc.COMMON_MODULE.debug("Evento pra gm e o usuário não é GM");
-                return;
+                doc.COMMON_MODULE.debug("Evento pra gm");
+                if(!game.user || !game.user.isGM)
+                {
+                    doc.COMMON_MODULE.debug("Evento pra gm, descartado pois o usuário não é GM");
+                    return;
+                }
+                 return await callback( ...data[0].data);
             } 
-            
+            doc.COMMON_MODULE.debug("Evento não é específico pra gm");
             return await callback( ...data);
          });
     }
