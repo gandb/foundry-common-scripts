@@ -106,7 +106,7 @@ export function socketTest(){
                 doc.COMMON_MODULE.debug(`The player random calculated: ${result}`);
 
       
-                commonSocket.executeIn("helloEveryOne", userids,"teste4");
+                commonSocket.executeIn("helloEveryOne", [userid],"teste4:" + game.user.id);
                 doc.COMMON_MODULE.debug(`Depois do teste4 seletivo: ${result}`);
             }
             catch(e)

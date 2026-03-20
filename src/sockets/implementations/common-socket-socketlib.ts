@@ -111,7 +111,8 @@ export class SocketLib implements Socket{
     }
 
     public async executeIn(eventName:string,users:Array<string>,...data:any):Promise<any>{
-        return undefined;
+          doc.COMMON_MODULE.debug("Socketlib executeIn for event:",eventName, ',parameters: ',data,'...parameters',...data);
+        return this._socketOriginal.executeForUsers(eventName,users,...data);
     }
 
     public isReadyToSendToGM ():boolean{

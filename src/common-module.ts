@@ -21,7 +21,7 @@ export class CommonModule{
     
 
 	private _prefix:string="CA:";
-	private _debugMode:boolean=false;
+	private _debugMode:boolean=true;
 	private _printData:boolean=this._debugMode;
 
 	constructor(){
