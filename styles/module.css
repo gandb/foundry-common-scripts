@@ -1,9 +1,18 @@
-/*HELP DICE FEATURE*/
+/*START - HELP DICE FEATURE*/
 .vertical .common-assets-help{
 	writing-mode: vertical-lr;
 	text-orientation: upright;
 }
-/*ATRIBUTE HERO POINTS FEATURE*/
+/*END - HELP DICE FEATURE*/
+
+/*START - CHAT MESSAGE SOCKET */
+.socket-chat-event{
+	display: none;
+}
+/*END - CHAT MESSAGE SOCKET */
+
+
+/*START - ATRIBUTE HERO POINTS FEATURE*/
 LABEL.common-assets.attribute{
 	position: relative;
 	width: 64px;
@@ -56,3 +65,4 @@ img.heroic-action-img{
 	height: auto;
 	width: auto;
 } 
+/*END - ATRIBUTE HERO POINTS FEATURE*/

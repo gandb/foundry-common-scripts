@@ -59,6 +59,19 @@ export class ChatSocket implements Socket{
         Hooks.callAll(CALLBACK_FUNCTION_EVENT_NAME, {});
     }
 
+    private cleanupRealChatMessage(){
+        commonModule.debug('[Common Socket Chat Message] cleanupRealChatMessage '); 
+        let elements  = document.querySelectorAll(".chat-message.message:not(.socket-chat-event)");// not work the negation
+        commonModule.debug('[Common Socket Chat Message] cleanupRealChatMessage elements size ', elements.length); 
+        elements.forEach(element =>
+        { 
+            if(element.innerHTML.indexOf("Common Socket Event") >=0){
+                element.classList.add("socket-chat-event");
+            }
+            
+        });
+    }
+
     private callHooks(){
 
  
@@ -71,11 +84,14 @@ export class ChatSocket implements Socket{
             this.init();
         
         });
+        
 
 
         Hooks.on('createChatMessage', (message: any) => {
             try {
                 commonModule.debug("createChatMessage recebido...") ;  
+                this.cleanupRealChatMessage();
+                setTimeout(this.cleanupRealChatMessage,500);
                 // Verifica se é um evento nosso
                 const eventReceived:string = message.flags?.[flagName]?.type;
 

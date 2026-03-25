@@ -187,7 +187,7 @@ export class CommonModule{
 	public logPrefix(newPrefixValue:string){
 		doc.COMMON_MODULE._prefix = newPrefixValue || "CA:";
 	}
-
+	
 	public log (...args:Array<any>)  { 
 		console.log(doc.COMMON_MODULE.prefix,...args);
 		if(!doc.COMMON_MODULE.debugMode()) return;
