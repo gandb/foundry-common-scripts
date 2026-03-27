@@ -187,63 +187,42 @@ export class CommonModule{
 	public logPrefix(newPrefixValue:string){
 		doc.COMMON_MODULE._prefix = newPrefixValue || "CA:";
 	}
-	
-	public log (...args:Array<any>)  { 
-		console.log(doc.COMMON_MODULE.prefix,...args);
+
+	private genericLog(func:(...args:Array<any>)=>void,alias:string, ...args:Array<any>):void
+	{
+	 
+		const prefix:string =  doc.COMMON_MODULE.prefix;
+		func(prefix,...args);
 		if(!doc.COMMON_MODULE.debugMode()) return;
 		try{
-			throw new Error("Thread trace:");
+			throw new Error("Thread trace " + alias + " :" + prefix);
 		}
 		catch(e){
 
-			console.error("info debug:",e);
+			console.error("log " + alias + ":",e);
 		}
+	 
+	}
+	
+	public log (...args:Array<any>)  { 
+		doc.COMMON_MODULE.genericLog(console.log,"log",...args);
 	}
 
 	public info (...args:Array<any>)  {
-		console.info(doc.COMMON_MODULE.prefix,...args);
-		if(!doc.COMMON_MODULE.debugMode()) return;
-		try{
-			throw new Error("Thread trace:");
-		}
-		catch(e){
-			console.error("info debug:",e);
-		}
+		doc.COMMON_MODULE.genericLog(console.log,"info",...args);
 	}
 
 	public error  (...args:Array<any>){
-		console.error(doc.COMMON_MODULE.prefix,...args);
-		if(!doc.COMMON_MODULE.debugMode()) return;
-		try{
-			throw new Error("Thread trace:");
-		}
-		catch(e){
-			console.error("info debug:",e);
-		}
+		doc.COMMON_MODULE.genericLog(console.log,"error",...args);
 	}
 
 	public warn (...args:Array<any>) {
-		console.warn(doc.COMMON_MODULE.prefix,...args);
-		if(!doc.COMMON_MODULE.debugMode()) return;
-		try{
-			throw new Error("Thread trace:");
-		}
-		catch(e){
-			console.error("info debug:",e);
-		}
+		doc.COMMON_MODULE.genericLog(console.log,"warn",...args);
 	}
 
 	public debug (...args:Array<any>) { 
-		if(!doc.COMMON_MODULE.debugMode()) return;
-		console.debug(doc.COMMON_MODULE.prefix ,...args);
-		try{
-			throw new Error("Thread trace:");
-		}
-		catch(e){
-			console.error("info debug:",e);
-		}
-	} 
- 
+		doc.COMMON_MODULE.genericLog(console.log,"debug",...args);
+	}
 }
 
 

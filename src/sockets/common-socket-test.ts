@@ -14,12 +14,10 @@ export function socketTest(){
             //configuration of socket
             commonSocket.register("helloEveryOne", showHelloMessageEveryOne);
     
-            commonSocket.register("heldebugM", showHelloMessageToGM);
+            commonSocket.register("helloToGM", showHelloMessageToGM);
             
             commonSocket.register("helloFromGM", showHelloMessageFromGM);
         
-
-
             doc.COMMON_MODULE.debug("Socketlib 20");
             commonSocket.register("add", add);
 
@@ -33,13 +31,11 @@ export function socketTest(){
             }
 
             function showHelloMessageToGM(userName:string) {
-                if(!game.user.isGM) return;
                 doc.COMMON_MODULE.debug(`User ${userName} says hello to GM!`);
             }
 
-            function showHelloMessageFromGM() {
-                if(game.user.isGM) return;
-                doc.COMMON_MODULE.debug(`GM say hello to you!`);
+            function showHelloMessageFromGM(options:any) {
+                doc.COMMON_MODULE.debug(`GM say hello to you!`,options);
             }
 
 
@@ -69,15 +65,19 @@ export function socketTest(){
 
                     if(game.user.isGM)
                     {
-                        
                         let result = await commonSocket.executeAsGM("add", 5, 6);
                         doc.COMMON_MODULE.debug(`The player calculated: ${result}`);
-                        await commonSocket.executeAsGM("helloFromGM","Hello from ","GM"); //esta mensagem jamais deveria aparecer no GM
+                         //esta mensagem jamais deveria aparecer no GM, só nos usuarios
+                        await commonSocket.executeAsGM("helloFromGM","Hello from ","GM");
                         doc.COMMON_MODULE.debug("depois de helloFromGM 1");
                     }
                     else{
                         commonSocket.executeForAll("helloEveryOne", "teste2");
                        doc.COMMON_MODULE.debug("Depois de heldebugM");
+ 
+                      //esta mensagem jamais deveria aparecer no GM, só nos usuarios
+                        await commonSocket.executeAsGM("helloToGM","Hello ","GM");
+                        doc.COMMON_MODULE.debug("depois de helloToGM 1");
                     }
          
                 }

@@ -97,12 +97,17 @@ export class SocketLib implements Socket{
 
      public async executeAsGM (eventName:string,...data:any):Promise<any>{
 
-                    
+        doc.COMMON_MODULE.debug("Socketlib executeAsGM start"); 
+        
         if (!game.user ||  !game.users) {
                throw new Error("Game isnt complete prepareted yet, player and gm isnt filled the information. Wait for game ready event ");
         }
         
-        return this._socketOriginal.executeAsGM(eventName,...data);
+        const ret:Promise<any> = this._socketOriginal.executeAsGM(eventName,...data);
+
+        doc.COMMON_MODULE.debug("Socketlib executeAsGM end, eventName:",eventName, ",data:",data); 
+
+        return ret;
     }
 
     public async executeToGM(eventName: string, ...data: any): Promise<any> {
@@ -121,11 +126,12 @@ export class SocketLib implements Socket{
 
     public async register(eventName:string,callback:any):Promise<void>
     {
+        doc.COMMON_MODULE.debug("start register,eventName:",eventName);
          this._socketOriginal.register(eventName,async ( ...data: any)=>{
              doc.COMMON_MODULE.debug("Socketlib new event:",eventName, ',parameters: ',data,'...parameters',...data);
             if(data instanceof Array && data.length == 1 && data[0].toGM)
             {
-                doc.COMMON_MODULE.debug("Evento pra gm");
+                doc.COMMON_MODULE.debug("Evento pra gm,event:",eventName);
                 if(!game.user || !game.user.isGM)
                 {
                     doc.COMMON_MODULE.debug("Evento pra gm, descartado pois o usuário não é GM");
