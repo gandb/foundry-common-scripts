@@ -2,7 +2,7 @@ import { DialogUtils } from "./dialog-utils";
 import {socketTest} from "./sockets/common-socket-test";
 	
  
-//alert(`TODO: `);
+ 
 const COMMON_REGISTERED_NAMES = {
 	MODULE_NAME : "common-assets",
 	MODULE_VERSION : "common-assets-version"
@@ -20,14 +20,11 @@ export class CommonModule{
 	public NPC_DIALOG:NPCDialog|undefined; 
     
 
-	private _prefix:string="CA:";
-	private _debugMode:boolean=false;
-	private _printData:boolean=this._debugMode;
+	private readonly _prefix:string="CA:";
+	private readonly _debugMode:boolean=true;
+	private readonly _printData:boolean=this._debugMode;
 
-	constructor(){
-		
-	}
-
+	 
 	// Função privada para formatar data no estilo ANOMESDIAHORAMINUTOSEGUNDOMILISEGUNDOS
 	public formatCompactDate(date: Date = new Date()): string {
 		

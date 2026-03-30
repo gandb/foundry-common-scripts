@@ -61,8 +61,6 @@ export function socketTest(){
                     commonSocket.executeForAll("helloEveryOne", "teste1"); 
                     doc.COMMON_MODULE.debug("Depois de usar executeForAll");
 
-                    
-
                     if(game.user.isGM)
                     {
                         let result = await commonSocket.executeAsGM("add", 5, 6);
@@ -73,11 +71,15 @@ export function socketTest(){
                     }
                     else{
                         commonSocket.executeForAll("helloEveryOne", "teste2");
-                       doc.COMMON_MODULE.debug("Depois de heldebugM");
+                        doc.COMMON_MODULE.debug("Depois de heldebugM");
  
-                      //esta mensagem jamais deveria aparecer no GM, só nos usuarios
-                        await commonSocket.executeAsGM("helloToGM","Hello ","GM");
-                        doc.COMMON_MODULE.debug("depois de helloToGM 1");
+                        try{
+                            //esta mensagem jamais deveria ser entregue, deveria retornar erro
+                            await commonSocket.executeAsGM("helloEveryOne", "teste5");
+                        }
+                        catch(e) {
+                            doc.COMMON_MODULE.debug("depois de helloToGM 1",e);
+                        }
                     }
          
                 }

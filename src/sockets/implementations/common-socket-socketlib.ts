@@ -99,11 +99,14 @@ export class SocketLib implements Socket{
 
         doc.COMMON_MODULE.debug("Socketlib executeAsGM start"); 
         
-        if (!game.user ||  !game.users) {
-               throw new Error("Game isnt complete prepareted yet, player and gm isnt filled the information. Wait for game ready event ");
+        if (!game.user ||  !game.users || !game.user.isGM ) {
+            doc.COMMON_MODULE.debug("Socketlib executeAsGM fail validation")
+            throw new Error("Isnt ready to send to gm or you arent GM");
         }
+
+        doc.COMMON_MODULE.debug("Socketlib executeAsGM after validation"); 
         
-        const ret:Promise<any> = this._socketOriginal.executeAsGM(eventName,...data);
+        const ret:Promise<any> = this._socketOriginal.executeForEveryone(eventName,...data);
 
         doc.COMMON_MODULE.debug("Socketlib executeAsGM end, eventName:",eventName, ",data:",data); 
 
