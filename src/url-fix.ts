@@ -1,6 +1,7 @@
  
  //UTILITARIO PARA CORRIGIR URL DE IMAGENS DE NPCS NO MUNDO ATUAL
-CONFIG.debug.hooks = true;
+const FIX_NPCs = false;
+
 
 const newImgPath = "modules/candlekeep-5ed/images/mobs"; //substitua com o caminho desejado
 
@@ -17,40 +18,45 @@ Hooks.on("ready", async  () => {
  * */
   
 async function updateNpcImageBaseUrl(newBaseUrl:any) {
-  // Remove barra final se houver
-  if (newBaseUrl.endsWith("/")) {
-    newBaseUrl = newBaseUrl.slice(0, -1);
-  }
 
-  const npcs = game.actors.filter((actor:any) => actor.type === "npc");
+    if(!FIX_NPCs)
+    {
+      return;
+    }
+    // Remove barra final se houver
+    if (newBaseUrl.endsWith("/")) {
+      newBaseUrl = newBaseUrl.slice(0, -1);
+    }
 
-  if (npcs.length === 0) {
-    ui.notifications.warn("Nenhum NPC encontrado.");
-    return;
-  }
+    const npcs = game.actors.filter((actor:any) => actor.type === "npc");
 
-  for (let npc of npcs) {
-    const oldImg = npc.img;
-    const oldTokenImg = npc.prototypeToken?.texture?.src ?? oldImg;
+    if (npcs.length === 0) {
+      ui.notifications.warn("Nenhum NPC encontrado.");
+      return;
+    }
 
-    // Extrai o nome do arquivo da imagem antiga 
-    const filenamePortrait = oldImg.split("/").pop();
-    const filenameToken = oldTokenImg.split("/").pop();
+    for (let npc of npcs) {
+      const oldImg = npc.img;
+      const oldTokenImg = npc.prototypeToken?.texture?.src ?? oldImg;
 
-    // Monta a nova URL com a base fornecida e o nome original do arquivo
+      // Extrai o nome do arquivo da imagem antiga 
+      const filenamePortrait = oldImg.split("/").pop();
+      const filenameToken = oldTokenImg.split("/").pop();
+
+      // Monta a nova URL com a base fornecida e o nome original do arquivo
+      
+      const newPortrait = `${newBaseUrl}/${filenamePortrait}`;
+      const newToken = `${newBaseUrl}/${filenameToken}`;
     
-    const newPortrait = `${newBaseUrl}/${filenamePortrait}`;
-    const newToken = `${newBaseUrl}/${filenameToken}`;
-  
-    await npc.update({ 
-      img: newPortrait,
-      prototypeToken: {
-        texture: {
-          src: newToken
+      await npc.update({ 
+        img: newPortrait,
+        prototypeToken: {
+          texture: {
+            src: newToken
+          }
         }
-      }
-     });
-    console.log(`NPC '${npc.name}' atualizado para imagem: ${newToken} and ${newPortrait} `);
+      });
+      console.log(`NPC '${npc.name}' atualizado para imagem: ${newToken} and ${newPortrait} `);
   }
 
   ui.notifications.info(`Atualizadas as imagens de ${npcs.length} NPC(s).`);

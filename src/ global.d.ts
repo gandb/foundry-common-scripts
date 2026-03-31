@@ -20,6 +20,12 @@ namespace CONST{
 };
 
 namespace foundry {
+    namespace audio {
+      const  AudioHelper:AudioHelperClass;
+    }
+    namespace utils {
+      function mergeObject(options:any,options2:any);
+    }
     namespace applications {
       namespace api {
         class DialogV2 {
@@ -33,6 +39,15 @@ namespace foundry {
       }
     }
   }
+
+  declare class Application{
+    static get defaultOptions():any;
+    activateListeners(html: any): void ;
+    close();
+    render(value:boolean);
+}
+
+ 
 
 declare const ChatMessage:{
     create( chatInfo: any,options:any|undefined=undefined);
@@ -57,6 +72,11 @@ private class Game{
     scenes:SceneList
     keybindings:RegisterKeyBinding;
     actors:Array<Actor>;
+    socket:Socket;
+}
+
+declare interface Socket{
+    emit(event:string, ...args:any[]):any;
 }
 
 declare class RegisterKeyBinding implements Register{
@@ -145,25 +165,7 @@ declare class FoundryDocument extends Document{
 
  
 declare const socketlib;  
-
-declare class NPCDialog {
-
-    npcSelected:NPC|any;
-    activeNPC:NPC|any;
-    npcs:Map<string,NPC>=new Map();
-
-
-    async addNPCButtons (controls:any) ;
-
-    async showNPCChooseDialog ();
-
-    async callMinsc (frmModule:Module);
-
-    async callBrizola (frmModule:Module);
  
-
-}  
-
 declare const docs:any|FoundryDocument ;
 
 declare class Module{

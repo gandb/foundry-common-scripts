@@ -1,5 +1,6 @@
 import { DialogUtils } from "./dialog-utils";
 import {socketTest} from "./sockets/common-socket-test";
+import { NPCDialog } from "./ui/npcDialog"; 
 	
  
  
@@ -15,14 +16,14 @@ export class CommonModule{
 	public readonly name:string="common-assets";
 	public readonly version:string="1.0.0";
 	public readonly startVersion:string="";
-	public DIALOG_UTILS:DialogUtils|undefined;  
-    public REGION_UTILS:RegionUtils|undefined; 
-	public NPC_DIALOG:NPCDialog|undefined; 
+	public DIALOG_UTILS:DialogUtils|any;  
+    public REGION_UTILS:RegionUtils|any;  
     
 
 	private readonly _prefix:string="CA:";
 	private readonly _debugMode:boolean=true;
 	private readonly _printData:boolean=this._debugMode;
+	private readonly _printTrace:boolean=false;
 
 	 
 	// Função privada para formatar data no estilo ANOMESDIAHORAMINUTOSEGUNDOMILISEGUNDOS
@@ -190,7 +191,7 @@ export class CommonModule{
 	 
 		const prefix:string =  doc.COMMON_MODULE.prefix;
 		func(prefix,...args);
-		if(!doc.COMMON_MODULE.debugMode()) return;
+		if(!doc.COMMON_MODULE.debugMode() || !doc.COMMON_MODULE._printTrace) return;
 		try{
 			throw new Error("Thread trace " + alias + " :" + prefix);
 		}
@@ -220,6 +221,10 @@ export class CommonModule{
 	public debug (...args:Array<any>) { 
 		doc.COMMON_MODULE.genericLog(console.log,"debug",...args);
 	}
+
+	public set NPC_DIALOG(npcDialog:NPCDialog){
+		throw new Error("Não é permitido setar npc dialog no commons, use o dialogUtils");
+	}
 }
 
 
@@ -231,8 +236,7 @@ doc.COMMON_MODULE = new CommonModule();
 function startHooks(){
 
 	Hooks.once("init", async () => {
-		const doc = document as FoundryDocument;
-		doc.COMMON_MODULE = new CommonModule();
+		const doc = document as FoundryDocument; 
 
 		doc.COMMON_MODULE.log("Módulo Common Assets inicalizando...") ;
 		await doc.COMMON_MODULE.startModule();
@@ -256,12 +260,7 @@ function startHooks(){
 
 
 		doc.COMMON_MODULE.log("Módulo Common Assets call all onReadyCommonModule.");
-
-	
-
-		doc.COMMON_MODULE.log("Módulo Common Assets sent the messages.");
-
-
+ 
 		doc.COMMON_MODULE.log("Módulo Common Assets launched onReadyCommonModule.");
 
 		doc.COMMON_MODULE.log(`Getting the old version with key:${COMMON_REGISTERED_NAMES.MODULE_VERSION}`) ;

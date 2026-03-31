@@ -17,7 +17,7 @@
 
     // Saída
     "sourceMap": true,
-    "outDir": "./",
+    "outDir": "./dist",
 
     // Qualidade de tipos / compatibilidade
     "esModuleInterop": true,
