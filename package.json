@@ -13,5 +13,8 @@
   "devDependencies": {
     "typescript": "^5.9.2",
     "vite": "^7.3.0"
+  },
+  "dependencies": {
+    "taulukko-commons": "^1.3.0"
   }
 }

@@ -1,33 +1,33 @@
 import { DialogUtils } from "./dialog-utils";
-import {socketTest} from "./sockets/common-socket-test";
-	
- 
- 
+import { socketTest } from "./sockets/common-socket-test";
+
+
+
 const COMMON_REGISTERED_NAMES = {
-	MODULE_NAME : "common-assets",
-	MODULE_VERSION : "common-assets-version"
+	MODULE_NAME: "common-assets",
+	MODULE_VERSION: "common-assets-version"
 };
 
- 
-let doc : FoundryDocument = document as FoundryDocument;
 
-export class CommonModule{
-	public readonly name:string="common-assets";
-	public readonly version:string="1.0.0";
-	public readonly startVersion:string="";
-	public DIALOG_UTILS:DialogUtils|undefined;  
-    public REGION_UTILS:RegionUtils|undefined; 
-	public NPC_DIALOG:NPCDialog|undefined; 
-    
+let doc: FoundryDocument = document as FoundryDocument;
 
-	private readonly _prefix:string="CA:";
-	private readonly _debugMode:boolean=true;
-	private readonly _printData:boolean=this._debugMode;
+export class CommonModule {
+	public readonly name: string = "common-assets";
+	public readonly version: string = "1.0.0";
+	public readonly startVersion: string = "";
+	public DIALOG_UTILS: DialogUtils | undefined;
+	public REGION_UTILS: RegionUtils | undefined;
+	public NPC_DIALOG: NPCDialog | undefined;
 
-	 
+
+	private readonly _prefix: string = "CA:";
+	private readonly _debugMode: boolean = false;
+	private readonly _printData: boolean = this._debugMode;
+
+
 	// Função privada para formatar data no estilo ANOMESDIAHORAMINUTOSEGUNDOMILISEGUNDOS
 	public formatCompactDate(date: Date = new Date()): string {
-		
+
 
 		const year = date.getFullYear().toString().padStart(4, '0');
 		const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -41,25 +41,24 @@ export class CommonModule{
 	}
 
 
-	public get prefix():string{
-		if(doc.COMMON_MODULE._printData)
-		{
-			const date:string = doc.COMMON_MODULE.formatCompactDate(new Date); 
-			return  date + " " + doc.COMMON_MODULE._prefix  ;
+	public get prefix(): string {
+		if (doc.COMMON_MODULE._printData) {
+			const date: string = doc.COMMON_MODULE.formatCompactDate(new Date);
+			return date + " " + doc.COMMON_MODULE._prefix;
 		}
 		return doc.COMMON_MODULE._prefix;
 	}
 
-	public async startModule(){ 
-		await this.addInitCommonAssetsChanges(); 
-		Hooks.callAll("onInitCommonModule", { });
+	public async startModule() {
+		await this.addInitCommonAssetsChanges();
+		Hooks.callAll("onInitCommonModule", {});
 	}
-  
-	public async addReadyCommonAssetsChanges () {
+
+	public async addReadyCommonAssetsChanges() {
 		this.debug("Criando botão de ajuda de rolagem");
 		const el = doc.getElementById("roll-privacy");
-		
-		if(!el){
+
+		if (!el) {
 			this.error("Menu privacy não encontrado");
 			return;
 		}
@@ -72,107 +71,102 @@ export class CommonModule{
 			const journal = game.journal.getName("Como Rolar Dados");
 			this.log("Mensagem exibida ao clicar no botão ?");
 			if (!journal) {
-			  this.error("Journal não instalado!");
-			  return;
+				this.error("Journal não instalado!");
+				return;
 			}
 			journal.sheet.render(true);
 		});
 
 		el.appendChild(botao);
 		this.debug("Botão de ajuda de rolagem criado");
-	  
+
+	}
+
+
+
+	public async registerSetting(key: string, type: any = String) {
+
+		await game.settings.register(COMMON_REGISTERED_NAMES.MODULE_NAME, key, { type });
+
 	}
 
 
 
-	public async registerSetting(key:string,  type:any=String)
-	{
+	public async registerNewSettings() {
+		this.debug("registerNewSettings:10,module_name:", this.name, ",key=", COMMON_REGISTERED_NAMES.MODULE_VERSION);
 
-		await game.settings.register(COMMON_REGISTERED_NAMES.MODULE_NAME,key, { type });
 
-	}
 
-	 
-
-	public async registerNewSettings(){
-		this.debug("registerNewSettings:10,module_name:",this.name,",key=",COMMON_REGISTERED_NAMES.MODULE_VERSION);
-
-		
-	
 		this.debug("registerNewSettings:20,register  in settings key:", COMMON_REGISTERED_NAMES.MODULE_VERSION);
 
 		this.registerSetting(COMMON_REGISTERED_NAMES.MODULE_VERSION);
 
 		this.debug("registerNewSettings:30, registered");
 
- 
-		this.debug("registerNewSettings:40,module_name:",this.name);
+
+		this.debug("registerNewSettings:40,module_name:", this.name);
 
 	}
 
 
-	public async setSettings(key:string,value:any){
-		 await game.settings.set(COMMON_REGISTERED_NAMES.MODULE_NAME,key,value);  
+	public async setSettings(key: string, value: any) {
+		await game.settings.set(COMMON_REGISTERED_NAMES.MODULE_NAME, key, value);
 	}
 
- 	public async getSettings(key:string){
-		 return await game.settings.get(COMMON_REGISTERED_NAMES.MODULE_NAME,key);  
+	public async getSettings(key: string) {
+		return await game.settings.get(COMMON_REGISTERED_NAMES.MODULE_NAME, key);
 	}
 
- 
 
-	public async addInitCommonAssetsChanges (){
+
+	public async addInitCommonAssetsChanges() {
 		this.debug("addInitCommonAssetsChanges:10.1");
-		await this.registerNewSettings(); 
+		await this.registerNewSettings();
 		this.debug("addInitCommonAssetsChanges:20");
 	}
 
-	public async updateVersions (instalatedVersion:string,nextVersionUpdated:string) {
-	 
-	  if(instalatedVersion!==nextVersionUpdated) 
-	  { 
-		this.warnAboutUpdate(instalatedVersion,nextVersionUpdated);
-		
-		//code... for old versions
-		 
-		instalatedVersion=nextVersionUpdated;
-		await this.setSettings(COMMON_REGISTERED_NAMES.MODULE_VERSION,instalatedVersion); 
-	  }
+	public async updateVersions(instalatedVersion: string, nextVersionUpdated: string) {
+
+		if (instalatedVersion !== nextVersionUpdated) {
+			this.warnAboutUpdate(instalatedVersion, nextVersionUpdated);
+
+			//code... for old versions
+
+			instalatedVersion = nextVersionUpdated;
+			await this.setSettings(COMMON_REGISTERED_NAMES.MODULE_VERSION, instalatedVersion);
+		}
 	}
- 
-	public async  warnAboutUpdate (previousVersion:string,lastVersion:string){
-	  this.log(`Atualizando da versão : ${previousVersion} para a versão ${lastVersion}`);
+
+	public async warnAboutUpdate(previousVersion: string, lastVersion: string) {
+		this.log(`Atualizando da versão : ${previousVersion} para a versão ${lastVersion}`);
 	}
- 
-	public async  whaitFor (test:()=>boolean,timeout:number=60000, sleep:number=100):Promise<void>{
+
+	public async whaitFor(test: () => boolean, timeout: number = 60000, sleep: number = 100): Promise<void> {
 		let totalTime = 0;
-		const ret:Promise<void>  = new Promise<void>((resolve,reject)=>{
-			const handle = setInterval(()=>{
- 
-				doc.COMMON_MODULE.debug("Total time:",totalTime," for function ",test); 
-				if(test())
-				{
+		const ret: Promise<void> = new Promise<void>((resolve, reject) => {
+			const handle = setInterval(() => {
+
+				doc.COMMON_MODULE.debug("Total time:", totalTime, " for function ", test);
+				if (test()) {
 					clearInterval(handle);
 					resolve();
 					return;
 				}
-				if(totalTime>timeout)
-				{
-					doc.COMMON_MODULE.debug("Timeout for test:",test); 
+				if (totalTime > timeout) {
+					doc.COMMON_MODULE.debug("Timeout for test:", test);
 					clearInterval(handle);
-					reject(new Error("timeout while wait For in common module" ));
+					reject(new Error("timeout while wait For in common module"));
 				}
-				totalTime+=sleep;
-			},sleep); 
+				totalTime += sleep;
+			}, sleep);
 		});
 
 		return ret;
 	}
 
- 
-	public debugMode(debugLog:boolean|undefined=undefined):boolean{
-		if(debugLog===undefined)
-		{
+
+	public debugMode(debugLog: boolean | undefined = undefined): boolean {
+		if (debugLog === undefined) {
 			return (doc.COMMON_MODULE as any)._debugMode as boolean;
 		}
 
@@ -181,44 +175,43 @@ export class CommonModule{
 	}
 
 	/*LOG FUNCTIONS*/
-	public logPrefix(newPrefixValue:string){
+	public logPrefix(newPrefixValue: string) {
 		doc.COMMON_MODULE._prefix = newPrefixValue || "CA:";
 	}
 
-	private genericLog(func:(...args:Array<any>)=>void,alias:string, ...args:Array<any>):void
-	{
-	 
-		const prefix:string =  doc.COMMON_MODULE.prefix;
-		func(prefix,...args);
-		if(!doc.COMMON_MODULE.debugMode()) return;
-		try{
+	private genericLog(func: (...args: Array<any>) => void, alias: string, ...args: Array<any>): void {
+
+		const prefix: string = doc.COMMON_MODULE.prefix;
+		func(prefix, ...args);
+		if (!doc.COMMON_MODULE.debugMode()) return;
+		try {
 			throw new Error("Thread trace " + alias + " :" + prefix);
 		}
-		catch(e){
+		catch (e) {
 
-			console.error("log " + alias + ":",e);
+			console.error("log " + alias + ":", e);
 		}
-	 
-	}
-	
-	public log (...args:Array<any>)  { 
-		doc.COMMON_MODULE.genericLog(console.log,"log",...args);
+
 	}
 
-	public info (...args:Array<any>)  {
-		doc.COMMON_MODULE.genericLog(console.log,"info",...args);
+	public log(...args: Array<any>) {
+		doc.COMMON_MODULE.genericLog(console.log, "log", ...args);
 	}
 
-	public error  (...args:Array<any>){
-		doc.COMMON_MODULE.genericLog(console.log,"error",...args);
+	public info(...args: Array<any>) {
+		doc.COMMON_MODULE.genericLog(console.log, "info", ...args);
 	}
 
-	public warn (...args:Array<any>) {
-		doc.COMMON_MODULE.genericLog(console.log,"warn",...args);
+	public error(...args: Array<any>) {
+		doc.COMMON_MODULE.genericLog(console.log, "error", ...args);
 	}
 
-	public debug (...args:Array<any>) { 
-		doc.COMMON_MODULE.genericLog(console.log,"debug",...args);
+	public warn(...args: Array<any>) {
+		doc.COMMON_MODULE.genericLog(console.log, "warn", ...args);
+	}
+
+	public debug(...args: Array<any>) {
+		doc.COMMON_MODULE.genericLog(console.log, "debug", ...args);
 	}
 }
 
@@ -226,29 +219,29 @@ export class CommonModule{
 doc = document as FoundryDocument;
 doc.COMMON_MODULE = new CommonModule();
 
- 
 
-function startHooks(){
+
+function startHooks() {
 
 	Hooks.once("init", async () => {
 		const doc = document as FoundryDocument;
 		doc.COMMON_MODULE = new CommonModule();
 
-		doc.COMMON_MODULE.log("Módulo Common Assets inicalizando...") ;
+		doc.COMMON_MODULE.log("Módulo Common Assets inicalizando...");
 		await doc.COMMON_MODULE.startModule();
- 
+
 
 	});
-	
- 
+
+
 	Hooks.once("ready", async () => {
-	
-		if(!doc.COMMON_MODULE.version) {
+
+		if (!doc.COMMON_MODULE.version) {
 			doc.COMMON_MODULE.error("Módulo Common Assets não está instalado ou não foi iniciado corretamente.");
 			return;
 		}
 
-		if(game.user.isGM){ 
+		if (game.user.isGM) {
 			doc.COMMON_MODULE.log("GM detected, adding isGM class to body");
 			document.body.classList.add("isGM");
 		}
@@ -257,42 +250,42 @@ function startHooks(){
 
 		doc.COMMON_MODULE.log("Módulo Common Assets call all onReadyCommonModule.");
 
-	
+
 
 		doc.COMMON_MODULE.log("Módulo Common Assets sent the messages.");
 
 
 		doc.COMMON_MODULE.log("Módulo Common Assets launched onReadyCommonModule.");
 
-		doc.COMMON_MODULE.log(`Getting the old version with key:${COMMON_REGISTERED_NAMES.MODULE_VERSION}`) ;
+		doc.COMMON_MODULE.log(`Getting the old version with key:${COMMON_REGISTERED_NAMES.MODULE_VERSION}`);
 
-		const instalatedVersion  = await doc.COMMON_MODULE.getSettings(COMMON_REGISTERED_NAMES.MODULE_VERSION);
+		const instalatedVersion = await doc.COMMON_MODULE.getSettings(COMMON_REGISTERED_NAMES.MODULE_VERSION);
 
 
 		let nextVersionUpdated = "1.0.6";
 
-		
+
 		await doc.COMMON_MODULE.addReadyCommonAssetsChanges();
 
 		//debug only
 		socketTest();
 
 
-		Hooks.callAll("onReadyCommonModule", { });
+		Hooks.callAll("onReadyCommonModule", {});
 
 
 		if (instalatedVersion === nextVersionUpdated) {
-			doc.COMMON_MODULE.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`) ;
+			doc.COMMON_MODULE.log(`Módulo Common Assets v.${nextVersionUpdated} carregado com sucesso!`);
 			return;
 		}
-	
-		
-		await doc.COMMON_MODULE.updateVersions(instalatedVersion,nextVersionUpdated);
+
+
+		await doc.COMMON_MODULE.updateVersions(instalatedVersion, nextVersionUpdated);
 
 		//FIM DE ATUALIZAÇÃO DE VERSÃO
-		doc.COMMON_MODULE.log(`Módulo Common Assets ${doc.COMMON_MODULE.version} carregado com sucesso!`); 
+		doc.COMMON_MODULE.log(`Módulo Common Assets ${doc.COMMON_MODULE.version} carregado com sucesso!`);
 
-		
+
 	});
 
 
