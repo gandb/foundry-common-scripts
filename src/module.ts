@@ -1,12 +1,14 @@
-import "./common-module";
-import "./region-utils";
-import "./hide-unidentify";
-//import "./url-fix"; apenas na necessidade de corrigir
-import "./dialog-utils";
-import "./hero-points"
-import "./sockets/socket-factory"
-import { injectController } from "taulukko-commons";
 
-injectController.registerByName("HelloWorld", "Hello World");
+import { injectController, LogGenericImpl, Log } from "taulukko-commons";
+import { CommonModule } from "./common-module";
 
-console.log(injectController.resolve("HelloWorld") + " InjectController");
+
+const commonModule = new CommonModule();
+const doc = document as FoundryDocument;
+const logguer: Log = new LogGenericImpl({ format: "", prefix: "CA", hasDate: true, hasLevel: true });
+
+injectController.registerByName("FoundryDocument", doc);
+injectController.registerByClass(commonModule);
+injectController.registerByName("Log", logguer);
+
+commonModule.init(); 

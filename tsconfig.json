@@ -1,30 +1,30 @@
 {
   "compilerOptions": {
-    // Linguagem/alvo
+    // Language/Target
     "target": "ES2022",
     "lib": ["ES2022", "DOM"],
 
-    // Módulos: ESM moderno, não CommonJS
+    // Modules: Modern ESM, not CommonJS
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleDetection": "auto",
 
-    // Strict mode do TypeScript + "use strict" no JS gerado
+    // TypeScript Strict mode + "use strict" in generated JS
     "strict": true,
     "alwaysStrict": true,
 
     "typeRoots": ["types"],
 
-    // Saída
+    // Output
     "sourceMap": true,
     "outDir": "./dist",
 
-    // Qualidade de tipos / compatibilidade
+    // Type Quality / Compatibility
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["src"],
+  "include": ["src", "dist/common/npc/npc.ts", "dist/common/npc/npcDialog.ts", "dist/common/npc/npcTalkDialog.ts", "dist/common/npc/button.ts"],
   "exclude": ["node_modules"]
 }

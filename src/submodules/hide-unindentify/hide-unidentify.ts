@@ -1,0 +1,109 @@
+import { Log, injectController } from "taulukko-commons";
+import { SubModuleBase } from "../../common/sub-module-base";
+
+
+
+export class HideUnidentify extends SubModuleBase {
+
+
+  readonly #requiredHooksLoaded: boolean = true;
+
+  protected async waitReady() {
+    if (!this.#requiredHooksLoaded) {
+      throw new Error("This module is created ready, no need to wait for hooks");
+    }
+    Hooks.callAll("onReadyHideUnidentify", {});
+  }
+
+  protected initHooks(): void {
+
+    Hooks.on("renderItemSheet5e", (sheet: any | undefined, options: any | undefined) => {
+      const logguer: Log = injectController.resolve("Log");
+      const hideUnidentify: HideUnidentify = injectController.resolve("HideUnidentify");
+      logguer.debug("dnd5e.renderItemSheet5e called");
+      hideUnidentify.removeItemSheetIdentifyInformations(sheet, options);
+    });
+
+    /*
+     //remover o attune por linha?
+    Hooks.on("closeCharacterActorSheet", (sheet) => {
+      docHideUnidentify.COMMON_MODULE.debug("dnd5e.closeCharacterActorSheet called"); 
+      clearInterval(docHideUnidentify.COMMON_MODULE.HIDE_UNIDENTIFY.sheetTime);
+      docHideUnidentify.COMMON_MODULE.debug("timer desligado"); 
+      docHideUnidentify.COMMON_MODULE.HIDE_UNIDENTIFY.sheetTime = null;
+    });
+  
+    Hooks.on("renderActorSheet5eCharacter", (sheet, [html]) => {
+      docHideUnidentify.COMMON_MODULE.debug("dnd5e.renderActorSheet5eCharacter called"); 
+    });
+  
+    Hooks.on("renderDocumentSheetV2", (sheet) => {
+      const logguer: Log = injectController.resolve("Log");
+      const hideUnidentify: HideUnidentify = injectController.resolve("HideUnidentify");
+      logguer.debug("renderDocumentSheetV2 called with parameters:", sheet);
+      hideUnidentify.removeCharacterSheetIdentifyInformation(sheet);
+    });
+
+  
+    */
+
+
+
+    // Remove Identify button from Item Context menu on Actor Sheet
+    Hooks.on("dnd5e.getItemContextOptions", (item, buttons) => {
+      const logguer: Log = injectController.resolve("Log");
+      const hideUnidentify: HideUnidentify = injectController.resolve("HideUnidentify");
+      logguer.debug("dnd5e.getItemContextOptions called");
+      hideUnidentify.removeButtonsFromItemContext(item, buttons as any[]);
+    });
+
+
+
+  }
+
+  removeButtonsFromItemContext(item: any, buttons: Array<any>) {
+    const logguer: Log = injectController.resolve("Log");
+    logguer.debug("removeButtonsFromItemContext called");
+    if (game.user.isGM) {
+      logguer.debug("is GM - not removing Identify button from Item Sheet context menu");
+      return;
+    }
+    const identified = item.system.identified;
+    if (identified) {
+      logguer.debug("Item:", item.name, " - Item is identified - not removing Identify button from Item Sheet context menu");
+      return;
+    }
+
+    const needRemoveButtons = ["DND5E.Identify", "DND5E.ContextMenuActionAttune"];
+
+    needRemoveButtons.forEach(buttonName => {
+      const index = buttons.findIndex(option => option.name === buttonName);
+      if (index !== -1) {
+        logguer.debug("Item:", item.name, " - Removing", buttonName, "button from Item Sheet context menu at index", index);
+        buttons.splice(index, 1);
+      }
+    });
+  }
+
+  removeItemSheetIdentifyInformations(sheet: any, option: any | undefined) {
+    const logguer: Log = injectController.resolve("Log");
+    logguer.debug("removeButtonsFromItemContext called");
+
+    if (game.user.isGM) {
+      logguer.debug("is GM - not removing Identify button from Item Sheet context menu");
+      return;
+    }
+
+
+    const identified = sheet.item.system.identified;
+    if (identified) {
+      return;
+    }
+
+    document.querySelectorAll(".dnd5e.sheet.item .sheet-header .item-subtitle label:has(input:not([disabled]))").forEach(n => n.remove());
+    document.querySelectorAll(".toggle-identified").forEach(n => n.remove());
+
+  }
+
+
+}

@@ -1,67 +1,55 @@
+import { Log, injectController } from "taulukko-commons";
+import { SubModuleBase } from "../../common/sub-module-base";
 import { Socket } from "../common-socket";
 
- 
+
 //socketlib Implementation, documentation: https://github.com/farling42/foundryvtt-socketlib#api
-const doc:FoundryDocument = document as FoundryDocument;
+const doc: FoundryDocument = document as FoundryDocument;
 
-export class DummySocket implements Socket{
+export class DummySocket extends SubModuleBase implements Socket {
 
-    _isReady:boolean=false;
- 
-    constructor()
-    {   
-        this.callHooks();
-    }
-
-    private init()
-    { 
-        doc.COMMON_MODULE.debug(`Dummy Socket initializing...`) ;         
-        this._isReady = true;
-        Hooks.callAll("onReadyCommonSocket", { });
-    }
-
-    private callHooks(){     
+    protected initHooks(): void {
         Hooks.once("onReadyCommonModule", async () => {
-            this.init();            
-        }); 
+            this.init();
+        });
     }
-    
-    public async executeForAll (eventName:string,...data:any):Promise<any>{
-        doc.COMMON_MODULE.debug("Socket dummy executeForAll for event:",eventName, ',parameters: ',data,'...parameters',...data);
+    protected async waitReady() {
+        Hooks.callAll("onReadyCommonSocket", {});
+    }
+
+
+
+    public async executeForAll(eventName: string, ...data: any): Promise<any> {
+        const logguer: Log = injectController.resolve("Log");
+        logguer.debug("Socket dummy executeForAll for event:", eventName, ',parameters: ', data, '...parameters', ...data);
         return undefined;
     }
 
-     public async executeAsGM (eventName:string,...data:any):Promise<any>{
-                    
-        if (!game.user ||  !game.users) {
-               throw new Error("Game isnt complete prepareted yet, player and gm isnt filled the information. Wait for game ready event ");
+    public async executeAsGM(eventName: string, ...data: any): Promise<any> {
+        const logguer: Log = injectController.resolve("Log");
+        if (!game.user || !game.users) {
+            throw new Error("Game isnt complete prepareted yet, player and gm isnt filled the information. Wait for game ready event ");
         }
-        doc.COMMON_MODULE.debug("Socket dummy executeAsGM for event:",eventName, ',parameters: ',data,'...parameters',...data);
+        logguer.debug("Socket dummy executeAsGM for event:", eventName, ',parameters: ', data, '...parameters', ...data);
         return undefined;
     }
 
     public async executeToGM(eventName: string, ...data: any): Promise<any> {
-        doc.COMMON_MODULE.debug("Socket dummy executeAsGM for event:",eventName, ',parameters: ',data,'...parameters',...data);
+        const logguer: Log = injectController.resolve("Log");
+        logguer.debug("Socket dummy executeAsGM for event:", eventName, ',parameters: ', data, '...parameters', ...data);
         return undefined;
     }
 
-    public async executeIn(eventName:string,users:Array<string>,...data:any):Promise<any>{
+    public async executeIn(eventName: string, users: Array<string>, ...data: any): Promise<any> {
         return undefined;
     }
 
-    public isReadyToSendToGM ():boolean{
+    public isReadyToSendToGM(): boolean {
         return false;
     }
 
-    public async register(eventName:string,callback:any):Promise<void>
-    {
+    public async register(eventName: string, callback: any): Promise<void> {
         return;
-    }
-
-    public isReady(): boolean {
-        return this._isReady;
     }
 };
 
-
-export const dummySocketImplementation:Socket = new DummySocket();
