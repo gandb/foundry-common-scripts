@@ -24,32 +24,8 @@ export class HideUnidentify extends SubModuleBase {
       hideUnidentify.removeItemSheetIdentifyInformations(sheet, options);
     });
 
-    /*
-     //remover o attune por linha?
-    Hooks.on("closeCharacterActorSheet", (sheet) => {
-      docHideUnidentify.COMMON_MODULE.debug("dnd5e.closeCharacterActorSheet called"); 
-      clearInterval(docHideUnidentify.COMMON_MODULE.HIDE_UNIDENTIFY.sheetTime);
-      docHideUnidentify.COMMON_MODULE.debug("timer desligado"); 
-      docHideUnidentify.COMMON_MODULE.HIDE_UNIDENTIFY.sheetTime = null;
-    });
-  
-    Hooks.on("renderActorSheet5eCharacter", (sheet, [html]) => {
-      docHideUnidentify.COMMON_MODULE.debug("dnd5e.renderActorSheet5eCharacter called"); 
-    });
-  
-    Hooks.on("renderDocumentSheetV2", (sheet) => {
-      const logguer: Log = injectController.resolve("Log");
-      const hideUnidentify: HideUnidentify = injectController.resolve("HideUnidentify");
-      logguer.debug("renderDocumentSheetV2 called with parameters:", sheet);
-      hideUnidentify.removeCharacterSheetIdentifyInformation(sheet);
-    });
-
-  
-    */
 
 
-
-    // Remove Identify button from Item Context menu on Actor Sheet
     Hooks.on("dnd5e.getItemContextOptions", (item, buttons) => {
       const logguer: Log = injectController.resolve("Log");
       const hideUnidentify: HideUnidentify = injectController.resolve("HideUnidentify");
