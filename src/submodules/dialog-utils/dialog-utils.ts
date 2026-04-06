@@ -3,7 +3,7 @@ import { Log, injectController } from "taulukko-commons";
 import { Button } from "../../common/npc/button";
 import { SubModuleBase } from "../../common/sub-module-base";
 import { NPC } from "../../common/npc/npc";
-import { NPCDialog } from "../../common/npc/npcDialog";
+import { NPCDialog } from "../../common/npc/npc-dialog";
 
 export class DialogUtils extends SubModuleBase {
 

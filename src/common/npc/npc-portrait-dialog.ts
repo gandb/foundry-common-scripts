@@ -1,5 +1,4 @@
- 
-// modules/seu-modulo/src/apps/npc-portrait-dialog.ts
+
 
 interface NPCPortraitOptions {
   imageUrl: string;
@@ -28,7 +27,7 @@ export class NPCPortraitDialog extends Application {
     this.dialogText = options.dialogText || 'Olá, aventureiro...';
   }
 
- static get defaultOptions(): any { 
+  static get defaultOptions(): any {
     return foundry.utils.mergeObject(Application.defaultOptions, {
       id: 'npc-portrait-dialog',
       classes: ['npc-portrait-app'],
@@ -62,7 +61,7 @@ export class NPCPortraitDialog extends Application {
     });
   }
 
-  static renderTalk( data: {
+  static renderTalk(data: {
     imageUrl: string;
     npcName: string;
     dialogText: string;
@@ -97,4 +96,3 @@ export class NPCPortraitDialog extends Application {
     }
   }
 }
- 

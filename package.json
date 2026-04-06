@@ -1,15 +1,20 @@
 {
-  "name": "common-scripts",
-  "version": "1.0.0",
-  "description": "",
-  "main": "hooks.js",
+  "name": "taulukko-common-scripts-dnd5ed",
+  "version": "1.0.2",
+  "description": "Taulukko Common Scripts for Foundry dnd5ed",
+  "main": "dist/taulukko-common-scripts-dnd5ed.iife.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && vite build",
     "vite-version": "vite --version"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": ["foundry", "dnd5e", "common-scripts", "utilities"],
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "author": "Edson Vicente Carli Junior",
+  "license": "MIT",
   "devDependencies": {
     "typescript": "^5.9.2",
     "vite": "^7.3.0"

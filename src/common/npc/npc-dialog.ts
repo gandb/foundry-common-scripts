@@ -1,8 +1,8 @@
 import { Log, injectController } from "taulukko-commons";
-import { SubModuleBase } from "../../../src/common/sub-module-base";
+import { SubModuleBase } from "../sub-module-base";
 import { DialogUtils } from "../../submodules/dialog-utils/dialog-utils";
 import { NPC } from "./npc";
-import { NPCPortraitDialog } from "./npcTalkDialog";
+import { NPCPortraitDialog } from "./npc-portrait-dialog";
 
 
 /*
