@@ -1,5 +1,5 @@
 
-export { DialogUtils, HeroPoints, HideUnidentify, PlayersTools, RegionUtils } from "./submodules";
+export { DialogUtils, HeroPoints, HideUnidentify, PlayersTools, RegionUtils, Button, NPC, NPCDialog, NPCPortraitDialog } from "./submodules";
 export { SocketLib, ChatSocket, DummySocket } from "./sockets";
 export type { Socket } from "./sockets";
-export { Button, NPC, NPCDialog, NPCPortraitDialog } from "./common/npc";
+export { ModuleBase, CacheReturnControl, SubModuleBase } from "./common";

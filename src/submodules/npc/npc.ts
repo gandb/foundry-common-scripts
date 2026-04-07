@@ -1,6 +1,6 @@
 import { Log, injectController } from "taulukko-commons";
-import { DialogUtils } from "../../submodules/dialog-utils/dialog-utils";
-import { NPCDialog } from "./npc-dialog";
+import { DialogUtils } from "../";
+import { NPCDialog } from "./";
 
 
 const RANDOM_GROUP: string = "999";

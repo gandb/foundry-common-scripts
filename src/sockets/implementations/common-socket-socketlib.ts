@@ -1,7 +1,7 @@
 import { Log, injectController } from "taulukko-commons";
 import { Socket, CALLBACK_FUNCTION_EVENT_NAME } from "../common-socket";
 import { CommonModule } from "../../common-module";
-import { SubModuleBase } from "../../common/sub-module-base";
+import { SubModuleBase } from "../../submodules/sub-module-base";
 
 
 //socketlib Implementation, documentation: https://github.com/farling42/foundryvtt-socketlib#api

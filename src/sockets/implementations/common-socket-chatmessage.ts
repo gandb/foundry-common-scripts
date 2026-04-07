@@ -1,7 +1,7 @@
 
 import { CacheReturnControl } from "../../common/cache-returns-control";
 import { Socket, CALLBACK_FUNCTION_EVENT_NAME } from "../common-socket";
-import { SubModuleBase } from "../../common/sub-module-base";
+import { SubModuleBase } from "../../submodules/sub-module-base";
 import { Log, injectController } from "taulukko-commons";
 import { CommonModule } from "../../common-module";
 

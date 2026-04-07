@@ -1,5 +1,4 @@
 
-
 interface NPCPortraitOptions {
   imageUrl: string;
   npcName: string;
@@ -41,7 +40,7 @@ export class NPCPortraitDialog extends Application {
   }
 
   get template(): string {
-    return 'modules/forgotten-realms/scripts/templates/npc-talk.hbs';
+    return 'modules/common-scripts-dnd5ed/scripts/templates/npc-talk.hbs';
   }
 
   async getData(): Promise<NPCPortraitOptions> {

@@ -1,5 +1,5 @@
 import { Log, injectController } from "taulukko-commons";
-import { SubModuleBase } from "../../common/sub-module-base";
+import { SubModuleBase } from "../sub-module-base";
 
 export class PlayersTools extends SubModuleBase {
 	#requiredHooksLoaded: boolean = false;

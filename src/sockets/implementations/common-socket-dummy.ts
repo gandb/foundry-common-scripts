@@ -1,5 +1,5 @@
 import { Log, injectController } from "taulukko-commons";
-import { SubModuleBase } from "../../common/sub-module-base";
+import { SubModuleBase } from "../../submodules/sub-module-base";
 import { Socket } from "../common-socket";
 
 

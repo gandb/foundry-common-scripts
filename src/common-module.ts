@@ -1,7 +1,7 @@
 import { Log, injectController } from "taulukko-commons";
 import { socketTest } from "./sockets/common-socket-test";
 import { ModuleBase } from "./common/module-base";
-import { SubModuleBase } from "./common/sub-module-base";
+import { SubModuleBase } from "./submodules/sub-module-base";
 import { RegionUtils } from "./submodules/region-utils/region-utils";
 import { PlayersTools } from "./submodules/playertools/players-tool";
 import { DialogUtils } from "./submodules/dialog-utils/dialog-utils";
