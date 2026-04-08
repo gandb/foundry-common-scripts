@@ -1,0 +1,9 @@
+{
+  "log": {
+    "format": "",
+    "prefix": "CA",
+    "hasDate": true,
+    "hasLevel": true,
+    "level":"DEBUG"
+  }
+}
