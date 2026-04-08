@@ -7,7 +7,7 @@ const commonModule = new CommonModule();
 const doc = document as FoundryDocument;
 
 async function initModule() {
-    const configResponse = await fetch('../config.json');
+    const configResponse = await fetch('/modules/common-scripts-dnd5ed/scripts/config.json');
     const config = await configResponse.json();
     const logConfig = config.log || { format: "", prefix: "CA", hasDate: true, hasLevel: true };
     
