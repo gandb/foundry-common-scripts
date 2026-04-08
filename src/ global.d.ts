@@ -155,10 +155,23 @@ declare const AudioHelper: {
     play(playInfo: PlayInfo, autoplay: boolean): void;
 };
 
-declare class FoundryDocument extends Document {
-    COMMON_MODULE: CommonModule;
-    private startHooks();
+declare interface FoundryDocument extends Document {
+    
+}
 
+declare interface FoundryWindow extends Window {
+    TaulukkoCommon : {
+        NPC:any,
+            NPCDialog:any,
+            DialogUtils:any,
+            ModuleBase:any,
+            SubModuleBase:any,
+            injectController:any,
+            Logguer:any,
+            Level:any, 
+            moduleProccessId:number
+
+        };
 }
 
 

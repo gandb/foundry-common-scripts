@@ -4,27 +4,12 @@ import { CommonModule } from "./common-module";
 import { NPC, NPCDialog, DialogUtils, ModuleBase, SubModuleBase } from "./";
 
 const commonModule = new CommonModule();
-const doc = document as FoundryDocument;
+const win = (window as any) as  FoundryWindow;
+const loaded = false;
 
-async function initModule() {
-    const configResponse = await fetch('/modules/common-scripts-dnd5ed/scripts/config.json');
-    const config = await configResponse.json();
-    const logConfig = config.log || { format: "", prefix: "CA", hasDate: true, hasLevel: true };
-    
-    const logguer: Logguer = new Logguer(logConfig);
+const proccessModuleId:number = Math.round(Math.random()*1000000);
 
-    logguer.level(Level.DEBUG);
-
-    injectController.registerByName("FoundryDocument", doc);
-    injectController.registerByName("CommonModule", commonModule);
-    injectController.registerByName("CommonLogguer", logguer);
-
-    commonModule.init();
-}
-
-initModule();
-
-(window as any).TaulukkoCommon = {
+win.TaulukkoCommon = {
     NPC,
     NPCDialog,
     DialogUtils,
@@ -32,5 +17,39 @@ initModule();
     SubModuleBase,
     injectController,
     Logguer,
-    Level
+    Level, 
+    moduleProccessId:0
 };
+
+async function initModule() {
+    const win = (window as any) as  FoundryWindow;
+
+    const anotherInstanceWin = win.TaulukkoCommon.moduleProccessId != proccessModuleId;
+
+    if(anotherInstanceWin)
+    {
+        return;
+    }
+     
+    const configResponse = await fetch('/modules/common-scripts-dnd5ed/scripts/config.json');
+    const config = await configResponse.json();
+    const logConfig = config.log || { format: "", prefix: "CA", hasDate: true, hasLevel: true };
+    const levelValue = config.log?.level ?? "DEBUG";
+    
+    const logguer: Logguer = new Logguer(logConfig);
+
+    const level = Level[levelValue as keyof typeof Level] ?? Level.DEBUG;
+    logguer.level(level);
+
+    injectController.registerByName("FoundryDocument", document);
+    injectController.registerByName("CommonModule", commonModule);
+    injectController.registerByName("CommonLogguer", logguer);
+
+    commonModule.init();
+}
+
+win.TaulukkoCommon.moduleProccessId = proccessModuleId;
+
+const sleep:number =win.TaulukkoCommon.moduleProccessId %1000;
+
+window.setTimeout(initModule,sleep);

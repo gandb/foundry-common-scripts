@@ -1,6 +1,7 @@
 
 import { Log, injectController } from "taulukko-commons";
 import { SubModuleBase } from "../sub-module-base";
+import { CommonModule } from "../../common-module";
 
 const docRegionUtils: FoundryDocument = document as FoundryDocument;
 
@@ -111,9 +112,11 @@ export class RegionUtils extends SubModuleBase {
 				}
 			],
 			onDown: async () => {
-				docRegionUtils.COMMON_MODULE.debug("onDown will be called");
+				const regionUtils:RegionUtils = injectController.resolve("RegionUtils");
+				const logguer:Log = injectController.resolve("CommonLogguer");
+				logguer.debug("onDown will be called");
 
-				docRegionUtils.COMMON_MODULE.REGION_UTILS.toggleVisibilityRegions();
+				regionUtils.toggleVisibilityRegions();
 			},
 			restricted: true,   // true = só GM
 			reservedModifiers: [], // normalmente vazio

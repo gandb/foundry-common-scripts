@@ -3,6 +3,4 @@ export { DialogUtils, HeroPoints, HideUnidentify, PlayersTools, RegionUtils, But
 export { SocketLib, ChatSocket, DummySocket } from "./sockets";
 export type { Socket } from "./sockets";
 export { ModuleBase, CacheReturnControl, SubModuleBase } from "./common";
-
-
 export { LogGenericImpl as Logguer, injectController, Level } from "taulukko-commons";
