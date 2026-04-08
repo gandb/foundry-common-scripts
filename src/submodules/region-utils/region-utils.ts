@@ -16,7 +16,7 @@ export class RegionUtils extends SubModuleBase {
 
 		Hooks.on("onInitCommonModule", () => {
 			const regionUtils: RegionUtils = injectController.resolve("RegionUtils");
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 			logguer.info("Loading Region Utils");
 			regionUtils.registerKeybindings();
 			regionUtils.#requiredHooksLoaded = true;
@@ -26,7 +26,7 @@ export class RegionUtils extends SubModuleBase {
 	}
 
 	protected async waitReady() {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		const fiveMinutes = 5 * 60 * 1000;
 		await this.whaitFor(() => this.#requiredHooksLoaded, fiveMinutes);
 		if (!this.#requiredHooksLoaded) {
@@ -49,7 +49,7 @@ export class RegionUtils extends SubModuleBase {
 	}
 
 	stop(event: any) {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		const shape: any = event?.region?.shapes[0];
 		logguer.debug("event:", event, ",shape:", shape);
 
@@ -77,7 +77,7 @@ export class RegionUtils extends SubModuleBase {
 	}
 
 	toggleVisibilityRegions() {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		logguer.debug("toggleVisibilityRegions called");
 		const activeScene = game.scenes.current;
 		if (!activeScene) {
@@ -87,7 +87,7 @@ export class RegionUtils extends SubModuleBase {
 
 
 		activeScene.regions.forEach((region: any) => {
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 			logguer.debug("region", region);
 
 			region.update({

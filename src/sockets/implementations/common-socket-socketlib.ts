@@ -13,7 +13,7 @@ export class SocketLib extends SubModuleBase implements Socket {
 
     protected initHooks(): void {
 
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
 
         logguer.debug("CA: Socketlib waiting for requirements modules...");
 
@@ -26,7 +26,7 @@ export class SocketLib extends SubModuleBase implements Socket {
         });
     }
     protected async waitReady() {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         const commonModule: CommonModule = injectController.resolve("CommonModule");
         const socketLib: SocketLib = injectController.resolve("Socket") as SocketLib;
 
@@ -73,13 +73,13 @@ export class SocketLib extends SubModuleBase implements Socket {
 
 
     public async executeForAll(eventName: string, ...data: any): Promise<any> {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         logguer.debug("Socketlib executeForAll for event:", eventName, ',parameters: ', data, '...parameters', ...data);
         return this._socketOriginal.executeForEveryone(eventName, ...data);
     }
 
     public async executeAsGM(eventName: string, ...data: any): Promise<any> {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         logguer.debug("Socketlib executeAsGM start");
 
         if (!game.user || !game.users || !game.user.isGM) {
@@ -102,7 +102,7 @@ export class SocketLib extends SubModuleBase implements Socket {
     }
 
     public async executeIn(eventName: string, users: Array<string>, ...data: any): Promise<any> {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         logguer.debug("Socketlib executeIn for event:", eventName, ',parameters: ', data, '...parameters', ...data);
         return this._socketOriginal.executeForUsers(eventName, users, ...data);
     }
@@ -112,10 +112,10 @@ export class SocketLib extends SubModuleBase implements Socket {
     }
 
     public async register(eventName: string, callback: any): Promise<void> {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         logguer.debug("start register,eventName:", eventName);
         this._socketOriginal.register(eventName, async (...data: any) => {
-            const logguer: Log = injectController.resolve("Log");
+            const logguer: Log = injectController.resolve("CommonLogguer");
             logguer.debug("Socketlib new event:", eventName, ',parameters: ', data, '...parameters', ...data);
             if (Array.isArray(data) && data.length == 1 && data[0].toGM) {
                 logguer.debug("Evento pra gm,event:", eventName);

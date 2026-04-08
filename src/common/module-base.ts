@@ -20,7 +20,7 @@ export abstract class ModuleBase {
 
 
     public async whaitFor(test: () => boolean, timeout: number = 60000, sleep: number = 100): Promise<void> {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
 
         let totalTime = 0;
         const ret: Promise<void> = new Promise<void>((resolve, reject) => {

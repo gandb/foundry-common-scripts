@@ -33,7 +33,7 @@ export class HeroPoints extends SubModuleBase {
 
 		Hooks.on("onReadyDialogUtils", async () => {
 			const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 			logguer.info("Starting Hability hero processing");
 			heroPoints.initializeHabilityHero();
 			heroPoints.#requiredHooksLoaded = true;
@@ -51,7 +51,7 @@ export class HeroPoints extends SubModuleBase {
 
 
 	removeAttribute(sheet: Sheet) {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		let htmldivs = document.querySelectorAll("div.ability-score[data-ability='hon']");
 		if (htmldivs.length == 0) {
 			logguer.debug(`This sheet not contain honrror field or system not enable honrror field`);
@@ -63,7 +63,7 @@ export class HeroPoints extends SubModuleBase {
 	}
 
 	addEditButtonsToHeroPoints(parent: HTMLElement) {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		if (!game.user.isGM) {
 			return;
 		}
@@ -124,7 +124,7 @@ export class HeroPoints extends SubModuleBase {
 
 
 	createDialog(element: HTMLElement) {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
 		let dialog: any = {};
 
@@ -190,7 +190,7 @@ export class HeroPoints extends SubModuleBase {
 
 
 	changeHabilityHonrrorToHeroPoints(sheet: Sheet) {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 
 		const forms = document.querySelectorAll("form.sheet");
 		const isEditable: boolean = forms.item(0)?.classList.contains("editable") ?? false;
@@ -211,7 +211,7 @@ export class HeroPoints extends SubModuleBase {
 
 				const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
 
-				const logguer: Log = injectController.resolve("Log");
+				const logguer: Log = injectController.resolve("CommonLogguer");
 
 				const div: HTMLElement = divElement as HTMLElement;
 
@@ -276,7 +276,7 @@ export class HeroPoints extends SubModuleBase {
 	initializeHabilityHero() {
 		Hooks.on("renderDocumentSheetV2", async (data: any) => {
 			const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 			const sheet: Sheet = data as Sheet;
 
 			if (!sheet.actor) {

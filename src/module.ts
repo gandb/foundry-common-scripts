@@ -9,7 +9,7 @@ const logguer: Logguer = new Logguer({ format: "", prefix: "CA", hasDate: true, 
 
 injectController.registerByName("FoundryDocument", doc);
 injectController.registerByName("CommonModule", commonModule);
-injectController.registerByName("Log", logguer);
+injectController.registerByName("CommonLogguer", logguer);
 
 
 commonModule.init();

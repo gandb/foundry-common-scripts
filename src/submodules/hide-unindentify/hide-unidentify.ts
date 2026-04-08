@@ -18,7 +18,7 @@ export class HideUnidentify extends SubModuleBase {
   protected initHooks(): void {
 
     Hooks.on("renderItemSheet5e", (sheet: any | undefined, options: any | undefined) => {
-      const logguer: Log = injectController.resolve("Log");
+      const logguer: Log = injectController.resolve("CommonLogguer");
       const hideUnidentify: HideUnidentify = injectController.resolve("HideUnidentify");
       logguer.debug("dnd5e.renderItemSheet5e called");
       hideUnidentify.removeItemSheetIdentifyInformations(sheet, options);
@@ -27,7 +27,7 @@ export class HideUnidentify extends SubModuleBase {
 
 
     Hooks.on("dnd5e.getItemContextOptions", (item, buttons) => {
-      const logguer: Log = injectController.resolve("Log");
+      const logguer: Log = injectController.resolve("CommonLogguer");
       const hideUnidentify: HideUnidentify = injectController.resolve("HideUnidentify");
       logguer.debug("dnd5e.getItemContextOptions called");
       hideUnidentify.removeButtonsFromItemContext(item, buttons as any[]);
@@ -38,7 +38,7 @@ export class HideUnidentify extends SubModuleBase {
   }
 
   removeButtonsFromItemContext(item: any, buttons: Array<any>) {
-    const logguer: Log = injectController.resolve("Log");
+    const logguer: Log = injectController.resolve("CommonLogguer");
     logguer.debug("removeButtonsFromItemContext called");
     if (game.user.isGM) {
       logguer.debug("is GM - not removing Identify button from Item Sheet context menu");
@@ -62,7 +62,7 @@ export class HideUnidentify extends SubModuleBase {
   }
 
   removeItemSheetIdentifyInformations(sheet: any, option: any | undefined) {
-    const logguer: Log = injectController.resolve("Log");
+    const logguer: Log = injectController.resolve("CommonLogguer");
     logguer.debug("removeButtonsFromItemContext called");
 
     if (game.user.isGM) {

@@ -25,7 +25,7 @@ export abstract class NPC {
 	}
 
 	async whaitFor(test: () => boolean, timeout = 60000, sleep = 100) {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		let totalTime = 0;
 		const ret = new Promise((resolve, reject) => {
 			const handle = setInterval(() => {
@@ -76,7 +76,7 @@ export abstract class NPC {
 	public async createDialog(title: string, content: string, options: Array<any>, submits: Array<any> | null) {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 		const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
-		const loguer: Log = injectController.resolve("Log");
+		const loguer: Log = injectController.resolve("CommonLogguer");
 		const alias = npcDialog.activeNPC.getAlias();
 
 		let innerContent = `
@@ -201,7 +201,7 @@ export abstract class NPC {
 
 	public async getListLinesFromGroup(groupsUnordered: any) {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-		const loguer: Log = injectController.resolve("Log");
+		const loguer: Log = injectController.resolve("CommonLogguer");
 
 		const groups = Array.from(groupsUnordered).map(Number).sort((a, b) => a - b);
 
@@ -229,7 +229,7 @@ export abstract class NPC {
 
 	public async getCombinations(numbers: Array<number>, separator: string = ";") {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-		const loguer: Log = injectController.resolve("Log");
+		const loguer: Log = injectController.resolve("CommonLogguer");
 
 		const ret = new Array();
 
@@ -272,7 +272,7 @@ export abstract class NPC {
 
 	public async speak(lineIndex: number) {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-		const loguer: Log = injectController.resolve("Log");
+		const loguer: Log = injectController.resolve("CommonLogguer");
 
 		const line = npcDialog.activeNPC.lines[lineIndex];
 
@@ -324,7 +324,7 @@ export abstract class NPC {
 
 	private async playSoundWithNoEffect(src: string): Promise<boolean> {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-		const loguer: Log = injectController.resolve("Log");
+		const loguer: Log = injectController.resolve("CommonLogguer");
 		try {
 			const response = await fetch(src, { method: 'HEAD' });
 			if (!response.ok) {
@@ -345,7 +345,7 @@ export abstract class NPC {
 
 	public async send(removeLastGroup = true) {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-		const loguer: Log = injectController.resolve("Log");
+		const loguer: Log = injectController.resolve("CommonLogguer");
 		if (npcDialog.activeNPC.groups.size === 0) {
 			npcDialog.activeNPC.groups.add(RANDOM_GROUP);
 		}

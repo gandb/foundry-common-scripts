@@ -107,7 +107,7 @@ export class NPCDialog extends SubModuleBase {
 	protected initHooks(): void {
 
 		Hooks.on('createChatMessage', async (message: any) => {
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 			const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 
 			const fiveMinute: number = 5 * 60 * 1000;
@@ -137,7 +137,7 @@ export class NPCDialog extends SubModuleBase {
 		Hooks.on("getSceneControlButtons", async (controls: any) => {
 
 
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 			const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 
 			const fiveMinute: number = 5 * 60 * 1000;
@@ -194,7 +194,7 @@ export class NPCDialog extends SubModuleBase {
 
 
 	public async addNPCButtons(controls: any) {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 
 
@@ -223,7 +223,7 @@ export class NPCDialog extends SubModuleBase {
 
 
 	public async showNPCChooseDialog() {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 		const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
 
@@ -271,7 +271,7 @@ export class NPCDialog extends SubModuleBase {
 
 	public async callNPC(npc: NPC) {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		logguer.debug("Selecionado ...", npc);
 		npcDialog.npcSelected = npc;
 		await npcDialog.npcSelected.startScreen();

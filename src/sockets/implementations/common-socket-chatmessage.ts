@@ -18,11 +18,11 @@ export class ChatSocket extends SubModuleBase implements Socket {
 
     protected initHooks(): void {
 
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         logguer.debug("CA: ChatSocket waiting for requirements modules...");
 
         Hooks.once("onReadyCommonModule", async () => {
-            const logguer: Log = injectController.resolve("Log");
+            const logguer: Log = injectController.resolve("CommonLogguer");
             logguer.debug("Common Module ready in Chat Socket");
             this.init();
 
@@ -31,7 +31,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
 
 
         Hooks.on('createChatMessage', (message: any) => {
-            const logguer: Log = injectController.resolve("Log");
+            const logguer: Log = injectController.resolve("CommonLogguer");
             const commonModule: CommonModule = injectController.resolve("CommonModule");
             try {
                 logguer.debug("createChatMessage recebido...");
@@ -103,7 +103,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
         });
     }
     protected async waitReady() {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         const commonModule: CommonModule = injectController.resolve("CommonModule");
         const module = game.modules.get(commonModule.name);
         logguer.debug(`Common Socket initializing for ${commonModule.name}...`);
@@ -116,7 +116,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
 
 
         this.register(CALLBACK_SYSTEM_CALLBACK, (data: any) => {
-            const logguer: Log = injectController.resolve("Log");
+            const logguer: Log = injectController.resolve("CommonLogguer");
             const socket: ChatSocket = injectController.resolve("Socket");
             logguer.debug("CA: ChatSocket adicionando o retorno na pilha de retorno : ", data);
             const anotherUserAnswerBefore: boolean = socket.#returns.has(data.requestId);
@@ -135,7 +135,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
 
 
     private cleanupRealChatMessage() {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         logguer.debug('[Common Socket Chat Message] cleanupRealChatMessage ');
         let elements = document.querySelectorAll(".chat-message.message:not(.socket-chat-event)");// not work the negation
         logguer.debug('[Common Socket Chat Message] cleanupRealChatMessage elements size ', elements.length);
@@ -149,7 +149,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
 
     private async sendMessage(eventName: string, data: any, onlyPlayers: boolean, toGM: boolean, userids: Array<string> | undefined = undefined) {
 
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
 
         const whisper = Array.from(game.users?.values());
 
@@ -186,7 +186,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
         logguer.debug('[Common Socket Chat] Aguardando retorno do callback :', payload, ",time:", new Date());
 
         await this.whaitFor(() => {
-            const logguer: Log = injectController.resolve("Log");
+            const logguer: Log = injectController.resolve("CommonLogguer");
             if (this.#returns.has(requestId)) {
                 logguer.debug('Encontrado o resultado para requestId:', requestId, " , returns:", this.#returns);
                 return true;

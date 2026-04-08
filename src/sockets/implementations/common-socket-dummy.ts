@@ -20,13 +20,13 @@ export class DummySocket extends SubModuleBase implements Socket {
 
 
     public async executeForAll(eventName: string, ...data: any): Promise<any> {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         logguer.debug("Socket dummy executeForAll for event:", eventName, ',parameters: ', data, '...parameters', ...data);
         return undefined;
     }
 
     public async executeAsGM(eventName: string, ...data: any): Promise<any> {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         if (!game.user || !game.users) {
             throw new Error("Game isnt complete prepareted yet, player and gm isnt filled the information. Wait for game ready event ");
         }
@@ -35,7 +35,7 @@ export class DummySocket extends SubModuleBase implements Socket {
     }
 
     public async executeToGM(eventName: string, ...data: any): Promise<any> {
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         logguer.debug("Socket dummy executeAsGM for event:", eventName, ',parameters: ', data, '...parameters', ...data);
         return undefined;
     }

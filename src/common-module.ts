@@ -19,7 +19,8 @@ const COMMON_REGISTERED_NAMES = {
 const doc: FoundryDocument = document as FoundryDocument;
 export class CommonModule extends ModuleBase {
 
-	public readonly name: string = "common-assets";
+	
+	public readonly name: string = "common-scripts-dnd5ed";
 	public readonly version: string = "1.0.6";
 	public readonly startVersion: string = "";
 	#debug: boolean = true;
@@ -29,7 +30,7 @@ export class CommonModule extends ModuleBase {
 
 	public async addInitCommonAssetsChanges() {
 
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		const commonModule: CommonModule = injectController.resolve("CommonModule");
 
 
@@ -72,7 +73,7 @@ export class CommonModule extends ModuleBase {
 
 		Hooks.once("init", async () => {
 			const commonModule: CommonModule = injectController.resolve("CommonModule");
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 
 			logguer.info("Módulo Common Assets inicalizando...");
 			await commonModule.addInitCommonAssetsChanges();
@@ -84,7 +85,7 @@ export class CommonModule extends ModuleBase {
 
 		Hooks.once("ready", async () => {
 			const commonModule: CommonModule = injectController.resolve("CommonModule");
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 
 			if (!commonModule.version) {
 				logguer.error("Módulo Common Assets não está instalado ou não foi iniciado corretamente.");
@@ -129,7 +130,7 @@ export class CommonModule extends ModuleBase {
 	}
 
 	public async addReadyCommonAssetsChanges() {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 
 		logguer.info("Criando botão de ajuda de rolagem");
 		const el = doc.getElementById("roll-privacy");
@@ -191,7 +192,7 @@ export class CommonModule extends ModuleBase {
 
 	public async warnAboutUpdate(previousVersion: string, lastVersion: string) {
 
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 
 		logguer.info(`Atualizando da versão : ${previousVersion} para a versão ${lastVersion}`);
 	}

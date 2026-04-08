@@ -7,7 +7,7 @@ export class PlayersTools extends SubModuleBase {
 	protected initHooks() {
 		Hooks.on("onReadyCommonModule", async () => {
 			const playersTools: PlayersTools = injectController.resolve("PlayersTools");
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 			logguer.info("Starting Hability hero processing");
 			playersTools.initializeFlyMeasure();
 			playersTools.#requiredHooksLoaded = true;
@@ -25,7 +25,7 @@ export class PlayersTools extends SubModuleBase {
 	}
 
 	public initializeFlyMeasure() {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		logguer.debug("initlizeFlyMeasure init");
 	}
 

@@ -7,13 +7,13 @@ import { Socket } from "./common-socket";
 let doc: FoundryDocument = document as FoundryDocument;
 
 function showMessage(message: string) {
-    const logguer: Log = injectController.resolve("Log");
+    const logguer: Log = injectController.resolve("CommonLogguer");
     logguer.debug(`Message: ${message}!`);
 }
 
 
 function add(a: number, b: number) {
-    const logguer: Log = injectController.resolve("Log");
+    const logguer: Log = injectController.resolve("CommonLogguer");
     logguer.debug("The addition is performed.");
     return a + b;
 }
@@ -23,7 +23,7 @@ export function socketTest() {
 
     Hooks.once("onReadyCommonSocket", async () => {
 
-        const logguer: Log = injectController.resolve("Log");
+        const logguer: Log = injectController.resolve("CommonLogguer");
         const commonSocket: Socket = injectController.resolve("Socket");
         logguer.debug("onReadyCommonSocket 20");
 
@@ -82,7 +82,7 @@ export function socketTest() {
             logguer.debug("Meu userid", game.user.id);
 
             userids = userids.filter((id: string) => {
-                const logguer: Log = injectController.resolve("Log");
+                const logguer: Log = injectController.resolve("CommonLogguer");
                 logguer.debug("id recebido e meu user id", id, game.user.id);
                 return id != game.user.id;
             });

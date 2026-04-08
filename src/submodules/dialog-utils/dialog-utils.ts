@@ -16,7 +16,7 @@ export class DialogUtils extends SubModuleBase {
 
 
 	protected async waitReady() {
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 
 		const fiveMinutes = 5 * 60 * 1000;
 		await this.whaitFor(() => this.#requiredHooksLoaded, fiveMinutes);
@@ -33,7 +33,7 @@ export class DialogUtils extends SubModuleBase {
 		Hooks.on("onReadyCommonModule", async (data) => {
 			const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
 
-			const logguer: Log = injectController.resolve("Log");
+			const logguer: Log = injectController.resolve("CommonLogguer");
 
 			logguer.debug("Dialog Utils loading on onReadyCommonModule");
 			dialogUtils.#requiredHooksLoaded = true;
@@ -53,7 +53,7 @@ export class DialogUtils extends SubModuleBase {
 
 	public createDialog(title: string, style: string = "", content: string = "", buttons: Array<any> = new Array(), submit: Array<any> = new Array(), left: undefined | number = undefined, top: undefined | number = undefined, width: number | "auto" = "auto", height: number | "auto" = "auto"): foundry.applications.api.DialogV2 {
 
-		const logguer: Log = injectController.resolve("Log");
+		const logguer: Log = injectController.resolve("CommonLogguer");
 		logguer.debug("Dialog Utils creating dialog width: ", width, " height: ", height);
 		if (!buttons?.length || buttons.length === 0) {
 			throw new Error("DIALOG_UTILS.createDialog: buttons array must have at least one button");
