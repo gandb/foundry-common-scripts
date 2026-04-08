@@ -26,7 +26,7 @@ export abstract class ModuleBase {
         const ret: Promise<void> = new Promise<void>((resolve, reject) => {
             const handle = setInterval(() => {
 
-                logguer.debug("Total time:", totalTime, " for function ", test);
+
                 if (test()) {
                     clearInterval(handle);
                     resolve();

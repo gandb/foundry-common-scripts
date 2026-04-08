@@ -29,7 +29,7 @@ export abstract class NPC {
 		let totalTime = 0;
 		const ret = new Promise((resolve, reject) => {
 			const handle = setInterval(() => {
-				logguer.debug("Total time:", totalTime, " for function ", test);
+
 				if (test()) {
 					clearInterval(handle);
 					resolve(undefined);
