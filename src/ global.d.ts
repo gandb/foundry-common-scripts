@@ -1,3 +1,4 @@
+ 
 
 // Declara o valor global que o Foundry injeta em runtime
 declare const Hooks: {
@@ -166,8 +167,8 @@ declare interface FoundryWindow extends Window {
             DialogUtils:any,
             ModuleBase:any,
             SubModuleBase:any,
-            injectController:any,
-            Logguer:any,
+            injectController:any, 
+            LogGenericImpl:any,
             Level:any, 
             moduleProccessId:number
 

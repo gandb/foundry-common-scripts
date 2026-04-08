@@ -1,7 +1,8 @@
 
-import { injectController, LogGenericImpl as Logguer, Level } from "taulukko-commons";
+import { injectController  , Level, LogGenericImpl } from "taulukko-commons";
 import { CommonModule } from "./common-module";
 import { NPC, NPCDialog, DialogUtils, ModuleBase, SubModuleBase } from "./";
+ 
 
 const commonModule = new CommonModule();
 const win = (window as any) as  FoundryWindow;
@@ -15,8 +16,8 @@ win.TaulukkoCommon = {
     DialogUtils,
     ModuleBase,
     SubModuleBase,
-    injectController,
-    Logguer,
+    LogGenericImpl,
+    injectController, 
     Level, 
     moduleProccessId:0
 };
@@ -36,7 +37,7 @@ async function initModule() {
     const logConfig = config.log || { format: "", prefix: "CA", hasDate: true, hasLevel: true };
     const levelValue = config.log?.level ?? "DEBUG";
     
-    const logguer: Logguer = new Logguer(logConfig);
+    const logguer: LogGenericImpl = new LogGenericImpl(logConfig);
 
     const level = Level[levelValue as keyof typeof Level] ?? Level.DEBUG;
     logguer.level(level);

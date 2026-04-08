@@ -8,7 +8,7 @@ import { DialogUtils } from "./submodules/dialog-utils/dialog-utils";
 import { HeroPoints } from "./submodules/hero-points/hero-points";
 import { HideUnidentify } from "./submodules/hide-unindentify/hide-unidentify";
 import { DummySocket } from "./sockets/implementations/common-socket-dummy";
-import { Socket } from "./sockets/common-socket";
+import { Socket } from "./sockets/common-socket"; 
 
 //import "./url-fix"; apenas na necessidade de corrigir
 
