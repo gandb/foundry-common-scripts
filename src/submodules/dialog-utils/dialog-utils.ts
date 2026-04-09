@@ -9,9 +9,7 @@ import { CommonModule } from "../../common-module";
 export class DialogUtils extends SubModuleBase {
 
 
-	public readonly npctype = NPC;
-
-	public readonly NPC_DIALOG: NPCDialog = new NPCDialog();
+	public readonly npctype = NPC; 
 
 	#requiredHooksLoaded: boolean = false;
 
@@ -37,16 +35,20 @@ export class DialogUtils extends SubModuleBase {
 
 
 	public createButton(action: string, label: string, defaultValue: boolean = false, type: string = "screen", callback: any = undefined): Button {
-		return new Button(
+ 
+		const button:Button = new Button(
 			action,
 			label,
 			defaultValue,
 			type,
 			callback
 		);
+ 
+
+		return button;
 	}
 
-	public createDialog(title: string, style: string = "", content: string = "", buttons: Array<any> = new Array(), submit: Array<any> = new Array(), left: undefined | number = undefined, top: undefined | number = undefined, width: number | "auto" = "auto", height: number | "auto" = "auto"): foundry.applications.api.DialogV2 {
+	public createDialog(title: string, style: string = "", content: string = "", buttons: Array<any> = new Array(), submit:( ... args:any[] )=>void = ()=>{}, left: undefined | number = undefined, top: undefined | number = undefined, width: number | "auto" = "auto", height: number | "auto" = "auto"): foundry.applications.api.DialogV2 {
 
 		const logguer: Log = injectController.resolve("CommonLogguer");
 		logguer.debug("Dialog Utils creating dialog width: ", width, " height: ", height);
