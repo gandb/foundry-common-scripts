@@ -18,10 +18,11 @@ export class DialogUtils extends SubModuleBase {
 
 	protected async waitReady() {
 		const logguer: Log = injectController.resolve("CommonLogguer");
+		const dialogUtils:DialogUtils = injectController.resolve( "DialogUtils"); 
 
 		const fiveMinutes = 5 * 60 * 1000;
-		await this.whaitFor(() => this.#requiredHooksLoaded, fiveMinutes);
-		if (!this.#requiredHooksLoaded) {
+		await dialogUtils.whaitFor(() => dialogUtils.isReady(), fiveMinutes);
+		if (!dialogUtils.isReady()) {
 			throw new Error("Timeout waiting for hooks");
 		}
 		Hooks.callAll("onReadyDialogUtils", {});
@@ -29,17 +30,8 @@ export class DialogUtils extends SubModuleBase {
 	}
 
 
-	protected async initHooks() {
-		const fiveMinute: number = 5 * 60 * 1000;
-		const dialogUtils:DialogUtils = injectController.resolve( "DialogUtils");
-		const commonModule:CommonModule = injectController.resolve( "CommonModule");
-		await dialogUtils.whaitFor(() => commonModule.isReady(), fiveMinute);
-
-		if(commonModule!.isReady())
-		{
-			throw new Error("Timeout waiting for  Common module"); 
-		}
-
+	protected async initHooks() { 
+		const dialogUtils:DialogUtils = injectController.resolve( "DialogUtils"); 
 		dialogUtils.#requiredHooksLoaded = true;
 	}
 
@@ -59,7 +51,7 @@ export class DialogUtils extends SubModuleBase {
 		const logguer: Log = injectController.resolve("CommonLogguer");
 		logguer.debug("Dialog Utils creating dialog width: ", width, " height: ", height);
 		if (!buttons?.length || buttons.length === 0) {
-			throw new Error("DIALOG_UTILS.createDialog: buttons array must have at least one button");
+			throw new Error("DialogUtils.createDialog: buttons array must have at least one button");
 		}
 
 		const options = {

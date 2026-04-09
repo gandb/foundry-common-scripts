@@ -13,9 +13,7 @@ packageJson.version = newVersion;
 writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + "\n");
 
 console.log("Running build...");
-//execSync("npm run build", { stdio: "inherit" });
-
-console.log("Publishing...");
-execSync("npm publish", { stdio: "inherit" });
+execSync("npm run build", { stdio: "inherit" });
+ 
 
 console.log(`Published version ${newVersion} successfully!`);
