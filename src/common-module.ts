@@ -1,5 +1,5 @@
 import { Log, injectController } from "taulukko-commons";
-import { socketTest } from "./sockets/common-socket-test";
+//import { socketTest } from "./sockets/common-socket-test";
 import { ModuleBase } from "./common/module-base";
 import { SubModuleBase } from "./submodules/sub-module-base";
 import { RegionUtils } from "./submodules/region-utils/region-utils";
@@ -9,6 +9,7 @@ import { HeroPoints } from "./submodules/hero-points/hero-points";
 import { HideUnidentify } from "./submodules/hide-unindentify/hide-unidentify";
 import { DummySocket } from "./sockets/implementations/common-socket-dummy";
 import { Socket } from "./sockets/common-socket"; 
+import { NPCDialog } from "./submodules";
 
 //import "./url-fix"; apenas na necessidade de corrigir
 
@@ -51,7 +52,8 @@ export class CommonModule extends ModuleBase {
 
 		 
 		 subModules.push(
-			 new RegionUtils(),new PlayersTools(), new DialogUtils(), new HeroPoints(), new HideUnidentify()
+			 new RegionUtils(),new NPCDialog(), new PlayersTools(), new DialogUtils(),
+			  new HeroPoints(), new HideUnidentify()
 		);
 
 		subModules.forEach(async (subModule) => {

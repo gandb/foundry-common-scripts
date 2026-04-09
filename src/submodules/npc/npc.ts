@@ -63,9 +63,9 @@ export abstract class NPC {
 	}
 	public decrementGroup() {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-		const array = [...npcDialog.activeNPC.groups];
+		const array = [...npcDialog.npcSelected.groups];
 		const newArray = array.slice(0, -1);
-		npcDialog.activeNPC.groups = new Set(newArray);
+		npcDialog.npcSelected.groups = new Set(newArray);
 
 	}
 
@@ -73,11 +73,11 @@ export abstract class NPC {
 		return this.name.toLocaleLowerCase();
 	}
 
-	public async createDialog(title: string, content: string, options: Array<any>, submits: Array<any> | null) {
+	public async createDialog(title: string, content: string, options: Array<any>, buttons: Array<any> | null) {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 		const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
 		const loguer: Log = injectController.resolve("CommonLogguer");
-		const alias = npcDialog.activeNPC.getAlias();
+		const alias = npcDialog.npcSelected.getAlias();
 
 		let innerContent = `
 		<DIV class="${alias}-actions-buttons">
@@ -111,16 +111,16 @@ export abstract class NPC {
 
 
 		loguer.debug("NPC.createDialog:10", options);
-		loguer.debug("NPC.createDialog:15:activeNPC.groups:",
-			npcDialog.activeNPC.groups);
+		loguer.debug("NPC.createDialog:15:npcSelected.groups:",
+			npcDialog.npcSelected.groups);
 
-		if (!submits) {
+		if (!buttons) {
 
 			loguer.debug("NPC.createDialog:20");
 
-			submits = [
+			buttons = [
 				dialogUtils.createButton("send", "Enviar", true, "action", async () => {
-					loguer.debug("NPC.createDialog, before creating send:", npcDialog.activeNPC.groups);
+					loguer.debug("NPC.createDialog, before creating send:", npcDialog.npcSelected.groups);
 
 					loguer.debug("NPC.createDialog [10]: Escolhido a opcao enviar");
 
@@ -136,11 +136,11 @@ export abstract class NPC {
 
 
 					if (result === `${alias}-random`) {
-						const lastScreen = npcDialog.activeNPC.screens.at(-1);
-						npcDialog.activeNPC.screens.push({ name: result, callback: npcDialog.activeNPC.send, type: lastScreen.type });
-						loguer.debug("NPC.createDialog, before  random send:", npcDialog.activeNPC.groups);
-						npcDialog.activeNPC.send(false);
-						loguer.debug("NPC.createDialog, after random send:", npcDialog.activeNPC.groups);
+						const lastScreen = npcDialog.npcSelected.screens.at(-1);
+						npcDialog.npcSelected.screens.push({ name: result, callback: npcDialog.npcSelected.send, type: lastScreen.type });
+						loguer.debug("NPC.createDialog, before  random send:", npcDialog.npcSelected.groups);
+						npcDialog.npcSelected.send(false);
+						loguer.debug("NPC.createDialog, after random send:", npcDialog.npcSelected.groups);
 
 						return;
 					}
@@ -150,23 +150,23 @@ export abstract class NPC {
 						}
 
 						loguer.debug("NPC.Enviado a opcao :" + result);
-						npcDialog.activeNPC.screens.push({ name: result, callback: button.callback, type: button.type });
+						npcDialog.npcSelected.screens.push({ name: result, callback: button.callback, type: button.type });
 						button.callback();
-						loguer.debug("NPC.createDialog, after 3 creating send:", npcDialog.activeNPC.groups);
+						loguer.debug("NPC.createDialog, after 3 creating send:", npcDialog.npcSelected.groups);
 					});
 
 				}),
 				dialogUtils.createButton("back", "Voltar", true, "action", async () => {
 
-					loguer.debug("NPC.screens ao voltar - antes: ", npcDialog.activeNPC.screens);
+					loguer.debug("NPC.screens ao voltar - antes: ", npcDialog.npcSelected.screens);
 
-					const previousLastScreen = npcDialog.activeNPC.screens.at(-2);
-					const lastScreen = npcDialog.activeNPC.screens.pop();
+					const previousLastScreen = npcDialog.npcSelected.screens.at(-2);
+					const lastScreen = npcDialog.npcSelected.screens.pop();
 					loguer.debug("lastScreen:", lastScreen)
-					loguer.debug("screens ao voltar - depois: ", npcDialog.activeNPC.screens);
+					loguer.debug("screens ao voltar - depois: ", npcDialog.npcSelected.screens);
 
 					if (lastScreen.type == "screen-context") {
-						npcDialog.activeNPC.decrementGroup();
+						npcDialog.npcSelected.decrementGroup();
 					}
 
 					previousLastScreen.callback();
@@ -179,7 +179,7 @@ export abstract class NPC {
 				})
 			];
 
-			loguer.debug("NPC.createDialog:25. Create submits", submits);
+			loguer.debug("NPC.createDialog:25. Create submits", buttons);
 
 			loguer.debug("NPC.createDialog:30 - depois de criar submits");
 		}
@@ -190,7 +190,7 @@ export abstract class NPC {
 
 		loguer.debug("NPC.createDialog:40 - antes de criar dialogo");
 
-		dialogUtils.createDialog(title, npcDialog.activeNPC.DEFAULT_STYLE, innerContent, submits, [submit], 200, undefined, 400);
+		dialogUtils.createDialog(title, npcDialog.npcSelected.DEFAULT_STYLE, innerContent, buttons, submit, 200, undefined, 400);
 
 		loguer.debug("NPC.createDialog:50 - depois de criar dialogo");
 
@@ -217,7 +217,7 @@ export abstract class NPC {
 			return groups;
 		}
 
-		let combinations = await npcDialog.activeNPC.getCombinations(groups);
+		let combinations = await npcDialog.npcSelected.getCombinations(groups);
 		loguer.debug("groups:", groups);
 		loguer.debug("keys:", combinations);
 
@@ -247,9 +247,9 @@ export abstract class NPC {
 			let combinationKey = numbers.join(";")
 			loguer.debug("combinationKey:", combinationKey);
 
-			loguer.debug("groupToLines:", npcDialog.activeNPC.groupToLines, "-", typeof combinationKey);
+			loguer.debug("groupToLines:", npcDialog.npcSelected.groupToLines, "-", typeof combinationKey);
 
-			if (npcDialog.activeNPC.groupToLines.has(combinationKey)) {
+			if (npcDialog.npcSelected.groupToLines.has(combinationKey)) {
 				loguer.debug("find, return the combination");
 				ret.push(combinationKey);
 				return ret;
@@ -274,7 +274,7 @@ export abstract class NPC {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 		const loguer: Log = injectController.resolve("CommonLogguer");
 
-		const line = npcDialog.activeNPC.lines[lineIndex];
+		const line = npcDialog.npcSelected.lines[lineIndex];
 
 
 		loguer.debug("speak:talk:", line);
@@ -312,8 +312,8 @@ export abstract class NPC {
 
 
 		const formatedIndex = lineIndex.toString().padStart(3, '0');
-		const name = npcDialog.activeNPC.name;
-		const src = `modules/forgotten-realms/sounds/npcs/${name}/${formatedIndex}/${name}${formatedIndex}.${npcDialog.activeNPC.formatSound}`;
+		const name = npcDialog.npcSelected.name;
+		const src = `modules/forgotten-realms/sounds/npcs/${name}/${formatedIndex}/${name}${formatedIndex}.${npcDialog.npcSelected.formatSound}`;
 		const ret = await this.playSoundWithNoEffect(src);
 		loguer.debug("Retorno do play:", ret);
 	}
@@ -342,11 +342,11 @@ export abstract class NPC {
 	public async send(removeLastGroup = true) {
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 		const loguer: Log = injectController.resolve("CommonLogguer");
-		if (npcDialog.activeNPC.groups.size === 0) {
-			npcDialog.activeNPC.groups.add(RANDOM_GROUP);
+		if (npcDialog.npcSelected.groups.size === 0) {
+			npcDialog.npcSelected.groups.add(RANDOM_GROUP);
 		}
 
-		const list = await npcDialog.activeNPC.getListLinesFromGroup(npcDialog.activeNPC.groups);
+		const list = await npcDialog.npcSelected.getListLinesFromGroup(npcDialog.npcSelected.groups);
 
 		loguer.debug("NPC.send, before send,list:", list);
 
@@ -356,7 +356,7 @@ export abstract class NPC {
 
 			const group = groupNumber.toString();
 			loguer.debug("group:", group);
-			if (!npcDialog.activeNPC.groupToLines.has(group)) {
+			if (!npcDialog.npcSelected.groupToLines.has(group)) {
 				loguer.warn(`NPC.send, afterSend:Grupo ${group} não encontrado em groupToLines!`);
 				continue;
 			}
@@ -364,7 +364,7 @@ export abstract class NPC {
 			const size = group.split(";").length + 1;
 
 
-			const linesForThisGroupConcat: string = npcDialog.activeNPC.groupToLines.get(group);
+			const linesForThisGroupConcat: string = npcDialog.npcSelected.groupToLines.get(group);
 			loguer.debug("NPC.send, 50,linesForThisGroupConcat:", linesForThisGroupConcat, "-size:", size);
 
 			const linesForThisGroup = linesForThisGroupConcat.split(";");
@@ -389,24 +389,24 @@ export abstract class NPC {
 		loguer.debug("NPC.send, afterSend,lineIndex:", lineIndex);
 
 
-		npcDialog.activeNPC.speak(lineIndex);
+		npcDialog.npcSelected.speak(lineIndex);
 
 
-		loguer.debug("NPC.send, afterSend,activeScreen:", npcDialog.activeNPC.screens);
+		loguer.debug("NPC.send, afterSend,activeScreen:", npcDialog.npcSelected.screens);
 
-		const activeScreen = npcDialog.activeNPC.screens.at(-2);
-		npcDialog.activeNPC.screens.pop();
+		const activeScreen = npcDialog.npcSelected.screens.at(-2);
+		npcDialog.npcSelected.screens.pop();
 
 		activeScreen.callback();
 
-		npcDialog.activeNPC.groups.delete(RANDOM_GROUP);
+		npcDialog.npcSelected.groups.delete(RANDOM_GROUP);
 
 		if (removeLastGroup) {
-			npcDialog.activeNPC.decrementGroup();
+			npcDialog.npcSelected.decrementGroup();
 		}
 
 
-		loguer.debug("NPC.send, afterSend:", npcDialog.activeNPC.groups);
+		loguer.debug("NPC.send, afterSend:", npcDialog.npcSelected.groups);
 
 	}
 

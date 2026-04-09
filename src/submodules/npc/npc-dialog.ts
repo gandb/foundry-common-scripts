@@ -3,6 +3,7 @@ import { SubModuleBase } from "../sub-module-base";
 import { DialogUtils } from "../dialog-utils/dialog-utils";
 import { NPC } from "./npc";
 import { NPCPortraitDialog } from "./npc-portrait-dialog";
+import { Button } from "./button";
 
 
 
@@ -95,8 +96,7 @@ Backwards-compatible support will be removed in Version 14
 export class NPCDialog extends SubModuleBase {
 
 
-	public npcSelected: NPC | any;
-	public activeNPC: NPC | any;
+	public npcSelected: NPC | any;  
 	public npcs: Map<string, NPC> = new Map();
 	public buttonloaded: boolean = false;
 	#requiredHooksLoaded: boolean = false;
@@ -106,17 +106,7 @@ export class NPCDialog extends SubModuleBase {
 	protected async initHooks() {
 
 		Hooks.on('createChatMessage', async (message: any) => {
-			const logguer: Log = injectController.resolve("CommonLogguer");
-			const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-
-			const fiveMinute: number = 5 * 60 * 1000;
-			await npcDialog.whaitFor(() => injectController.has("DialogUtils"), fiveMinute);
-
-			if (!injectController.has("DialogUtils")) {
-				logguer.error("Givup chat message ", message, " because timeout waiting for DialogUtils");
-				return;
-			}
-
+			const logguer: Log = injectController.resolve("CommonLogguer"); 
 			try {
 				logguer.debug("createChatMessage recebido...");
 				// Verifica se é um evento nosso
@@ -139,21 +129,9 @@ export class NPCDialog extends SubModuleBase {
 			const logguer: Log = injectController.resolve("CommonLogguer");
 			const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 
-			const fiveMinute: number = 5 * 60 * 1000;
-			await npcDialog.whaitFor(() => injectController.has("DialogUtils"), fiveMinute);
-
-			if (!injectController.has("DialogUtils")) {
-				logguer.error("Givup getSceneControlButtons ", controls, " because timeout wiaiting for DialogUtils");
-				return;
-			}
-
-			logguer.debug("On getSceneControlButtons 05...", controls, npcDialog);
-
-
 			await npcDialog.addNPCButtons(controls);
 
 
-			npcDialog.#requiredHooksLoaded = true;
 
 
 			//com sockets nao funcionou
@@ -183,12 +161,8 @@ export class NPCDialog extends SubModuleBase {
 	}
 
 	protected async waitReady() {
-		const fiveMinutes = 5 * 60 * 1000;
-		await this.whaitFor(() => this.#requiredHooksLoaded, fiveMinutes);
-		if (!this.#requiredHooksLoaded) {
-			throw new Error("Timeout waiting for hooks");
-		}
-		Hooks.callAll("onReadyNPCDialog", {});
+		const npcDialog:NPCDialog = injectController.resolve("NPCDialog");
+		npcDialog.#requiredHooksLoaded = true;
 	}
 
 
@@ -224,7 +198,18 @@ export class NPCDialog extends SubModuleBase {
 	public async showNPCChooseDialog() {
 		const logguer: Log = injectController.resolve("CommonLogguer");
 		const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-		const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
+
+		const fiveMinute: number = 5 * 60 * 1000;
+		await npcDialog.whaitFor(() => injectController.has("DialogUtils"), fiveMinute);
+
+		if (!injectController.has("DialogUtils")) {
+			throw new Error ("NPCDialog getSceneControlButtons : Time out waiting for dialog utils inject");
+		}
+
+		const dialogUtils:DialogUtils = injectController.resolve("DialogUtils");
+		logguer.debug("On showNPCChooseDialog 05...", dialogUtils);
+
+
 
 		logguer.debug("Botão NPCsespecial pressionado, mostrando diálogo...");
 
@@ -243,8 +228,17 @@ export class NPCDialog extends SubModuleBase {
 		let buttons = [];
 
 		npcDialog.npcs.forEach(npc => {
+
+			const label : string =  npc.name.toLowerCase();
+			injectController.registerByName("npc:" + label ,npc);
+			
 			logguer.debug("showNPCChooseDialog:15 add NPC ", npc.name, npc);
-			buttons.push(dialogUtils.createButton(npc.name.toLocaleLowerCase(), npc.name, true, "screen", npcDialog.callNPC(npc)));
+			
+			buttons.push(dialogUtils.createButton(label, npc.name, true, "screen", ()=>{
+				const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+				const npc:NPC =  injectController.resolve("npc:" + label);
+				npcDialog.callNPC(npc);
+			}));
 		});
 		buttons.push(dialogUtils.createButton("cancel", "Cancel", false, "screen"));
 

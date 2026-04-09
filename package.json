@@ -1,13 +1,13 @@
 {
   "name": "taulukko-common-scripts-dnd5ed",
-  "version": "1.11.36",
+  "version": "1.11.55",
   "description": "Taulukko Common Scripts for Foundry dnd5ed",
   "main": "dist/taulukko-common-scripts-dnd5ed.iife.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && vite build",
+    "build": "node build.mjs && tsc && vite build",
     "vite-version": "vite --version",
-    "prepublishOnly": "node build.mjs"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "foundry",

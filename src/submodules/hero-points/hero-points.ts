@@ -188,7 +188,7 @@ export class HeroPoints extends SubModuleBase {
 				Exemplos: se você tem 5 pontos, passa a ter 2; se tem 3, passa a ter 1; se tem 1 ponto, passa a ter 0.
 			</p>
 		</div>
-					`, [cancelButton], new Array());
+					`, [cancelButton] );
 
 		};
 	}
