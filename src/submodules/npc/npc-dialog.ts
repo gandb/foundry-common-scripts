@@ -2,8 +2,7 @@ import { Log, injectController } from "taulukko-commons";
 import { SubModuleBase } from "../sub-module-base";
 import { DialogUtils } from "../dialog-utils/dialog-utils";
 import { NPC } from "./npc";
-import { NPCPortraitDialog } from "./npc-portrait-dialog";
-import { Button } from "./button";
+import { NPCPortraitDialog } from "./npc-portrait-dialog"; 
 
 
 
@@ -85,9 +84,8 @@ Backwards-compatible support will be removed in Version 14
 4-) Corrigir pro createDialog usar options em vez de depender da ordem dos parâmetros, criar uma interface pra options e documentar os campos.
 5-) Nos npcs no lugar onde tem "action" , "screen", "screen-context", criar um enum pra isto com a documentação do que significa cada um
 6-) o último voltar deveria reabrir a tela de escolha de npc
-7-) melhorar o menu do minsc, o do brizola ficou melhor
-8-) Tem como generalizar ainda mais o código pro próximo npc?
-9-) Separar o common-assets do common-scripts (que pdoe ser opensource)
+7-) melhorar o menu do minsc, o do brizola ficou melhor 
+8-) ao abrir duas telas de npc elas nao devem se misturar, e o titulo deve constar o nome do npc em questao.
 
 */
 
@@ -108,10 +106,10 @@ export class NPCDialog extends SubModuleBase {
 		Hooks.on('createChatMessage', async (message: any) => {
 			const logguer: Log = injectController.resolve("CommonLogguer"); 
 			try {
-				logguer.debug("createChatMessage recebido...");
+				logguer.debug("createChatMessage recebido...",message);
 				// Verifica se é um evento nosso
-				if (message.flags?.['common-assets']?.type === 'npcDialogOnTalk') {
-					const data = message.flags['common-assets'].payload;
+				if (message.flags?.['npc-talk']?.type === 'npcDialogOnTalk') {
+					const data = message.flags['npc-talk'].payload;
 					logguer.debug('[NPC Portrait] Evento recebido dos jogadores:', data);
 
 					NPCPortraitDialog.renderTalk(data);

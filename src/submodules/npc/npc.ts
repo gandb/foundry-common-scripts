@@ -287,7 +287,7 @@ export abstract class NPC {
 			content: 'NPC Portrait Event', // Invisível pra maioria
 			whisper: Array.from(game.users?.values() || []).map((u: any) => u.id),
 			flags: {
-				'forgotten-realms': {
+				'npc-talk': {
 					type: 'npcDialogOnTalk',
 					payload: { imageUrl: this.imageUrl, npcName: this.name, dialogText: line }
 				}

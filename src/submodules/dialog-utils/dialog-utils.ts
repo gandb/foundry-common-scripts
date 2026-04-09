@@ -15,14 +15,8 @@ export class DialogUtils extends SubModuleBase {
 
 
 	protected async waitReady() {
-		const logguer: Log = injectController.resolve("CommonLogguer");
-		const dialogUtils:DialogUtils = injectController.resolve( "DialogUtils"); 
-
-		const fiveMinutes = 5 * 60 * 1000;
-		await dialogUtils.whaitFor(() => dialogUtils.isReady(), fiveMinutes);
-		if (!dialogUtils.isReady()) {
-			throw new Error("Timeout waiting for hooks");
-		}
+		const logguer: Log = injectController.resolve("CommonLogguer"); 
+ 
 		Hooks.callAll("onReadyDialogUtils", {});
 		logguer.debug("Dialog Utils ready");
 	}
