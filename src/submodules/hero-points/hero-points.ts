@@ -21,10 +21,9 @@
  * 10-Usar o conhecimento do item 7 pra habilitar ou não iniciar com o debug ligado.
  */
 
-import { Log, injectController } from "taulukko-commons";
+import { Log,injectController } from "taulukko-commons";
 import { SubModuleBase } from "../sub-module-base";
-import { DialogUtils } from "../dialog-utils/dialog-utils";
-import { CommonModule } from "../../common-module";
+import { DialogUtils } from "../dialog-utils/dialog-utils"; 
 
 export class HeroPoints extends SubModuleBase {
 
@@ -33,32 +32,11 @@ export class HeroPoints extends SubModuleBase {
 	protected async initHooks() {
 	}
 
-	protected async waitReady() {
-		const fiveMinute: number = 5 * 60 * 1000;
-		const heroPoints:HeroPoints = injectController.resolve( "HeroPoints");
-		const commonModule:CommonModule = injectController.resolve( "CommonModule");
+	protected async waitReady() { 
+		const heroPoints:HeroPoints = injectController.resolve( "HeroPoints"); 
 		const logguer: Log = injectController.resolve("CommonLogguer");
-
-		logguer.debug("Heropoint : Waiting for common module");
-		await heroPoints.whaitFor(() => commonModule.isReady(), fiveMinute);
-
-		if(!heroPoints.isReady())
-		{
-			throw new Error("Error waiting common Module");
-		}
-		logguer.debug("Heropoint : Common module is ready, waiting for dialogUtils module");
-	
-		const dialogUtils:DialogUtils = injectController.resolve( "DialogUtils");
-	
-		await heroPoints.whaitFor(() => dialogUtils.isReady(), fiveMinute);
-
-		if(!dialogUtils.isReady())
-		{
-			throw new Error("Error waiting dialog Modules");
-		}
-
-		logguer.debug("Heropoint : DialogUtils module is ready");
-
+  
+	 
 		heroPoints.initializeHabilityHero();
 
 
@@ -146,6 +124,13 @@ export class HeroPoints extends SubModuleBase {
 	createDialog(element: HTMLElement) {
 		const logguer: Log = injectController.resolve("CommonLogguer");
 		const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
+
+
+		if(!dialogUtils.isReady())
+		{
+			throw new Error("HeroPoint.createDialog :  dialogUtils isnt ready");
+		}
+
 		let dialog: any = {};
 
 		element.onclick = (e) => {

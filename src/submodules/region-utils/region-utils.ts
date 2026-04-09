@@ -1,9 +1,7 @@
 
 import { Log, injectController } from "taulukko-commons";
-import { SubModuleBase } from "../sub-module-base";
-import { CommonModule } from "../../common-module";
-
-const docRegionUtils: FoundryDocument = document as FoundryDocument;
+import { SubModuleBase } from "../sub-module-base"; 
+ 
 
 const REGION_UTILS_REGISTERED_NAMES = {
 	MODULE_NAME: "common-assets",
@@ -45,18 +43,7 @@ export class RegionUtils extends SubModuleBase {
 		Hooks.callAll("onReadyRegionUtils", {});
 		logguer.debug("Region Utils ready");
 	}
-
-	sendMessageToChat(senderid: string, message: string) {
-
-		// create the message
-		const chatData = {
-			user: senderid,
-			speaker: "Game Master",
-			content: message,
-			whisper: game.users.filter((u: any) => u.isGM).map((u: any) => u._id),
-		};
-		ChatMessage.create(chatData, {});
-	}
+ 
 
 	stop(event: any) {
 		const logguer: Log = injectController.resolve("CommonLogguer");

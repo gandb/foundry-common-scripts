@@ -113,7 +113,7 @@ export class NPCDialog extends SubModuleBase {
 			await npcDialog.whaitFor(() => injectController.has("DialogUtils"), fiveMinute);
 
 			if (!injectController.has("DialogUtils")) {
-				logguer.error("Givup chat message ", message, " because timeout wiaiting for DialogUtils");
+				logguer.error("Givup chat message ", message, " because timeout waiting for DialogUtils");
 				return;
 			}
 

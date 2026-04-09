@@ -118,7 +118,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
         this.register(CALLBACK_SYSTEM_CALLBACK, (data: any) => {
             const logguer: Log = injectController.resolve("CommonLogguer");
             const socket: ChatSocket = injectController.resolve("Socket");
-            logguer.debug("CA: ChatSocket adicionando o retorno na pilha de retorno : ", data);
+            logguer.debug("ChatSocket adicionando o retorno na pilha de retorno : ", data);
             const anotherUserAnswerBefore: boolean = socket.#returns.has(data.requestId);
             if (anotherUserAnswerBefore) {
                 logguer.debug("CA: Já foi respondido antes : ", data);

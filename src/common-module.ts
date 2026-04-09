@@ -125,7 +125,7 @@ export class CommonModule extends ModuleBase {
 			await commonModule.addReadyCommonAssetsChanges();
 
 			//debug only
-			socketTest();
+			//socketTest();
 
 
 			this.#hooksRequiredLoaded = true;
