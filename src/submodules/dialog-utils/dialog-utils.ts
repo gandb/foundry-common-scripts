@@ -4,6 +4,7 @@ import { Button } from "../npc/button";
 import { SubModuleBase } from "../sub-module-base";
 import { NPC } from "../npc/npc";
 import { NPCDialog } from "../npc/npc-dialog";
+import { CommonModule } from "../../common-module";
 
 export class DialogUtils extends SubModuleBase {
 
@@ -28,16 +29,18 @@ export class DialogUtils extends SubModuleBase {
 	}
 
 
-	protected initHooks(): void {
+	protected async initHooks() {
+		const fiveMinute: number = 5 * 60 * 1000;
+		const dialogUtils:DialogUtils = injectController.resolve( "DialogUtils");
+		const commonModule:CommonModule = injectController.resolve( "CommonModule");
+		await dialogUtils.whaitFor(() => commonModule.isReady(), fiveMinute);
 
-		Hooks.on("onReadyCommonModule", async (data) => {
-			const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
+		if(commonModule!.isReady())
+		{
+			throw new Error("Timeout waiting for  Common module"); 
+		}
 
-			const logguer: Log = injectController.resolve("CommonLogguer");
-
-			logguer.debug("Dialog Utils loading on onReadyCommonModule");
-			dialogUtils.#requiredHooksLoaded = true;
-		});
+		dialogUtils.#requiredHooksLoaded = true;
 	}
 
 

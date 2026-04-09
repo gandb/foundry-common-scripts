@@ -1,18 +1,27 @@
 import { Log, injectController } from "taulukko-commons";
 import { SubModuleBase } from "../sub-module-base";
+import { CommonModule } from "../../common-module";
 
 export class PlayersTools extends SubModuleBase {
 	#requiredHooksLoaded: boolean = false;
 
-	protected initHooks() {
-		Hooks.on("onReadyCommonModule", async () => {
-			const playersTools: PlayersTools = injectController.resolve("PlayersTools");
-			const logguer: Log = injectController.resolve("CommonLogguer");
-			logguer.info("Starting Hability hero processing");
-			playersTools.initializeFlyMeasure();
-			playersTools.#requiredHooksLoaded = true;
-		});
+	protected async initHooks() {
+		const commonModule:CommonModule = injectController.resolve("CommonModule");
 
+		const fiveMinute: number = 5 * 60 * 1000;
+		const playerTools: PlayersTools = injectController.resolve("PlayersTools");
+	
+		await playerTools.whaitFor(() => commonModule.isReady(), fiveMinute);
+		
+		if(!commonModule.isReady())
+		{
+			throw new Error("Timeout waiting for Common module"); 
+		}
+ 
+		const logguer: Log = injectController.resolve("CommonLogguer");
+		logguer.debug("Starting PlayersTools init hooks");
+		playerTools.initializeFlyMeasure(); 
+		playerTools.#requiredHooksLoaded = true;
 	}
 
 	protected async waitReady() {

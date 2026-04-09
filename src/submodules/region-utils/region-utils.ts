@@ -13,17 +13,26 @@ const REGION_UTILS_REGISTERED_NAMES = {
 export class RegionUtils extends SubModuleBase {
 	#requiredHooksLoaded: boolean = false;
 
-	protected initHooks() {
+	protected async initHooks() {
 
-		Hooks.on("onInitCommonModule", () => {
-			const regionUtils: RegionUtils = injectController.resolve("RegionUtils");
+
+		Hooks.once("init", async () => {
+			 
 			const logguer: Log = injectController.resolve("CommonLogguer");
-			logguer.info("Loading Region Utils");
-			regionUtils.registerKeybindings();
-			regionUtils.#requiredHooksLoaded = true;
+
+			logguer.debug("RegionUtils.initHooks: init event, registering key bindings");
+
+			const regionUtils: RegionUtils = injectController.resolve("RegionUtils");
+
+			regionUtils.registerKeybindings(); 
+
+			logguer.debug("RegionUtils.initHooks: init event, registering key bindings done!");
+
+			regionUtils.#requiredHooksLoaded = true; 
 
 		});
-
+ 
+	
 	}
 
 	protected async waitReady() {

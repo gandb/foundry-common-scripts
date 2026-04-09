@@ -11,7 +11,7 @@ export class SocketLib extends SubModuleBase implements Socket {
     private _socketOriginal: any;
     private _requirementModules: number = 2;
 
-    protected initHooks(): void {
+    protected async initHooks() {
 
         const logguer: Log = injectController.resolve("CommonLogguer");
 

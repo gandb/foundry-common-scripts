@@ -281,11 +281,7 @@ export abstract class NPC {
 
 
 		loguer.debug("disparando o evento pra todo mundo:");
-
-
-
-		console.log('[NPC Portrait] Enviando para todos...');
-
+ 
 		// Cria uma mensagem invisível que todos recebem
 		await ChatMessage.create({
 			content: 'NPC Portrait Event', // Invisível pra maioria

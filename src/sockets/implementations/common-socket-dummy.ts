@@ -8,7 +8,7 @@ const doc: FoundryDocument = document as FoundryDocument;
 
 export class DummySocket extends SubModuleBase implements Socket {
 
-    protected initHooks(): void {
+    protected async initHooks(){
         Hooks.once("onReadyCommonModule", async () => {
             this.init();
         });

@@ -91,8 +91,7 @@ Backwards-compatible support will be removed in Version 14
 */
 
 
-
-console.log("npcDialog.ts loaded 10");
+    
 export class NPCDialog extends SubModuleBase {
 
 
@@ -104,7 +103,7 @@ export class NPCDialog extends SubModuleBase {
 
 
 
-	protected initHooks(): void {
+	protected async initHooks() {
 
 		Hooks.on('createChatMessage', async (message: any) => {
 			const logguer: Log = injectController.resolve("CommonLogguer");
@@ -212,7 +211,7 @@ export class NPCDialog extends SubModuleBase {
 			toggle: false,
 			onClick: () => {
 				logguer.debug("Botão de NPCs especiais pressionado");
-				console.log("npcDialog", npcDialog);
+	 
 				npcDialog.showNPCChooseDialog();
 				logguer.debug("Após abrir janela de NPCs especiais");
 			}
@@ -262,8 +261,7 @@ export class NPCDialog extends SubModuleBase {
 			Submit need be a function:
 			(action,label,defaultValue,callback)=>{
 				return result => {
-						if ( result === "minsc" ) console.log("User picked minsc options.");
-						else console.log("User picked option:  ", rsult );
+						 
 					}
 			}
 			`;

@@ -22,7 +22,7 @@ export class CommonModule extends ModuleBase {
 	
 	public readonly name: string = "common-scripts-dnd5ed";
 	public readonly version: string = "1.0.6";
-	public readonly startVersion: string = "";
+	public readonly startVersion: string = ""; 
 	#debug: boolean = true;
 	#hooksRequiredLoaded: boolean = false;
 
@@ -41,18 +41,25 @@ export class CommonModule extends ModuleBase {
 	}
 
 	public async init() {
+		
+
 		await super.init();
-		await this.loadSubModules();
 	}
 
-	private async loadSubModules() {
-		const subModules: SubModuleBase[] = [
-			new RegionUtils(), new PlayersTools(), new DialogUtils(), new HeroPoints(), new HideUnidentify()
-		];
+	private async loadSubModules( ) {
+		 const subModules:Array<SubModuleBase> = new Array( );
+
+		 
+		 subModules.push(
+			 new RegionUtils(),new PlayersTools(), new DialogUtils(), new HeroPoints(), new HideUnidentify()
+		);
 
 		subModules.forEach(async (subModule) => {
 			injectController.registerByClass(subModule);
-			await subModule.init();
+			subModule.init().then(()=>{
+				const logguer: Log = injectController.resolve("CommonLogguer");
+				logguer.debug("Submodule loaded : " , subModule);
+		});
 		});
 
 		//choose implementation dependes what I want
@@ -61,23 +68,34 @@ export class CommonModule extends ModuleBase {
 	}
 
 	protected async waitReady() {
+
+		const logguer: Log = injectController.resolve("CommonLogguer");
+
 		const fiveMinutes = 5 * 60 * 1000;
 		await this.whaitFor(() => this.#hooksRequiredLoaded, fiveMinutes);
 		if (!this.#hooksRequiredLoaded) {
 			throw new Error("Timeout waiting for hooks");
 		}
+
+		logguer.debug("Módulo Common Assets waitReady finish with success.");
+			
 		Hooks.callAll("onReadyCommonModule", {});
 	}
 
-	protected initHooks(): void {
+	protected async initHooks() {
+
+		this.loadSubModules( ).then(()=>{
+				const logguer: Log = injectController.resolve("CommonLogguer");
+				logguer.info("All submodules from common modules loaded with success");
+			});
 
 		Hooks.once("init", async () => {
 			const commonModule: CommonModule = injectController.resolve("CommonModule");
 			const logguer: Log = injectController.resolve("CommonLogguer");
 
-			logguer.info("Módulo Common Assets inicalizando...");
-			await commonModule.addInitCommonAssetsChanges();
-
+			logguer.info("Módulo Common Assets inicalizando 2...",commonModule);
+			await commonModule.addInitCommonAssetsChanges(); 
+		
 		});
 
 

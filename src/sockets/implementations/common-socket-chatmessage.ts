@@ -16,7 +16,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
     readonly #callbacks: Map<string, any> = new Map();
     readonly #returns: CacheReturnControl<string, any> = new CacheReturnControl();
 
-    protected initHooks(): void {
+    protected async initHooks() {
 
         const logguer: Log = injectController.resolve("CommonLogguer");
         logguer.debug("CA: ChatSocket waiting for requirements modules...");

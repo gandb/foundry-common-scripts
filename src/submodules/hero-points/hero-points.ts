@@ -24,28 +24,48 @@
 import { Log, injectController } from "taulukko-commons";
 import { SubModuleBase } from "../sub-module-base";
 import { DialogUtils } from "../dialog-utils/dialog-utils";
+import { CommonModule } from "../../common-module";
 
 export class HeroPoints extends SubModuleBase {
 
 	#requiredHooksLoaded: boolean = false;
 
-	protected initHooks() {
-
-		Hooks.on("onReadyDialogUtils", async () => {
-			const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
-			const logguer: Log = injectController.resolve("CommonLogguer");
-			logguer.info("Starting Hability hero processing");
-			heroPoints.initializeHabilityHero();
-			heroPoints.#requiredHooksLoaded = true;
-		});
+	protected async initHooks() {
 	}
 
 	protected async waitReady() {
-		const fiveMinutes = 5 * 60 * 1000;
-		await this.whaitFor(() => this.#requiredHooksLoaded, fiveMinutes);
-		if (!this.#requiredHooksLoaded) {
-			throw new Error("Timeout waiting for hooks");
+		const fiveMinute: number = 5 * 60 * 1000;
+		const heroPoints:HeroPoints = injectController.resolve( "HeroPoints");
+		const commonModule:CommonModule = injectController.resolve( "CommonModule");
+		const logguer: Log = injectController.resolve("CommonLogguer");
+
+		logguer.debug("Heropoint : Waiting for common module");
+		await heroPoints.whaitFor(() => commonModule.isReady(), fiveMinute);
+
+		if(!heroPoints.isReady())
+		{
+			throw new Error("Error waiting common Module");
 		}
+		logguer.debug("Heropoint : Common module is ready, waiting for dialogUtils module");
+	
+		const dialogUtils:DialogUtils = injectController.resolve( "DialogUtils");
+	
+		await heroPoints.whaitFor(() => dialogUtils.isReady(), fiveMinute);
+
+		if(!dialogUtils.isReady())
+		{
+			throw new Error("Error waiting dialog Modules");
+		}
+
+		logguer.debug("Heropoint : DialogUtils module is ready");
+
+		heroPoints.initializeHabilityHero();
+
+
+		logguer.debug("Heropoints hooks initialized");
+
+		heroPoints.#requiredHooksLoaded = true;
+	
 		Hooks.callAll("onReadyHeroPoints", {});
 	}
 

@@ -5,8 +5,7 @@ const FIX_NPCs = false;
 
 const newImgPath = "modules/candlekeep-5ed/images/mobs"; //substitua com o caminho desejado
 
-Hooks.on("ready", async () => {
-  console.log("Iniciando a alteração da URL!");
+Hooks.on("ready", async () => { 
   await updateNpcImageBaseUrl(newImgPath);
 });
 
@@ -55,7 +54,6 @@ async function updateNpcImageBaseUrl(newBaseUrl: any) {
         }
       }
     });
-    console.log(`NPC '${npc.name}' atualizado para imagem: ${newToken} and ${newPortrait} `);
   }
 
   ui.notifications.info(`Atualizadas as imagens de ${npcs.length} NPC(s).`);

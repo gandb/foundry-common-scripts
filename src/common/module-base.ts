@@ -9,13 +9,13 @@ export abstract class ModuleBase {
     }
 
     public async init() {
-        this.initHooks();
+        await this.initHooks();
         await this.waitReady();
         this.#ready = true;
     }
 
 
-    protected abstract initHooks(): void;
+    protected abstract initHooks(): Promise<void>;
     protected abstract waitReady(): Promise<void>;
 
 

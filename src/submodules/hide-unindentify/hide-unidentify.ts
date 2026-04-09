@@ -15,7 +15,7 @@ export class HideUnidentify extends SubModuleBase {
     Hooks.callAll("onReadyHideUnidentify", {});
   }
 
-  protected initHooks(): void {
+  protected async initHooks()  {
 
     Hooks.on("renderItemSheet5e", (sheet: any | undefined, options: any | undefined) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
