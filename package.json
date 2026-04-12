@@ -4,7 +4,7 @@
   "description": "Taulukko Common Scripts for Foundry dnd5ed",
   "main": "dist/taulukko-common-scripts-dnd5ed.iife.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
     "build": "node build.mjs && tsc && vite build",
     "vite-version": "vite --version",
     "prepublishOnly": "npm run build"
@@ -25,7 +25,8 @@
     "terser": "^5.46.1",
     "typescript": "^5.9.2",
     "vite": "^7.3.0",
-    "vite-plugin-dts": "^4.5.4"
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^4.1.4"
   },
   "dependencies": {
     "taulukko-commons": "^1.3.0"
