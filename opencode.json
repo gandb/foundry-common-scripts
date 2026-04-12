@@ -3,6 +3,29 @@
   "model": "github-copilot/claude-opus-4",
   "small_model": "github-copilot/gpt-4o-mini",
   "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "qwen3:8b": {
+          "name": "Qwen3 8B (local)",
+          "limit": {
+            "context": 32768,
+            "output": 8192
+          }
+        },
+        "qwen2.5-coder:7b": {
+          "name": "Qwen2.5 Coder 7B (local)",
+          "limit": {
+            "context": 32768,
+            "output": 8192
+          }
+        }
+      }
+    },
     "github-copilot": {
       "options": {
         "timeout": 600000,
@@ -34,7 +57,7 @@
       }
     }
   },
-  "enabled_providers": ["github-copilot"],
+
   "permission": {
     "bash": {
       "*": "ask",
