@@ -193,32 +193,33 @@ Antes de finalizar (etapa DOCUMENTATION_WRITER), você DEVE:
 
 #### 3. TESTER (criação de testes)
 ```typescript
-// Arquivo: src/submodules/invisibility/invisibility.test.ts
+// Arquivo: src/tests/submodules/invisibility/invisibility.test.ts
+// IMPORTANTE: Testes sempre em src/tests/, espelhando a estrutura de src/
 
 import { describe, it, expect } from 'vitest';
 
 describe('InvisibilitySubModule', () => {
 
   it('deve exportar a classe InvisibilitySubModule', async () => {
-    const module = await import('./invisibility');
+    const module = await import('../../../submodules/invisibility/invisibility');
     expect(module.InvisibilitySubModule).toBeDefined();
   });
 
   it('deve estender SubModuleBase', async () => {
-    const { InvisibilitySubModule } = await import('./invisibility');
-    const { SubModuleBase } = await import('../sub-module-base');
+    const { InvisibilitySubModule } = await import('../../../submodules/invisibility/invisibility');
+    const { SubModuleBase } = await import('../../../submodules/sub-module-base');
     const instance = new InvisibilitySubModule();
     expect(instance).toBeInstanceOf(SubModuleBase);
   });
 
   it('deve ter método para aplicar invisibilidade', async () => {
-    const { InvisibilitySubModule } = await import('./invisibility');
+    const { InvisibilitySubModule } = await import('../../../submodules/invisibility/invisibility');
     const instance = new InvisibilitySubModule();
     expect(typeof instance.applyInvisibility).toBe('function');
   });
 
   it('deve estar registrado no index de submodules', async () => {
-    const submodules = await import('../index');
+    const submodules = await import('../../../submodules/index');
     expect(submodules).toHaveProperty('InvisibilitySubModule');
   });
 });
@@ -234,7 +235,7 @@ describe('InvisibilitySubModule', () => {
 - ✅ src/submodules/index.ts (atualizado)
 
 **Execução dos testes:**
-$ npx vitest run src/submodules/invisibility/
+$ npx vitest run src/tests/submodules/invisibility/
 ✅ deve exportar a classe InvisibilitySubModule
 ✅ deve estender SubModuleBase
 ✅ deve ter método para aplicar invisibilidade

@@ -18,6 +18,7 @@ Cada plano deve explicar:
 - Manter compatibilidade com código existente
 - Ter documentado todo o projeto, funcionalidades e padrões de arquitetura
 - Reutilizar código, funções e padrões existentes
+- **Testes ficam em `src/tests/`** espelhando a estrutura de `src/` (nunca junto ao código fonte)
 
 ## Fluxo
 1. Receber TASK do SCRUM_MASTER
