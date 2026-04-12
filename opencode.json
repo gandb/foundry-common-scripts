@@ -36,12 +36,13 @@
   },
   "enabled_providers": ["github-copilot"],
   "permission": {
-    "edit": "grant",
-    "write": "grant",
-    "read": "grant",
-    "glob": "grant",
-    "grep": "grant",
-    "bash": "ask"
+    "bash": {
+      "*": "ask",
+      "git *": "allow",
+      "npm *": "allow",
+      "npx *": "allow",
+      "node *": "allow"
+    }
   },
   "compaction": {
     "auto": true,

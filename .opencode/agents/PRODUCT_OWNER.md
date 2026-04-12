@@ -27,7 +27,6 @@ Este repositório contém scripts e submodules TypeScript para o módulo common-
 ## TAREFAS (TASKS)
 As tarefas abaixo devem ser feitas e a medida que forem pedidas, se o usuário repedir uma já feita (com ✅ na frente) então é porque ela tem algum bug, neste caso passe para o SCRUM_MASTER as observações do usuário.
 
-### Tarefas concluídas (projeto legado Bash - migrado para TypeScript)
 - 1. ✅ - Gerar Agentes do projeto
 - 2. ✅ - Corrigir os módulos que devem ser feito deploy e bkp (common-assets, common-scripts-dnd5ed, forgotten-realms, ravenloft-adventures, mystara, loop-fate, shared-fate, after-time-fate)
 - 3. ✅ - Tratamento de módulos novos no deploy (warning ao invés de erro)
