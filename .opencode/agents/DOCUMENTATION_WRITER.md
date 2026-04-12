@@ -28,7 +28,7 @@ Documentar no README.md todas as funcionalidades novas e alterações e nos arqu
    - Funcionalidades novas
    - Alterações de funcionalidades existentes
    - Novas variáveis de configuração
-3. Documentar nos novos arquivos scripts JS ou sh:
+3. Documentar nos novos arquivos TypeScript ou JavaScript (`*.mjs`):
    - Como funciona
    - Pré requisitos
    - Parâmetros

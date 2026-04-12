@@ -28,5 +28,5 @@ Definir novas TASKs (SUBTASKS) dado a TASK recebida pelo PRODUCT_OWNER, a TASK r
 
 ## Exemplo de TASK
 ```
-TASK: Criar script de backup semanal do Foundry para Dropbox
+TASK: Criar submodule para aplicar condição de invisibilidade ao token selecionado
 ```

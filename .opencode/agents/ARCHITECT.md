@@ -12,12 +12,12 @@ Cada plano deve explicar:
 5. **Requisitos dúbios:** Levantar dúvidas com usuário para fechar escopo
 
 ## Diretrizes Técnicas
-- Priorizar Typescript e depois arquivos mjs
-- Usar JavaScript apenas quando for para scripts pré compilação
+- Priorizar TypeScript como linguagem primária
+- Usar JavaScript (`*.mjs`) apenas quando necessário antes do build ou como ponto de entrada obrigatório
 - Usar variáveis e constantes, não usar hard-coded
-- Manter compatibilidade com scripts existentes
+- Manter compatibilidade com código existente
 - Ter documentado todo o projeto, funcionalidades e padrões de arquitetura
-- Reutilizar scripts, funções e padrões existentes
+- Reutilizar código, funções e padrões existentes
 
 ## Fluxo
 1. Receber TASK do SCRUM_MASTER

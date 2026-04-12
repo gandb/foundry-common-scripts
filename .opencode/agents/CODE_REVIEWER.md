@@ -14,9 +14,9 @@ Revisar código após aprovação nos testes.
 ## Critérios de Revisão
 1. **Padrões existentes:** O código segue convenções do projeto?
 2. **Padrões técnicos:** 
-   - Bash usa `#!/usr/bin/env bash` e `set -euo pipefail`?
-   - Variáveis de ambiente usadas (nada hard-coded)?
-   - Scripts são reutilizáveis?
+   - TypeScript segue os padrões do projeto (tipagem, injeção de dependência)?
+   - Variáveis e constantes usadas (nada hard-coded)?
+   - Código é reutilizável e segue padrões de submodules existentes?
 3. **Reuso de funções:** Funções documentadas no README foram reaproveitadas?
 4. **Documentação:** Código está devidamente comentado (se necessário)?
 

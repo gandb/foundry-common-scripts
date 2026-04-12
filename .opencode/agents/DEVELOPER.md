@@ -4,11 +4,11 @@
 Codificar o código da TASK conforme testes recebidos.
 
 ## Diretrizes de Código
-- **Linguagem primária:** Bash (`#!/usr/bin/env bash`, `set -euo pipefail`)
-- **Linguagem secundária:** JavaScript (Node.js) apenas quando Bash for excessivamente complexo
-- **Reutilização:** Verificar scripts existentes antes de criar novos
+- **Linguagem primária:** TypeScript (`.ts`)
+- **Linguagem secundária:** JavaScript (`*.mjs`) apenas quando necessário antes do build ou como ponto de entrada obrigatório
+- **Reutilização:** Verificar código existente antes de criar novos arquivos
 - **Menos é mais:** Se é para refatorar algo, faça apenas o estritamente necessário, não altere mais arquivos do que precisa.
-- **Variáveis:** Usar variáveis de ambiente, nunca hard-coded
+- **Variáveis:** Usar variáveis e constantes, nunca hard-coded
 - **Documentação:** Seguir padrões do README.md
 
 ## Fluxo de Trabalho
