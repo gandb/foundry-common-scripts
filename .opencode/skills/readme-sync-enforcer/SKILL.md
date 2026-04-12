@@ -5,97 +5,106 @@ description: Verifica se todos os scripts e variaveis do projeto estao documenta
 
 ## O que esta skill faz
 
-Garante que o `README.md` na raiz do projeto esta sincronizado com a realidade do codigo. Isso inclui:
-- Todo script `.sh` documentado
-- Toda variavel `FOUNDRY_*` documentada
+Garante que o `README.md` na raiz do projeto esta sincronizado com a realidade do codigo TypeScript. Isso inclui:
+- Todo submodule documentado
+- Todo script npm/build documentado
+- Todas as configuracoes (`config.json`, `module.json`) documentadas
 - Descricoes de comportamento atualizadas
-- Comandos de execucao corretos
-
-Esta skill complementa o script `src/verificar-readme.sh` que ja existe no projeto (que valida datas de deploy nos worlds).
+- Estrutura de arquivos atualizada
 
 ## Procedimento
 
-### 1. Listar todos os scripts do projeto
+### 1. Listar todos os arquivos fonte do projeto
 
-Buscar todos os `.sh` nas pastas do projeto (excluindo `bkp/`, `.git/`, `node_modules/`):
-
-```bash
-find . -name "*.sh" -not -path "./bkp/*" -not -path "./.git/*" | sort
-```
+Buscar todos os `.ts` e `.mjs` nas pastas do projeto (excluindo `.git/`, `node_modules/`, `dist/`):
 
 **Locais esperados:**
-- Raiz: `backup.sh`, `backup-dev.sh`, `backup-prod.sh`, `deploy.sh`
-- `src/`: scripts de suporte ao deploy e backup
-- `src-prod/`: scripts que rodam no servidor remoto
-- `src/tests/`: scripts de teste
-- `dev-key/`: scripts de chave SSH
-- `util/`: utilitarios
+- `src/`: codigo TypeScript principal
+- `src/submodules/`: submodules do Foundry VTT (NPC, HeroPoints, etc.)
+- `src/socket/`: implementacoes de socket
+- `src/util/`: utilitarios e helpers
+- `src/__tests__/`: testes com vitest
+- Raiz: `build.mjs`, `vite.config.ts`, `tsconfig.json`
 
 ### 2. Verificar presenca no README.md
 
-Para cada script encontrado, verificar se ha uma entrada correspondente no `README.md`. O README deve conter:
+Para cada submodule e arquivo relevante encontrado, verificar se ha uma entrada correspondente no `README.md`. O README deve conter:
 
-- **Nome do script** (nome do arquivo)
+- **Nome do submodule/arquivo** (nome descritivo)
 - **Descricao** do que faz
-- **Comando de execucao** (como rodar)
-- **Variaveis usadas** (se aplicavel)
+- **Exports relevantes** (classes, funcoes, interfaces)
+- **Dependencias internas** (se aplicavel)
 
-### 3. Verificar variaveis documentadas
+### 3. Verificar scripts npm documentados
 
-Cruzar as variaveis `FOUNDRY_*` mencionadas no README com as realmente usadas nos scripts:
-- Variaveis usadas mas nao documentadas -> `[ERRO]`
-- Variaveis documentadas mas nao usadas -> `[WARN]`
+Cruzar os scripts definidos no `package.json` com os documentados no README:
+- Scripts existentes mas nao documentados -> `[ERRO]`
+- Scripts documentados mas nao existentes -> `[WARN]`
 
-### 4. Verificar comportamento documentado vs real
+### 4. Verificar configuracoes documentadas
 
-Para scripts ja documentados, comparar:
-- O comportamento descrito no README (ex: "emite warning e continua") com o codigo real
-- Parametros aceitos pelo script vs documentados
-- Listas de modulos mencionadas no README vs listas no codigo
+Comparar as configuracoes em `config.json` e `module.json` com o que esta documentado:
+- Campos de configuracao usados no codigo vs documentados
+- Globais registrados (`game.commonScripts`, etc.) vs documentados
 
-### 5. Verificar scripts de teste
+### 5. Verificar comportamento documentado vs real
 
-Todo script em `src/tests/` deve estar documentado na secao "Testes" do README.md com:
+Para submodules ja documentados, comparar:
+- O comportamento descrito no README com o codigo real
+- Hooks do Foundry registrados vs documentados
+- Estrategias de socket mencionadas vs implementadas
+- Dependencias externas (`taulukko-commons`, etc.) vs documentadas
+
+### 6. Verificar testes
+
+Todo arquivo em `src/__tests__/` deve estar documentado na secao de testes do README.md com:
 - Nome do teste
 - O que testa
-- Comando de execucao
+- Comando de execucao (`npx vitest run`)
 
 ## Formato de saida
 
 ```
 === SINCRONIZACAO README.md ===
 
---- Scripts ---
-[OK]    deploy.sh                              | Documentado
-[OK]    backup.sh                              | Documentado
-[ERRO]  src/deploy-mount-space.sh              | NAO documentado no README
-[ERRO]  src/folder_compact.sh                  | NAO documentado no README
-[WARN]  src-prod/start.sh                      | Documentacao incompleta (falta comando de execucao)
+--- Submodules ---
+[OK]    npc-system                             | Documentado
+[OK]    hero-points                            | Documentado
+[ERRO]  region-utils                           | NAO documentado no README
+[WARN]  players-tools                          | Documentacao incompleta (falta exports)
 
---- Variaveis ---
-[OK]    FOUNDRY_PATH                           | Documentada e usada
-[WARN]  FOUNDRY_LOCAL_USER                     | Documentada mas nao usada em scripts
+--- Scripts npm ---
+[OK]    build                                  | Documentado
+[OK]    test                                   | Documentado
+[ERRO]  dev                                    | NAO documentado no README
+
+--- Configuracoes ---
+[OK]    config.json                            | Documentado
+[WARN]  module.json                            | Faltam campos documentados
 
 --- Comportamento ---
-[OK]    deploy-copy-remote-modules.sh          | Warning para modulos novos documentado corretamente
-[WARN]  backup-modules.sh                      | Lista de modulos no README difere da lista no script
+[OK]    Socket Strategy Pattern                | Documentado corretamente
+[WARN]  Lifecycle Hooks                        | Lista de hooks no README difere do codigo
 ```
 
-### 6. Sugerir correcoes
+### 7. Sugerir correcoes
 
 Para cada `[ERRO]`, gerar um bloco markdown pronto para ser inserido no README.md seguindo o formato existente:
 
 ```markdown
-## nome-do-script.sh
+### nome-do-submodule
+
 Descricao breve do que faz.
 
-**Execucao:** `./caminho/nome-do-script.sh`
+**Arquivo:** `src/submodules/nome-do-submodule.ts`
+**Exports:** `ClassePrincipal`, `funcaoHelper`
 ```
 
 ## Quando usar esta skill
 
-- Apos criar ou modificar qualquer script
-- Antes de commits que alteram scripts
+- Apos criar ou modificar qualquer submodule TypeScript
+- Apos alterar `package.json`, `config.json` ou `module.json`
+- Antes de commits que alteram a estrutura do projeto
 - Em revisoes de codigo (etapa CODE_REVIEWER do fluxo de agentes)
 - Na etapa DOCUMENTATION_WRITER do fluxo de agentes
 - Periodicamente para manter a documentacao saudavel

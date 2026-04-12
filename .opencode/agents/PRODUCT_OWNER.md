@@ -26,28 +26,16 @@ Este repositório contém scripts e submodules TypeScript para o módulo common-
 
 ## TAREFAS (TASKS)
 As tarefas abaixo devem ser feitas e a medida que forem pedidas, se o usuário repedir uma já feita (com ✅ na frente) então é porque ela tem algum bug, neste caso passe para o SCRUM_MASTER as observações do usuário.
-- 1. ✅  - Gerar Agentes do projeto
-- 2. ✅  - Corrigir os módulos que devem ser feito deploy e bkp coforme a lista abaixo, incluindo os módulos faltantes:
-    - Módulos:
-        - **common-assets**
-        - **common-scripts-dnd5ed**
-        - **forgotten-realms**
-        - **ravenloft-adventures**
-        - **mystara**
-        - **loop-fate**
-        - **shared-fate**
-        - **after-time-fate**
-- 3. ✅  - Alterar a parte de deploy.sh para que se a pasta em bkp/prod/Data/<nome-do-module> não existir, é porque o módulo é novo então só da um aviso e não dá erro em  deploy-copy-remote-modules.sh e nem em merge-modules-for-deploy.sh (a função copy_enviroment deve apenas dar um warning se não existir e for prod e erro se o enviroment for dev)
-- 4. Aderindo ao item anterior, se a pasta não existir em bkp/prod/Data/<nome-do-module>.
-- 3. em verificar-readme.sh, receber uma variavel que se estiver skip, ele pula as verificacos sobre os arquivos de README.MD dentro dos mundos
-- 4. na funcao verificar-readme.sh fazer um for pra cada mundo e imprimir o nome da pasta de cada mundo
-- 5. para cada mundo, verificar se existe um arquivo de readme
-- 6. perguntar pro usuário se a versao encontrada é a atual (e parar por ai, nao fazer nada com esta informacao) com a versao encontrada ,se for nao sair da instalacao caso sair
-- 7. checar arquivo a arquivo dos mundos seguintes ao primeiro se todos estao atualizados com a informação confirmada na TASK 6. Se todos forem, continuar com sucesso, se não, informar o mundo desatualizado
-- 8. alterar automaticamente a data atual do mundo para o dia do deploy e remover o questionamento e confirmação do usuário do item 6 e 7
-- 9. copiar o arquivo README atualizado pros mundos em producao em um arquivo update-reademes.sh
-- 10. descompactar o bkp baixado de producao durante o processo de backup e substituir o world local pelo baixado
-- 11. remover variáveis fixas, usar variaveis de ambiente ou parametros para definir caminhos 
+
+### Tarefas concluídas (projeto legado Bash - migrado para TypeScript)
+- 1. ✅ - Gerar Agentes do projeto
+- 2. ✅ - Corrigir os módulos que devem ser feito deploy e bkp (common-assets, common-scripts-dnd5ed, forgotten-realms, ravenloft-adventures, mystara, loop-fate, shared-fate, after-time-fate)
+- 3. ✅ - Tratamento de módulos novos no deploy (warning ao invés de erro)
+- 4. ✅ - Tarefas do projeto legado Bash (verificar-readme.sh, deploy, backup) - **migradas/descontinuadas** na transição para TypeScript
+- 5. ✅ - Migrar toda documentação e configuração do OpenCode de Bash para TypeScript
+- 6. ✅ - Reescrever README.md para refletir o projeto TypeScript atual
+- 7. ✅ - Atualizar todos os agentes para priorizar TypeScript
+- 8. ✅ - Atualizar skill readme-sync-enforcer para TypeScript
 
 ## Saída Esperada
 Definições claras de funcionalidades que orientem as TASKs do SCRUM_MASTER.
