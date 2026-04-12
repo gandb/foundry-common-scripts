@@ -160,32 +160,31 @@ Antes de finalizar (etapa DOCUMENTATION_WRITER), você DEVE:
 
 #### 1. SCRUM_MASTER (primeira resposta)
 ```
-📋 **TASK 1345: Criar script macro pra tornar personagem selecionado invisível**
+📋 **TASK 1345: Criar submodule macro para tornar personagem selecionado invisível**
 
-**Descrição:** a fazer
-
-**a fazer:** 
+**Descrição:** Criar um submodule que aplica a condição "Invisible" ao token selecionado via API do Foundry VTT.
 
 **Próximo passo:** Aguardando ARCHITECT criar o plano de ação
 ```
 
 #### 2. ARCHITECT (plano de ação)
 ```
-🏗️ **Plano de Ação - TASK 2**
+🏗️ **Plano de Ação - TASK 1345**
 
-**Arquivos a modificar:**
-1. `src/deploy-copy-local-modules.sh` - linha ~45
-2. `src/deploy-copy-remote-modules.sh` - linha ~54
-3. `src/deploy-clean-local-modules.sh` - linha ~64
-4. `src/compact-modules-for-deploy.sh` - linha ~26
-5. `src/upload-backup-to-remote.sh` - linhas ~149-169
+**Arquivos a criar/modificar:**
+1. `src/submodules/invisibility/invisibility.ts` - novo submodule
+2. `src/submodules/invisibility/index.ts` - export do submodule
+3. `src/submodules/index.ts` - registrar novo submodule
+4. `src/submodules/sub-module-base.ts` - verificar interface base
 
 **Alterações:**
-- Atualizar array `modules` e `packages` para incluir os 8 módulos
+- Criar classe `InvisibilitySubModule` estendendo `SubModuleBase`
+- Implementar método que aplica ActiveEffect "Invisible" ao token selecionado
+- Registrar o submodule no index de submodules
 
-**Variáveis:** Nenhuma nova necessária
+**Variáveis:** Nenhuma nova necessária (usar config.json existente)
 
-**Riscos:** Baixo - apenas atualização de listas existentes
+**Riscos:** Baixo - segue padrão de submodules existentes
 
 **Dúvidas:** Nenhuma
 
@@ -193,82 +192,69 @@ Antes de finalizar (etapa DOCUMENTATION_WRITER), você DEVE:
 ```
 
 #### 3. TESTER (criação de testes)
-```bash
-#!/bin/bash
-# Arquivo: tests/task-2-modules-list.test.sh
+```typescript
+// Arquivo: src/submodules/invisibility/invisibility.test.ts
 
-echo "🧪 Teste: Verificar lista de módulos"
+import { describe, it, expect } from 'vitest';
 
-# Teste 1: deploy-copy-local-modules.sh deve ter 8 módulos
-local_count=$(grep -o 'modules=(' src/deploy-copy-local-modules.sh | wc -l)
-if [ "$local_count" -eq 1 ]; then
-    echo "✅ Teste 1: Array de módulos existe"
-else
-    echo "❌ Teste 1: Falhou"
-    exit 1
-fi
+describe('InvisibilitySubModule', () => {
 
-# Teste 2: Verificar se common-scripts-dnd5ed está presente
-if grep -q "common-scripts-dnd5ed" src/deploy-copy-local-modules.sh; then
-    echo "✅ Teste 2: common-scripts-dnd5ed incluído"
-else
-    echo "❌ Teste 2: common-scripts-dnd5ed faltando"
-    exit 1
-fi
+  it('deve exportar a classe InvisibilitySubModule', async () => {
+    const module = await import('./invisibility');
+    expect(module.InvisibilitySubModule).toBeDefined();
+  });
 
-# Teste 3: Verificar se loop-fate está presente
-if grep -q "loop-fate" src/deploy-copy-local-modules.sh; then
-    echo "✅ Teste 3: loop-fate incluído"
-else
-    echo "❌ Teste 3: loop-fate faltando"
-    exit 1
-fi
+  it('deve estender SubModuleBase', async () => {
+    const { InvisibilitySubModule } = await import('./invisibility');
+    const { SubModuleBase } = await import('../sub-module-base');
+    const instance = new InvisibilitySubModule();
+    expect(instance).toBeInstanceOf(SubModuleBase);
+  });
 
-# Teste 4: Verificar se after-time-fate está presente (não after-time)
-if grep -q "after-time-fate" src/deploy-copy-local-modules.sh && ! grep -q '"after-time"' src/deploy-copy-local-modules.sh; then
-    echo "✅ Teste 4: after-time-fate corrigido"
-else
-    echo "❌ Teste 4: after-time-fate não corrigido"
-    exit 1
-fi
+  it('deve ter método para aplicar invisibilidade', async () => {
+    const { InvisibilitySubModule } = await import('./invisibility');
+    const instance = new InvisibilitySubModule();
+    expect(typeof instance.applyInvisibility).toBe('function');
+  });
 
-echo "✅ Todos os testes passaram!"
+  it('deve estar registrado no index de submodules', async () => {
+    const submodules = await import('../index');
+    expect(submodules).toHaveProperty('InvisibilitySubModule');
+  });
+});
 ```
 
 #### 4. DEVELOPER (implementação)
 ```
-👨‍💻 **Implementação - TASK 2**
+👨‍💻 **Implementação - TASK 1345**
 
 **Arquivos modificados:**
-- ✅ src/deploy-copy-local-modules.sh
-- ✅ src/deploy-copy-remote-modules.sh
-- ✅ src/deploy-clean-local-modules.sh
-- ✅ src/compact-modules-for-deploy.sh
-- ✅ src/upload-backup-to-remote.sh
+- ✅ src/submodules/invisibility/invisibility.ts (criado)
+- ✅ src/submodules/invisibility/index.ts (criado)
+- ✅ src/submodules/index.ts (atualizado)
 
 **Execução dos testes:**
-```
-$ bash tests/task-2-modules-list.test.sh
-✅ Teste 1: Array de módulos existe
-✅ Teste 2: invisibility.ts incluído 
-✅ Teste 4: after-time-fate corrigido
+$ npx vitest run src/submodules/invisibility/
+✅ deve exportar a classe InvisibilitySubModule
+✅ deve estender SubModuleBase
+✅ deve ter método para aplicar invisibilidade
+✅ deve estar registrado no index de submodules
 ✅ Todos os testes passaram!
-```
 
 ✅ Código passou nos testes, enviando para CODE_REVIEWER
 ```
 
 #### 5. CODE_REVIEWER (revisão)
 ```
-🔍 **Code Review - TASK 2**
+🔍 **Code Review - TASK 1345**
 
 **Checklist:**
-- [✅] Padrão Typescript seguido 
+- [✅] Padrão TypeScript seguido
 - [✅] Sem valores hard-coded
-- [✅] Scripts existentes reaproveitados
-- [✅] Padrões de arquitetura reaproveitados
+- [✅] Injeção de dependência utilizada corretamente
+- [✅] Padrão de SubModuleBase reutilizado
 - [✅] Consistência com README.md
-- [✅] Listas atualizadas em todos os arquivos relevantes
+- [✅] Não viola diretrizes da CONSTITUTION.md
 
 **Problemas encontrados:** Nenhum
 
@@ -277,33 +263,32 @@ $ bash tests/task-2-modules-list.test.sh
 
 #### 6. DOCUMENTATION_WRITER (documentação)
 ```
-📝 **Documentação - TASK 2**
+📝 **Documentação - TASK 1345**
 
 **Atualizações no README.md:**
 
-```markdown
-## Script para deixar personagem invisivel
+## Submodule: Invisibility
 
-### src/macros/turn-player-invisible.ts
-Deixa o personagem selecionado invisível
- 
-**Execução:**
-Após arrastar a macro para a barra, selecione o personagem e clique na macro
-```
+### src/submodules/invisibility/invisibility.ts
+Aplica a condição "Invisible" ao token selecionado no Foundry VTT.
 
-**Atualizações nos scripts:**
-- Adicionado comentário descritivo no header de cada script modificado
+**Uso:**
+Registrado automaticamente como submodule. Aplica ActiveEffect de invisibilidade
+ao token selecionado pelo jogador.
+
+**Atualizações nos arquivos:**
+- Adicionado comentário descritivo no header do novo submodule
 
 ✅ Documentação concluída, enviando para ARCHITECT validar aderência
 ```
 
 #### 7. ARCHITECT (validação final)
 ```
-🏗️ **Validação Final - TASK 2**
+🏗️ **Validação Final - TASK 1345**
 
 **Conferência:**
 - [✅] Plano original seguido
-- [✅] Todos os 8 módulos incluídos
+- [✅] SubModuleBase estendido corretamente
 - [✅] Testes passando
 - [✅] Revisão aprovada
 - [✅] Documentação atualizada
@@ -313,17 +298,17 @@ Após arrastar a macro para a barra, selecione o personagem e clique na macro
 
 #### 8. SCRUM_MASTER (entrega)
 ```
-✅ **TASK 2 CONCLUÍDA**
+✅ **TASK 1345 CONCLUÍDA**
 
 **Resumo:**
-- 5 arquivos modificados
-- 8 módulos agora incluídos no deploy/backup
-- common-scripts-dnd5ed e loop-fate adicionados
-- after-time corrigido para after-time-fate
+- 3 arquivos modificados (1 atualizado, 2 criados)
+- Novo submodule InvisibilitySubModule implementado
+- Segue padrão existente de submodules do projeto
+- Testes e documentação atualizados
 
 **Próxima TASK:** Aguardando solicitação do usuário
 
-Marcar como concluída no PRODUCT_OWNER.md: [V] 2. Corrigir os módulos...
+Marcar como concluída no PRODUCT_OWNER.md: [V] 1345. Criar macro de invisibilidade...
 ```
 
 ---
