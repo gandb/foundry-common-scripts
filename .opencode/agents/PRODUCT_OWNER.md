@@ -43,7 +43,7 @@ As tarefas abaixo devem ser feitas e a medida que forem pedidas, se o usuário r
      - Seguir padrões de DI (injectController), lifecycle hooks e estrutura de submodules existentes
 - 10. ✅ - Gere pesquisa pra que serve o módulo lib-wrapper do foundry vtt e como serveria para este projeto. Não altere nada, apenas conclua esta tarefa entregando um relatório
 - 11. ✅ - Implementar a integração com lib-wrapper conforme a TASK 11 se o relatório foi favorável e o usuário quiser (não necessário - relatório desfavorável)
-- 12. - Checar como é usado as funcionalidades deste modulo no modulo ../Foundry/Data/modules/forgotten-realms/scripts e colocar no readme.md deste projeto a documentacao de como usar com exemplos, principalmente pra parte de npcs
+- 12. ✅ - Checar como é usado as funcionalidades deste modulo no modulo ../Foundry/Data/modules/forgotten-realms/scripts e colocar no readme.md deste projeto a documentacao de como usar com exemplos, principalmente pra parte de npcs
 - 13. - Teste se mensagens apenas pra players em socketlib funciona, teste manual feito pelo usuario
 - 14. - Teste se um player calculando algo em everyone em socketlib funciona, teste manual feito pelo usuario
 - 15. - Teste se um player calculando algo em gm em socketlib funciona, teste manual feito pelo usuario

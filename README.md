@@ -381,6 +381,313 @@ Todas as exports do barrel `src/index.ts`.
 
 ---
 
+## Como Usar
+
+### NPC System - Tutorial Completo
+
+O sistema de NPCs permite criar personagens não-jogadores com dialogos contextuais. Cada NPC possui linhas de dialogo organizadas em grupos, e o sistema seleciona aleatoriamente uma linha baseada nos grupos ativos.
+
+#### 1. Estrutura de Arquivos
+
+Cada NPC deve ter pelo menos 2 arquivos:
+- `{nome}.ts` - Classe do NPC extends NPC
+- `{nome}-lines.ts` - Linhas de dialogo e mapeamento de grupos
+
+#### 2. Definindo Linhas de Dialogo
+
+No arquivo `{nome}-lines.ts`:
+
+```typescript
+// Linhas de dialogo indexadas por ID
+export const npcLines: any = {
+  1: "Primeira linha de dialogo",
+  2: "Segunda linha de dialogo",
+  3: "Terceira linha de dialogo",
+  // ... mais linhas
+};
+
+// Mapeamento de grupos para linhas (separadas por ponto-e-virgula)
+export const npcGroupToLines: Map<string, string> = new Map([
+  ["1", "1"],                    // Grupo 1 usa linha 1
+  ["2", "2;3;4"],                // Grupo 2 usa linhas 2, 3 ou 4
+  ["1;2", "5;6"],                // Grupos 1 E 2 juntos usam linhas 5 ou 6
+  ["999", "100;101;102"],        // Grupo especial para aleatorio
+]);
+
+// Constantes dos grupos
+export const npcGroups = {
+  GRUPO_1: "1",
+  GRUPO_2: "2",
+  GRUPO_COMBATE: "3",
+  GRUPO_EXPLORACAO: "4",
+  RANDOM: "999"                  // Obrigatorio para respostas aleatorias
+} as const;
+```
+
+#### 3. Criando a Classe NPC
+
+```typescript
+import { joaoLines, joaoGroupToLines, joaoGroups } from "./joao-lines";
+import { DialogUtils, NPC, NPCDialog } from "taulukko-common-scripts-dnd5ed";
+import { injectController, Log } from "taulukko-commons";
+
+export class JoaoNinguem extends NPC {
+  // Opcional: CSS customizado para os dialogos
+  readonly DEFAULT_STYLE: string = `
+    <style>
+      .select-action { padding: 20px; background: #222; color: #eee; }
+      .select-action button { margin: 5px; padding: 5px 10px; }
+    </style>
+  `;
+
+  // Mapeamentos obrigatorios
+  groupToLines: Map<string, string> = joaoGroupToLines;
+  lines: any = joaoLines;
+
+  constructor() {
+    // super(nome, imagemURL, formatoAudio)
+    // Formato padrao: "ogg". Para usar MP3, passe "mp3" como terceiro parametro
+    super("JoaoNinguem", "modules/meu-modulo/images/npcs/joao.webp", "mp3");
+  }
+
+  // Inicializacao - registra o NPC no sistema
+  public async init() {
+    const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
+    npcDialog.npcSelected = this;
+
+    if (!npcDialog.npcs) {
+      npcDialog.npcs = new Map();
+    }
+
+    // Registrar com chave unica
+    npcDialog.npcs.set("joao", this);
+  }
+
+  // Tela inicial - menu principal de acoes
+  public async startScreen() {
+    const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
+    const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
+
+    // Adicionar tela inicial para navegacao
+    npcDialog.npcSelected.screens.push({ 
+      name: "start-screen", 
+      callback: npcDialog.npcSelected.startScreen, 
+      type: "screen" 
+    });
+
+    const title = "Joao Ninguem: Escolha o que fazer";
+    const content = `<div class="select-action"><H1>Escolha uma ação:</H1>`;
+
+    // Criar botoes de acao
+    const buttons = [
+      // O TIPO DO BOTAO Define o comportamento, NAO a funcao callback:
+      // - "screen": abre nova tela, NAO adiciona grupo ao enviar
+      // - "action": executa e sai, adiciona grupo ao enviar
+      // - "screen-context": abre nova tela E adiciona grupo ao enviar
+      
+      // Este botao e do tipo "screen-context" - leva pra nova tela E combina grupos
+      dialogUtils.createButton(
+        "joao-encontrando-alguem", 
+        "Encontrando Alguém", 
+        true, 
+        "screen-context",    // <-- O TIPO DEFINE O COMPORTAMENTO
+        async () => npcDialog.npcSelected.findSomeone()  // Callback apenas executado apos enviar
+      ),
+
+      // Este botao e do tipo "action" - executa e sai imediatamente
+      dialogUtils.createButton(
+        "joao-sobrecarga-peso", 
+        "Sobrecarga de peso", 
+        true, 
+        "action",            // <-- O TIPO DEFINE O COMPORTAMENTO
+        async () => npcDialog.npcSelected.overWeight()  // Callback executado apos enviar
+      ),
+    ];
+
+    // Criar dialogo com dropdown de navegacao + botoes
+    npcDialog.npcSelected.createDialog(title, content, buttons);
+  }
+
+  // Funcao chamada quando o botao "Encontrando Alguem" (screen-context) e selecionado
+  // Note: a logica de grupo ja foi adicionada pelo tipo do botao ANTES de chamar esta funcao
+  public async findSomeone() {
+    const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
+    const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
+
+    const title = "Joao Ninguem: Encontrando alguém";
+    const content = `<div class="select-action"><H1>Escolha uma ação:</H1>`;
+
+    const buttons = [
+      dialogUtils.createButton(
+        "joao-vendo-alguem-conhecido",
+        "Vendo alguém conhecido",
+        true,
+        "action",    // Agora usa action - executa e sai
+        async () => npcDialog.npcSelected.seeingSomeoneFamiliar()
+      ),
+    ];
+
+    npcDialog.npcSelected.createDialog(title, content, buttons);
+  }
+
+  // Funcao chamada quando o botao "Sobrecarga de peso" (action) e selecionado
+  // O grupo ja foi adicionado pelo tipo do botao
+  public async overWeight() {
+    const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
+    // O grupo joaoGroups.OVERWEIGHT ja foi adicionado pelo botao do tipo "action"
+    // Apenas chama send() para selecionar e reproduzir a linha
+    await npcDialog.npcSelected.send();
+  }
+
+  // Funcao chamada quando botao de action e pressionado na tela de findSomeone
+  public async seeingSomeoneFamiliar() {
+    const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
+    // O grupo ja foi adicionado pelo tipo do botao
+    await npcDialog.npcSelected.send();
+  }
+}
+```
+
+#### 4. Tipos de Botoes (IMPORTANTE: o comportamento e definido no tipo, nao na funcao)
+
+| Tipo | Quando usar | O que acontece |
+|------|-------------|----------------|
+| `"screen"` | Para navegar entre telas sem mudar o contexto de dialogo | Abre nova tela, **nao adiciona** grupo ao enviar |
+| `"action"` | Para executar uma acao e sair do dialogo | Executa callback, **adiciona** grupo, chama send() automaticamente |
+| `"screen-context"` | Para criar submenus que combinam com o contexto atual | Abre nova tela, **adiciona** grupo ao enviar |
+
+**A diferenca principais:**
+- `action` = executa E sai do dialogo (adiciona grupo)
+- `screen` ou `screen-context` = abre nova tela dentro do dialogo (apenas screen-context adiciona grupo)
+
+#### Menu de Escolha (Dropdown)
+
+O `createDialog()` automaticamente cria um **dropdown SELECT** com:
+- Uma opção "Aleatório dado o contexto até aqui" (selecionada por padrão)
+- Uma opção para cada botão criado
+
+Quando o usuário clica em **"Enviar"**, o sistema executa a opção selecionada no dropdown, não o botão diretamente. Isso permite:
+1. Usar os botões apenas como menu visual
+2. Escolher a ação específica no dropdown antes de enviar
+3. Escolher "Aleatório" para selecionar uma linha aleatória baseada nos grupos ativos
+
+#### 5. Sistema de Grupos e Combinacoes
+
+O sistema permite combinar multiplos grupos para gerar dialogos contextuais:
+
+```typescript
+// Adicionar multiplos grupos
+npcDialog.npcSelected.groups.add(joaoGroups.ENTER_IN_BATTLE);  // "2"
+npcDialog.npcSelected.groups.add(joaoGroups.GETTING_HURT);     // "3"
+
+// O sistema procurar chaves:
+// "2;3" (combinação exata)
+// "2" e "3" (individuais)
+```
+
+#### 6. Áudio
+
+**Formato Padrão:** OGF (ogg)
+
+**Construtor do NPC:**
+```typescript
+// Formato padrao (ogg) - nao precisa passar o terceiro parametro
+super("NomeNPC", "caminho/imagem.webp");
+
+// Formato diferente (mp3) - passe o formato como terceiro parametro
+super("NomeNPC", "caminho/imagem.webp", "mp3");
+```
+
+**Estrutura de arquivos de áudio:**
+```
+modules/{modulo}/sounds/npcs/{nomeNPC}/{indice}/{nomeNPC}{indice}.{formato}
+```
+
+Exemplo (formato padrão ogg):
+```
+modules/forgotten-realms/sounds/npcs/joao/001/joao001.ogg
+```
+
+Exemplo (formato mp3):
+```
+modules/meu-modulo/sounds/npcs/joao/001/joao001.mp3
+```
+
+**Observação:** O índice deve ser padding com 3 dígitos (001, 002, etc.)
+
+#### 7. Registration no Module
+
+No arquivo `module.ts` do seu modulo:
+
+```typescript
+// Importar seu NPC
+import { JoaoNinguem } from "./src/joao";
+
+// Criar instancia e inicializar
+const joao = new JoaoNinguem();
+await joao.init();
+```
+
+#### Exemplo Completo: Callback Dinamico
+
+Quando voce precisa passar um grupo dinamico para o callback (em vez de usar o tipo do botao):
+
+```typescript
+// Funcao que cria um callback que adiciona grupo e envia
+public createcallbackSend(group: number) {
+  return async () => {
+    const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
+    npcDialog.npcSelected.groups.add(group);
+    return npcDialog.npcSelected.send();
+  };
+}
+
+// Uso com botao action
+const callback: any = npcDialog.npcSelected.createcallbackSend;
+
+const buttons = [
+  dialogUtils.createButton("joao-exhausted", "Exaustão / Sono", true, "action", callback(joaoGroups.EXHAUSTED_AND_SLEEPY)),
+  dialogUtils.createButton("joao-weight", "Sobrecarga de Peso", true, "action", callback(joaoGroups.EXCESS_WEIGHT)),
+];
+```
+
+---
+
+### Dialog Utils
+
+#### Criando Botoes
+
+```typescript
+const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
+
+const button = dialogUtils.createButton(
+  "action-id",      // Identificador unico
+  "Label do Botao",  // Texto exibido
+  true,              // É default?
+  "action",         // Tipo: "screen", "action", "screen-context"
+  async () => {     // Callback
+    console.log("Botao clicado!");
+  }
+);
+```
+
+#### Criando Dialogos
+
+```typescript
+dialogUtils.createDialog(
+  "Titulo do Dialogo",
+  "DEFAULT_STYLE ou CSS customizado",
+  "Conteudo HTML",
+  [botao1, botao2],
+  submit,           // Funcao de submit (opcional)
+  200,              // Posicao X (opcional)
+  undefined,        // Posicao Y (opcional)
+  400               // Largura (opcional)
+);
+```
+
+---
+
 ## Skills do OpenCode
 
 Skills sao instrucoes reutilizaveis que o OpenCode carrega sob demanda para executar tarefas especificas do projeto. Ficam em `.opencode/skills/<nome>/SKILL.md`.
