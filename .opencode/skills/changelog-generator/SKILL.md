@@ -28,6 +28,11 @@ Gera um changelog estruturado para releases do modulo Foundry VTT, baseado em:
 - Ler `src/common-module.ts` -> campo `version` da classe `CommonModule`
 - Se as duas versoes divergem -> `[WARN]` (devem estar sincronizadas)
 
+**Arquivos que contem versao (verificar sincronizacao):**
+- `*.json` -> campo `version` (ex: `package.json`, `module.json`)
+- `*.ts` -> propriedade `version` em classes do projeto (ex: `src/common-module.ts`)
+- Nao buscar versao em outros tipos de arquivo
+
 **Determinar ponto de partida:**
 - Buscar ultima tag git: `git describe --tags --abbrev=0`
 - Se nao ha tags, usar o primeiro commit: `git rev-list --max-parents=0 HEAD`
