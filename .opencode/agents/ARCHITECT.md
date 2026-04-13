@@ -1,9 +1,6 @@
 ---
 description: Planejar TASKs e validar aderência
 mode: subagent
-permission:
-  edit: allow
-  bash: deny
 ---
 
 # ARCHITECT

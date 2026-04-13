@@ -1,9 +1,6 @@
 ---
 description: Definir como o produto deve ser
 mode: subagent
-permission:
-  edit: allow
-  bash: deny
 ---
 
 # PRODUCT_OWNER

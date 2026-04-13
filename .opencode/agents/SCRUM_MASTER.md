@@ -1,9 +1,6 @@
 ---
 description: Gerenciar TASKs e coordenar fluxo entre agentes
 mode: subagent
-permission:
-  edit: allow
-  bash: deny
 ---
 
 # SCRUM_MASTER

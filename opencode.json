@@ -102,6 +102,12 @@
         "edit": "deny",
         "bash": "deny"
       }
+    },
+    "TESTER": {
+      "permission": {
+        "edit": "deny",
+        "bash": "allow"
+      }
     }
   },
   "compaction": {

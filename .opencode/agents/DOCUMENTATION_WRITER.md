@@ -1,9 +1,6 @@
 ---
 description: Documentar funcionalidades no README.md e arquivos novos
 mode: subagent
-permission:
-  edit: allow
-  bash: deny
 ---
 
 # DOCUMENTATION_WRITER
