@@ -61,10 +61,12 @@
   "permission": {
     "bash": {
       "*": "ask",
-      "git *": "allow",
-      "npm *": "allow",
-      "npx *": "allow",
-      "node *": "allow"
+      "git": "allow",
+      "cat": "allow",
+      "ls": "allow",
+      "grep": "allow",
+      "echo": "allow",
+      "wc": "allow"
     }
   },
   "compaction": {
