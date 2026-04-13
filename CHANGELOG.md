@@ -16,13 +16,10 @@
 - NPCs interativos com sistema de falas e retratos
 
 ### Alterado
-- Icone do botao de Calculadora de Voo alterado para pomba (tematica medieval)
 - Configuracoes do modulo agora vem de arquivo centralizado em vez de valores fixos
 - Chave de log separada para nao misturar com demais modulos
 
 ### Corrigido
-- Corrigido botao Calcular da Calculadora de Voo que fechava o formulario ao clicar
-- Corrigido erro nos Hero Points quando a ficha nao tinha o atributo
 - Corrigido envio de mensagens via socket entre GM e jogadores
 - Corrigido mensagens de socket que apareciam indevidamente no chat do jogo
 - Corrigido identificacao de itens nao reconhecidos (hideUnidentify)

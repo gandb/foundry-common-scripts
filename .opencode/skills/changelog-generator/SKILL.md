@@ -152,6 +152,8 @@ O changelog e voltado para o usuario final (jogadores e GMs do Foundry VTT). Apl
 
 6. **Focar no que o usuario ve** - Incluir apenas funcionalidades visiveis no Foundry VTT: novos botoes, dialogos, correcoes de comportamento em jogo, mudancas de compatibilidade, etc.
 
+7. **Consolidar por funcionalidade dentro da mesma versao** - Quando uma funcionalidade nova, suas correcoes e seus ajustes acontecem todos na mesma versao (entre a tag anterior e a atual), consolidar tudo em um unico item na secao "Novo". Correcoes e alteracoes so devem aparecer em "Corrigido" ou "Alterado" se o item ja existia em uma versao anterior que o usuario final ja teve acesso. A pergunta-chave e: "o usuario final ja tinha acesso a essa funcionalidade antes desta release?" Se nao, tudo e "Novo".
+
 ## Quando usar esta skill
 
 - Antes de cada release/deploy do modulo
