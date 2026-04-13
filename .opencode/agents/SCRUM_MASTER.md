@@ -2,7 +2,7 @@
 description: Gerenciar TASKs e coordenar fluxo entre agentes
 mode: subagent
 permission:
-  edit: deny
+  edit: allow
   bash: deny
 ---
 

@@ -64,9 +64,44 @@
       "git": "allow",
       "cat": "allow",
       "ls": "allow",
-      "grep": "allow",
       "echo": "allow",
-      "wc": "allow"
+      "wc": "allow",
+      "less": "allow"
+    },
+    "grep": "allow",
+    "glob": "allow",
+    "list": "allow"
+  },
+  "agent": {
+    "SCRUM_MASTER": {
+      "permission": {
+        "edit": "allow",
+        "bash": "deny"
+      }
+    },
+    "PRODUCT_OWNER": {
+      "permission": {
+        "edit": "allow",
+        "bash": "deny"
+      }
+    },
+    "DOCUMENTATION_WRITER": {
+      "permission": {
+        "edit": "allow",
+        "bash": "deny"
+      }
+    },
+    "ARCHITECT": {
+      "permission": {
+        "edit": "allow",
+        "bash": "deny"
+      }
+    },
+    "CODE_REVIEWER": {
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     }
   },
   "compaction": {
