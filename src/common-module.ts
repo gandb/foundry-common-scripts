@@ -21,7 +21,7 @@ const COMMON_REGISTERED_NAMES = {
 const doc: FoundryDocument = document as FoundryDocument;
 export class CommonModule extends ModuleBase {
   public readonly name: string = "common-scripts-dnd5ed";
-  public readonly version: string = "1.0.6";
+  public readonly version: string = "2.0.1";
   public readonly startVersion: string = "";
   #debug: boolean = true;
   #hooksRequiredLoaded: boolean = false;
