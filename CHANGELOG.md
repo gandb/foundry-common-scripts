@@ -8,43 +8,24 @@
 - Dependencia: socketlib
 
 ### Novo
-- Adicionado submodule FlightMovement - Calculadora de Movimento em Voo com Teorema de Pitagoras
-- Adicionado sistema de Socket com Strategy Pattern (Dummy, Chat, SocketLib) para comunicacao entre clientes
-- Adicionado submodule HeroPoints para gerenciamento de pontos heroicos com botoes +/- na ficha
-- Adicionado submodule RegionUtils para manipulacao de regioes do Foundry
-- Adicionado submodule DialogUtils para criacao padronizada de dialogos DialogV2
-- Adicionado submodule NPCDialog com sistema de falas para NPCs (Minsc, Brizola)
-- Adicionado submodule NPCPortraitDialog para exibicao de retratos de NPCs
-- Adicionado sistema de injecao de dependencia via taulukko-commons (injectController)
-- Adicionado modelo de testes com Vitest
+- Calculadora de Movimento em Voo - botao nos Token Controls que abre formulario com 3 campos (Eixo X, Eixo Y, Hipotenusa) e calcula o terceiro automaticamente pelo Teorema de Pitagoras
+- Sistema de comunicacao entre clientes via Socket com suporte a SocketLib
+- Gerenciamento de Hero Points com botoes de incremento/decremento na ficha do personagem
+- Utilitario de regioes para manipulacao de regioes do Foundry
+- Sistema de dialogos padronizado para interacoes no Foundry
+- NPCs interativos com sistema de falas e retratos
 
 ### Alterado
-- Migrado projeto inteiro de JavaScript para TypeScript com Vite como bundler
-- Refatorado NPC Dialog para usar injectController e classes base (SubModuleBase)
-- Atualizada skill readme-sync-enforcer para TypeScript
-- Externalizado socket para nao ficar diretamente ligado a implementacao
-- Compatibilizacao entre modulos (common-assets, common-scripts-dnd5ed, forgotten-realms)
-- Parametros agora vem do config.json em vez de valores hard-coded
-- Mudada chave do log common para nao misturar com demais modulos
-- Icone do botao de voo alterado de aviao (fa-plane) para pomba (fa-dove) por coerencia medieval
+- Icone do botao de Calculadora de Voo alterado para pomba (tematica medieval)
+- Configuracoes do modulo agora vem de arquivo centralizado em vez de valores fixos
+- Chave de log separada para nao misturar com demais modulos
 
 ### Corrigido
-- Corrigido botao Calcular do FlightMovement que fechava o dialog ao clicar (botao movido para HTML content)
-- Corrigido bug de loop infinito esperando resposta no socket
-- Corrigido erro que ocorria no HeroPoints quando a ficha nao tinha o atributo
-- Corrigido socket lib sendAsGM
-- Corrigido bug onde mensagens de socket via chat eram exibidas no jogo
-- Corrigido bug de timeout no onReadyCommonSocket vs onReadyCommonModule
-- Corrigido erro que so funcionava no modulo local
-- Corrigido hideUnidentify script
-- Corrigido discrepancia de parametros na hora do envio de socket
-- Corrigido uso de slice substituido por shift para remocao de pilha
+- Corrigido botao Calcular da Calculadora de Voo que fechava o formulario ao clicar
+- Corrigido erro nos Hero Points quando a ficha nao tinha o atributo
+- Corrigido envio de mensagens via socket entre GM e jogadores
+- Corrigido mensagens de socket que apareciam indevidamente no chat do jogo
+- Corrigido identificacao de itens nao reconhecidos (hideUnidentify)
 
 ### Removido
-- Removido toggle de regioes do module common (passado para RegionUtils)
-- Removidos comentarios desnecessarios
-
-### Documentacao
-- Documentado local correto para testes (src/tests/)
-- Criados 9 agentes do OpenCode para o projeto (TASK 1)
-- Criadas 8 skills especializadas para o OpenCode
+- Removido toggle de regioes do modulo principal (movido para submodule dedicado)

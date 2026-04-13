@@ -136,6 +136,22 @@ TASKs sem commit: 1
 --- Changelog gerado em CHANGELOG.md ---
 ```
 
+## Regras de filtragem do conteudo
+
+O changelog e voltado para o usuario final (jogadores e GMs do Foundry VTT). Aplicar os seguintes filtros:
+
+1. **Nunca mencionar IA, agentes ou ferramentas de desenvolvimento** - Nao incluir referencias a OpenCode, agentes (SCRUM_MASTER, ARCHITECT, etc.), skills, prompts ou qualquer ferramenta de IA. Isso e interno.
+
+2. **Nunca mencionar TASKs** - TASKs sao controle interno. No changelog, descrever apenas o que foi feito. Se uma TASK e seu bugfix aconteceram na mesma versao, mencionar apenas a funcionalidade final entregue (nao o bug intermediario).
+
+3. **Nao mencionar infraestrutura de desenvolvimento** - Excluir itens como: scripts de build, arquivos .sh, configuracoes de CI/CD, scripts de deploy, backup, geracao de chaves, etc.
+
+4. **Nao mencionar mudancas tecnicas internas** - Excluir itens como: troca de linguagem de programacao (JS para TS), refatoracoes internas, mudancas de bundler, reorganizacao de pastas, etc. O usuario final nao precisa saber disso.
+
+5. **Sempre verificar sincronizacao de versoes** - Antes de gerar o changelog, confirmar que `package.json`, `CommonModule.version` e `module.json` estao com a mesma versao. Se divergirem, avisar e sugerir correcao antes de gerar.
+
+6. **Focar no que o usuario ve** - Incluir apenas funcionalidades visiveis no Foundry VTT: novos botoes, dialogos, correcoes de comportamento em jogo, mudancas de compatibilidade, etc.
+
 ## Quando usar esta skill
 
 - Antes de cada release/deploy do modulo
