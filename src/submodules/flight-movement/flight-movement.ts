@@ -92,23 +92,46 @@ export class FlightMovement extends SubModuleBase {
 
     const content = `
 			<div class="flight-calc">
-				<p>Preencha 2 dos 3 campos. O terceiro será calculado automaticamente.</p>
-				<label for="flight-x">Eixo X (horizontal) em feet:</label>
+				<p>Preencha 2 dos 3 campos, sugiro sempre preencher o campo 3 já que ele que define quanto seu persoangem vai se mover. O terceiro campo não preenchido será calculado automaticamente.</p>
+				<label for="flight-x">1- Quanto você quer andar de fato no mapa em feet (eixo x)?:</label>
 				<input type="number" id="flight-x" min="0" step="0.01" placeholder="0" />
-				<label for="flight-y">Eixo Y (vertical) em feet:</label>
+				<label for="flight-y">2- Quanto você pretende descer ou subir de altura em feet (eixo y):</label>
 				<input type="number" id="flight-y" min="0" step="0.01" placeholder="0" />
-				<label for="flight-hyp">Hipotenusa (movimento total) em feet:</label>
+				<label for="flight-hyp">3- Qual vai ser o movimento total do seu personagem em feet (ex: 30 )? </label>
 				<input type="number" id="flight-hyp" min="0" step="0.01" placeholder="0" />
 				<div id="flight-error" class="flight-error"></div>
+				<button id="flight-calc-btn" type="button" style="margin-top: 10px; padding: 6px 16px; font-weight: bold; cursor: pointer;">Calcular</button>
 			</div>
 		`;
 
-    const calcButton = dialogUtils.createButton(
-      "calculate",
-      "Calcular",
+    const closeButton = dialogUtils.createButton(
+      "close",
+      "Fechar",
       true,
       "screen",
-      () => {
+    );
+
+    dialogUtils.createDialog(
+      title,
+      style,
+      content,
+      [closeButton],
+      undefined,
+      undefined,
+      undefined,
+      400,
+    );
+
+    logguer.debug("FlightMovement: Diálogo criado");
+
+    const attachCalcListener = () => {
+      const calcBtn = document.getElementById("flight-calc-btn");
+      if (!calcBtn) {
+        requestAnimationFrame(attachCalcListener);
+        return;
+      }
+
+      calcBtn.addEventListener("click", () => {
         const inputX = document.getElementById("flight-x") as HTMLInputElement;
         const inputY = document.getElementById("flight-y") as HTMLInputElement;
         const inputHyp = document.getElementById(
@@ -156,7 +179,7 @@ export class FlightMovement extends SubModuleBase {
         } else if (filledFields.includes("x") && filledFields.includes("hyp")) {
           if (hyp < x) {
             errorDiv.textContent =
-              "A hipotenusa não pode ser menor que o Eixo X.";
+              "O movimento não pode ser menor que o Eixo X.";
             return;
           }
           const result = calcCathetus(hyp, x);
@@ -167,7 +190,7 @@ export class FlightMovement extends SubModuleBase {
         } else if (filledFields.includes("y") && filledFields.includes("hyp")) {
           if (hyp < y) {
             errorDiv.textContent =
-              "A hipotenusa não pode ser menor que o Eixo Y.";
+              "O movimento não pode ser menor que o Eixo Y.";
             return;
           }
           const result = calcCathetus(hyp, y);
@@ -182,27 +205,13 @@ export class FlightMovement extends SubModuleBase {
           y: inputY.value,
           hyp: inputHyp.value,
         });
-      },
-    );
+      });
 
-    const closeButton = dialogUtils.createButton(
-      "close",
-      "Fechar",
-      false,
-      "screen",
-    );
+      logguer.debug(
+        "FlightMovement: Event listener do botão Calcular atachado",
+      );
+    };
 
-    dialogUtils.createDialog(
-      title,
-      style,
-      content,
-      [calcButton, closeButton],
-      undefined,
-      undefined,
-      undefined,
-      400,
-    );
-
-    logguer.debug("FlightMovement: Diálogo criado");
+    requestAnimationFrame(attachCalcListener);
   }
 }
