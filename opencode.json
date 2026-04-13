@@ -74,38 +74,51 @@
   },
   "agent": {
     "SCRUM_MASTER": {
+      "mode": "all",
       "permission": {
         "edit": "allow",
         "bash": "deny"
       }
     },
     "PRODUCT_OWNER": {
+      "mode": "primary",
       "permission": {
         "edit": "allow",
         "bash": "deny"
       }
     },
     "DOCUMENTATION_WRITER": {
+      "mode": "all",
       "permission": {
         "edit": "allow",
         "bash": "deny"
       }
     },
     "ARCHITECT": {
+      "mode": "all",
       "permission": {
         "edit": "allow",
         "bash": "deny"
       }
     },
     "CODE_REVIEWER": {
+      "mode": "all",
       "permission": {
         "edit": "deny",
         "bash": "deny"
       }
     },
     "TESTER": {
+      "mode": "all",
       "permission": {
         "edit": "deny",
+        "bash": "allow"
+      }
+    },
+    "DEVELOPER": {
+      "mode": "all",
+      "permission": {
+        "edit": "allow",
         "bash": "allow"
       }
     }

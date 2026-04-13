@@ -327,6 +327,37 @@ Marcar como concluída no PRODUCT_OWNER.md: [V] 1345. Criar macro de invisibilid
 
 ---
 
+## Fluxo de Agentes
+
+Todos os agentes seguem o fluxo completo de tarefas coordenadas pelo SCRUM_MASTER:
+- **SCRUM_MASTER**: Coordena o fluxo, entrega uma TASK por vez, marca em andamento/concluídas
+- **PRODUCT_OWNER**: Define as TASKs no arquivo `PRODUCT_OWNER.md`
+- **ARCHITECT**: Planeja a TASK e envia para o TESTER
+- **TESTER**: Cria testes que validam a TASK
+- **DEVELOPER**: Codifica a solução (só passa quando testes passam)
+- **CODE_REVIEWER**: Revisa aderência a padrões
+- **DOCUMENTATION_WRITER**: Documenta no README.md e arquivos
+
+**Apenas o agente PRODUCT_OWNER pode ser chamado diretamente** - o fluxo completo é ativado quando o usuário diz "Faça TASK X". Quando PRODUCT_OWNER é acionado ele deve seguir seu fluxo completo de trabalho exceto se o usuário mencionar que deve delegar diretamente uma tarefa para outro agente pulando alguma parte do fluxo, ver abaixo em Delegação de Tarefas.
+
+---
+
+## Delegação de Tarefas
+
+O PRODUCT_OWNER pode receber pedidos de delegação no formato:
+- "Peça ao developer corrigir o bug de null na TASK 9"
+- "Peça ao architect planejar a TASK 15"
+- "Peça ao tester criar testes para a TASK 12"
+- "Peça ao documentation writer documentar a TASK 3"
+
+Ao receber um pedido de delegação, o PRODUCT_OWNER:
+1. Identifica o agente solicitado (por nome ou descrição)
+2. Identifica a TASK ou ação requerida
+3. Envia a requisição para o agente adequado seguindo seu fluxo completo de trabalho
+
+---
+
 ## Notas Finais
+
 Seguir estas regras é obrigatório para qualquer agente trabalhando neste projeto.
 
