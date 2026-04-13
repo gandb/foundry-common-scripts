@@ -13,8 +13,13 @@ Lista todas as sessoes/areas de trabalho do OpenCode no projeto, incluindo:
 ### 1. Listar Sessões
 
 Identificar diretorios de sessoes em  `~/.local/share/opencode/snapshot/` (IMPORTANTE: este diretorio especifico, nao outro)
-Formatar a saída pro usuário com um menu pra selecionar e oferecer sugestoes como, remover o selecionado, apagar todos ou sair
-Remover todas as sessões se o usuário solicitar, confirmar antes se é o que ele deseja sendo bem explicito no que vai ser removido 
+Se houver apenas 1 sessão, IGNORAR e informar ao usuário "Existe apenas a sessão atual".
+Se houver mais de 1, formatar a saída pro usuário com um menu pra selecionar e oferecer sugestoes como, remover o selecionado, apagar todos ou sair
+Remover todas as sessões se o usuário solicitar, confirmar antes se é o que ele deseja sendo bem explicito no que vai ser removido
+
+### 2. Pós-Remoção
+
+Se após a remoção sobrar apenas 1 sessão (a sessão aberta atualmente), IGNORAR e NÃO notificar o usuário. Apenas informar se houverem outras sessões. 
 
 ## Formato de saida
 
