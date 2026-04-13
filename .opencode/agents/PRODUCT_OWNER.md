@@ -58,6 +58,10 @@ As tarefas abaixo devem ser feitas e a medida que forem pedidas, se o usuário r
 - 23. - Corrigir pro createDialog usar options em vez de depender da ordem dos parâmetros, criar uma interface pra options e documentar os campos.
 - 24. - o último voltar deveria reabrir a tela de escolha de npc, se isso for possível ser tratado nas classes bases e nao de quem usa o npcdialog.
 - 25. - corrigir bug que ao abrir duas telas de npc diferentes a primeira passa a se portar como a segunda, alguma variavel global esta sendo poluída, e e o título deve constar o nome do npc em questao para ajudar a nao se confundir.
+- 26. Trocar em  npcTalkDialog.ts  pra uar a nova implementacao usando socket a interface inicialmente do chat
+- 27. - Trocar em  npcTalkDialog.ts  pra uar a nova implementacao usando a interface do socketlib  
+- 28. - Verificar que no projeto ../../../../forgotten-realms/scripts/ nos npcs no lugar onde tem "action", "screen", "screen-context", criar um enum neste projeto e documentar isto, pra que os projetos que usarem fazerem uso do enum e nao uma string, para evitar erros de digitacao
+
 
 ## Saída Esperada
 Definições claras de funcionalidades que orientem as TASKs do SCRUM_MASTER.
