@@ -74,7 +74,7 @@
   },
   "agent": {
     "SCRUM_MASTER": {
-      "mode": "all",
+      "mode": "subagent",
       "permission": {
         "edit": "allow",
         "bash": "deny"
@@ -88,35 +88,35 @@
       }
     },
     "DOCUMENTATION_WRITER": {
-      "mode": "all",
+      "mode": "subagent",
       "permission": {
         "edit": "allow",
         "bash": "deny"
       }
     },
     "ARCHITECT": {
-      "mode": "all",
+      "mode": "subagent",
       "permission": {
         "edit": "allow",
         "bash": "deny"
       }
     },
     "CODE_REVIEWER": {
-      "mode": "all",
+      "mode": "subagent",
       "permission": {
         "edit": "deny",
         "bash": "deny"
       }
     },
     "TESTER": {
-      "mode": "all",
+      "mode": "subagent",
       "permission": {
         "edit": "deny",
         "bash": "allow"
       }
     },
     "DEVELOPER": {
-      "mode": "all",
+      "mode": "subagent",
       "permission": {
         "edit": "allow",
         "bash": "allow"

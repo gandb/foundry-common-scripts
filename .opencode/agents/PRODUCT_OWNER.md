@@ -41,18 +41,20 @@ As tarefas abaixo devem ser feitas e a medida que forem pedidas, se o usuário r
     - Valores nunca podem ser negativos (validação no input)
     - Se o usuário alterar um campo já calculado, o cálculo deve se reajustar
     - Seguir padrões de DI (injectController), lifecycle hooks e estrutura de submodules existentes
-- 10. - Teste se mensagens apenas pra players em socketlib funciona, teste manual feito pelo usuario
-- 11. - Teste se um player calculando algo em everyone em socketlib funciona, teste manual feito pelo usuario
-- 12. - Teste se um player calculando algo em gm em socketlib funciona, teste manual feito pelo usuario
-- 13. - Teste para apenas um player em socketlib funciona, teste manual feito pelo usuario
-- 14. - Teste para a resposta vir de apenas um player no execin mesmo que seja mandado varios  em socketlib funciona, teste manual feito pelo usuario 
-- 15. - Teste evento que nao existe, erro se não em socketlib funciona, teste manual feito pelo usuario 
-- 16. - Teste eventoPlayer sempre envia pra gm mesmo que filtre, testar em chat implementation funciona, teste manual feito pelo usuario  
-- 17. - Teste player sempre envia pra gm mesmo que filtre, testar em socketlib implementation
-- 18. - Alternar a configuração de qual implementação usar a depender de uma configuração. Alterar no factory de mensageria.
-- 19. - Corrigir pro createDialog usar options em vez de depender da ordem dos parâmetros, criar uma interface pra options e documentar os campos.
-- 20. - o último voltar deveria reabrir a tela de escolha de npc, se isso for possível ser tratado nas classes bases e nao em quem usa o npcdialog.
-- 21. - corrigir bug que ao abrir duas telas de npc diferentes a primeira passa a se portar como a segunda, alguma variavel global esta sendo poluída, e e o título deve constar o nome do npc em questao para ajudar a nao se confundir.
+- 11. - Gere pesquisa pra que serve o módulo lib-wrapper do foundry vtt e como serveria para este projeto. Não altere nada, apenas conclua esta tarefa entregando um relatório
+- 12. - Implementar a integração com lib-wrapper conforme a TASK 11 se o relatório foi favorável e o usuário quiser
+- 13. - Teste se mensagens apenas pra players em socketlib funciona, teste manual feito pelo usuario
+- 14. - Teste se um player calculando algo em everyone em socketlib funciona, teste manual feito pelo usuario
+- 15. - Teste se um player calculando algo em gm em socketlib funciona, teste manual feito pelo usuario
+- 16. - Teste para apenas um player em socketlib funciona, teste manual feito pelo usuario
+- 17. - Teste para a resposta vir de apenas um player no execin mesmo que seja mandado varios  em socketlib funciona, teste manual feito pelo usuario 
+- 18. - Teste evento que nao existe, erro se não em socketlib funciona, teste manual feito pelo usuario 
+- 19. - Teste eventoPlayer sempre envia pra gm mesmo que filtre, testar em chat implementation funciona, teste manual feito pelo usuario  
+- 20. - Teste player sempre envia pra gm mesmo que filtre, testar em socketlib implementation
+- 21. - Alternar a configuração de qual implementação usar a depender de uma configuração. Alterar no factory de mensageria.
+- 22. - Corrigir pro createDialog usar options em vez de depender da ordem dos parâmetros, criar uma interface pra options e documentar os campos.
+- 23. - o último voltar deveria reabrir a tela de escolha de npc, se isso for possível ser tratado nas classes bases e nao em quem usa o npcdialog.
+- 24. - corrigir bug que ao abrir duas telas de npc diferentes a primeira passa a se portar como a segunda, alguma variavel global esta sendo poluída, e e o título deve constar o nome do npc em questao para ajudar a nao se confundir.
 
 ## Saída Esperada
 Definições claras de funcionalidades que orientem as TASKs do SCRUM_MASTER.
