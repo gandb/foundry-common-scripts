@@ -41,8 +41,8 @@ As tarefas abaixo devem ser feitas e a medida que forem pedidas, se o usuário r
      - Valores nunca podem ser negativos (validação no input)
      - Se o usuário alterar um campo já calculado, o cálculo deve se reajustar
      - Seguir padrões de DI (injectController), lifecycle hooks e estrutura de submodules existentes
-- 10. - Gere pesquisa pra que serve o módulo lib-wrapper do foundry vtt e como serveria para este projeto. Não altere nada, apenas conclua esta tarefa entregando um relatório
-- 11. - Implementar a integração com lib-wrapper conforme a TASK 11 se o relatório foi favorável e o usuário quiser
+- 10. ✅ - Gere pesquisa pra que serve o módulo lib-wrapper do foundry vtt e como serveria para este projeto. Não altere nada, apenas conclua esta tarefa entregando um relatório
+- 11. ✅ - Implementar a integração com lib-wrapper conforme a TASK 11 se o relatório foi favorável e o usuário quiser (não necessário - relatório desfavorável)
 - 12. - Teste se mensagens apenas pra players em socketlib funciona, teste manual feito pelo usuario
 - 13. - Teste se um player calculando algo em everyone em socketlib funciona, teste manual feito pelo usuario
 - 14. - Teste se um player calculando algo em gm em socketlib funciona, teste manual feito pelo usuario
