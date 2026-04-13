@@ -33,6 +33,11 @@ Documentar no README.md todas as funcionalidades novas e alterações e nos arqu
    - Funcionalidades novas
    - Alterações de funcionalidades existentes
    - Novas variáveis de configuração
+   - Stack usada no projeto (verificar/incluir seção "Stack e Versões"):
+     - Versão do OpenCode
+     - Versão do Node
+     - Versão do npm
+     - Versão do TypeScript (se estiver no package.json, incluir seção se não estiver)
 3. Documentar nos novos arquivos TypeScript ou JavaScript (`*.mjs`):
    - Como funciona
    - Pré requisitos
