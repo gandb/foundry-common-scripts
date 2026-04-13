@@ -35,7 +35,7 @@ As tarefas abaixo devem ser feitas e a medida que forem pedidas, se o usuário r
 - 6. ✅ - Reescrever README.md para refletir o projeto TypeScript atual
 - 7. ✅ - Atualizar todos os agentes para priorizar TypeScript
 - 8. ✅ - Atualizar skill readme-sync-enforcer para TypeScript
-- 9. Cálculo de movimento em voo (Flight Movement Calculator)
+- 9. ✅ - Cálculo de movimento em voo (Flight Movement Calculator)
   - **Descrição:** Criar um submodule seguindo o padrão do NPC (botão que abre um formulário). O formulário terá 3 campos: movimento no eixo Y (vertical), movimento no eixo X (horizontal) e movimento total (hipotenusa). O usuário preenche 2 dos 3 campos e o terceiro é calculado automaticamente pelo teorema de Pitágoras (a² + b² = c²). Todos os valores devem ser >= 0 (nunca negativos). Baseado nas regras do D&D 5e onde o personagem tem um movimento fixo em pés (feet) ao voar.
   - **Critérios de aceite:**
     - Botão visível na interface (seguindo padrão do submodule NPC)

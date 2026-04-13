@@ -165,6 +165,7 @@ declare interface FoundryWindow extends Window {
         NPC:any,
             NPCDialog:any,
             DialogUtils:any,
+            FlightMovement:any,
             ModuleBase:any,
             SubModuleBase:any,
             injectController:any, 

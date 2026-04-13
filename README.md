@@ -11,7 +11,7 @@
 
 Common Scripts for Foundry VTT D&D 5e - Modulo TypeScript com submodules, sockets e utilitarios para o Foundry VTT.
 
-- **Versao:** 1.11.58
+- **Versao:** 1.11.60
 - **Autor:** Edson Vicente Carli Junior
 - **Licenca:** MIT
 - **Linguagem primaria:** TypeScript
@@ -27,6 +27,7 @@ scripts/
 ├── config.json                      # Configuracao de logging (prefix, level)
 ├── package.json                     # Dependencias e scripts npm
 ├── tsconfig.json                    # Configuracao TypeScript (ES2022, strict)
+├── vitest.config.ts                 # Configuracao de testes Vitest
 ├── vite.config.ts                   # Build Vite (IIFE, terser, dts)
 ├── styles/
 │   └── module.css                   # Estilos do modulo (hero points, socket, NPC)
@@ -53,6 +54,7 @@ scripts/
     │   ├── dialog-utils/            # Fabrica de dialogos Foundry
     │   ├── hero-points/             # Sistema de Hero Points (substitui Honor)
     │   ├── hide-unindentify/        # Esconde UI de identificacao de itens
+    │   ├── flight-movement/         # Calculadora de movimento em voo (Pitagoras)
     │   ├── playertools/             # Ferramentas de jogador (placeholder)
     │   └── region-utils/            # Toggle de visibilidade de regioes
     └── sockets/
@@ -75,7 +77,7 @@ scripts/
 |---------|-----------|
 | `npm run build` | Executa `build.mjs` (incrementa versao) + `tsc` (compila TS) + `vite build` (bundle IIFE) |
 | `npm run prepublishOnly` | Alias para `npm run build` |
-| `npm test` | Placeholder (sem testes configurados ainda) |
+| `npm test` | Executa testes unitarios via Vitest (`npx vitest run`) |
 
 ### Processo de build
 
@@ -99,6 +101,7 @@ scripts/
 | `vite` | ^7.3.0 | Bundler (dev) |
 | `vite-plugin-dts` | ^4.5.4 | Geracao de `.d.ts` (dev) |
 | `terser` | ^5.46.1 | Minificador JS (dev) |
+| `vitest` | ^4.1.4 | Framework de testes unitarios (dev) |
 
 ---
 
@@ -142,7 +145,7 @@ Configuracao de logging carregada em runtime pelo `CommonModule`:
 
 Ponto de entrada principal do runtime:
 - Cria instancia de `CommonModule`
-- Registra globais em `window.TaulukkoCommon`: NPC, NPCDialog, DialogUtils, ModuleBase, SubModuleBase, LogGenericImpl, injectController, Level
+- Registra globais em `window.TaulukkoCommon`: NPC, NPCDialog, DialogUtils, FlightMovement, ModuleBase, SubModuleBase, LogGenericImpl, injectController, Level
 - Busca `config.json` para configuracao de log
 - Registra singletons DI: `"FoundryDocument"`, `"CommonModule"`, `"CommonLogguer"`
 - Chama `commonModule.init()`
@@ -274,6 +277,47 @@ Toggle de visibilidade de regioes:
 
 ---
 
+### Flight Movement (`flight-movement/`) - FlightMovement (SubModuleBase)
+
+Calculadora de movimento em voo baseada no Teorema de Pitagoras (D&D 5e).
+
+Adiciona um botao em **Token Controls** visivel para **todos os jogadores** (nao requer GM). Ao clicar, abre um dialogo com 3 campos numericos:
+
+- **Eixo X** - Movimento horizontal (feet)
+- **Eixo Y** - Movimento vertical (feet)
+- **Hipotenusa** - Movimento total em voo (feet)
+
+O usuario preenche 2 dos 3 campos e clica "Calcular". O terceiro campo e calculado automaticamente via `a² + b² = c²`. Todos os valores devem ser >= 0.
+
+#### Arquivos
+
+| Arquivo | Descricao |
+|---------|-----------|
+| `flight-movement/flight-movement.ts` | Classe `FlightMovement` - hook `getSceneControlButtons`, botao e dialogo |
+| `flight-movement/flight-movement-calc.ts` | Funcoes puras: `calcHypotenuse(x, y)` e `calcCathetus(hypotenuse, otherCathetus)` |
+| `flight-movement/index.ts` | Barrel export |
+
+#### Funcoes de calculo (`flight-movement-calc.ts`)
+
+| Funcao | Parametros | Retorno |
+|--------|-----------|---------|
+| `calcHypotenuse(x, y)` | Catetos X e Y (>= 0) | Hipotenusa arredondada a 2 casas decimais |
+| `calcCathetus(hypotenuse, otherCathetus)` | Hipotenusa e cateto conhecido (>= 0) | Cateto calculado arredondado a 2 casas decimais |
+
+Valores negativos retornam 0. Hipotenusa menor que cateto retorna 0 (triangulo impossivel).
+
+#### Testes
+
+20 testes unitarios em `src/tests/submodules/flight-movement/flight-movement-calc.test.ts` cobrindo:
+- Triangulos pitagoricos classicos (3-4-5, 5-12-13)
+- Valores zero
+- Valores negativos
+- Decimais e arredondamento
+- Triangulo impossivel (hipotenusa < cateto)
+- Valores tipicos de D&D 5e (30ft, 60ft)
+
+---
+
 ## Sockets (`src/sockets/`)
 
 ### `common-socket.ts` - Interface Socket
@@ -324,6 +368,7 @@ O bundle IIFE expoe dois globais no `window`:
 | `NPC` | Classe abstrata NPC |
 | `NPCDialog` | Instancia NPCDialog |
 | `DialogUtils` | Instancia DialogUtils |
+| `FlightMovement` | Instancia FlightMovement |
 | `ModuleBase` | Classe abstrata ModuleBase |
 | `SubModuleBase` | Classe abstrata SubModuleBase |
 | `LogGenericImpl` | Implementacao de log (taulukko-commons) |
