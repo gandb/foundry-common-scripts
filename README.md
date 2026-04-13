@@ -19,6 +19,17 @@ Common Scripts for Foundry VTT D&D 5e - Modulo TypeScript com submodules, socket
 
 ---
 
+## Stack e Versões
+
+| Ferramenta | Versão |
+|------------|--------|
+| OpenCode | 1.4.3 |
+| Node | v22.18.0 |
+| npm | 10.9.3 |
+| TypeScript | ^5.9.2 |
+
+---
+
 ## Estrutura do Projeto
 
 ```

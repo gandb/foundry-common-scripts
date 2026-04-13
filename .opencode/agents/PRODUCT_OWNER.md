@@ -44,7 +44,7 @@ As tarefas abaixo devem ser feitas e a medida que forem pedidas, se o usuário r
 - 10. ✅ - Gere pesquisa pra que serve o módulo lib-wrapper do foundry vtt e como serveria para este projeto. Não altere nada, apenas conclua esta tarefa entregando um relatório
 - 11. ✅ - Implementar a integração com lib-wrapper conforme a TASK 11 se o relatório foi favorável e o usuário quiser (não necessário - relatório desfavorável)
 - 12. ✅ - Checar como é usado as funcionalidades deste modulo no modulo ../Foundry/Data/modules/forgotten-realms/scripts e colocar no readme.md deste projeto a documentacao de como usar com exemplos, principalmente pra parte de npcs
-- 13. - ⏳ Documentar a stack no README.md
+- 13. ✅ - Documentar a stack no README.md
    - **Descrição:** Adicionar seção "Stack e Versões" no README.md com: Versão do OpenCode (1.4.3), Node (v22.18.0), npm (10.9.3), TypeScript (^5.9.2 - presente no package.json). O DOCUMENTATION_WRITER foi atualizado para incluir esta documentação automaticamente em futuras alterações.
 - 14. - Teste se mensagens apenas pra players em socketlib funciona, teste manual feito pelo usuario
 - 15. - Teste se um player calculando algo em everyone em socketlib funciona, teste manual feito pelo usuario
