@@ -45,7 +45,7 @@ export class FlightMovement extends SubModuleBase {
     controls.tokens.tools["flightMovementButton"] = {
       name: "flightMovementButton",
       title: "Calculadora de Voo",
-      icon: "fa-solid fa-plane",
+      icon: "fa-solid fa-dove",
       button: true,
       toggle: false,
       onClick: () => {
