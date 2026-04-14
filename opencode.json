@@ -131,6 +131,9 @@
   "watcher": {
     "ignore": ["node_modules/**", "dist/**", ".git/**", "bkp/**"]
   },
+  "skills": {
+    "path": ".opencode/skills"
+  },
   "instructions": [".opencode/CONSTITUTION.md"],
   "formatter": {
     "prettier": {

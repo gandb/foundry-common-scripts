@@ -29,7 +29,10 @@ Documentar no README.md todas as funcionalidades novas e alterações e nos arqu
 
 ## Fluxo de Trabalho
 1. Receber código aprovado do CODE_REVIEWER
-2. Documentar no README.md:
+2. Validar documentação usando as skills disponíveis:
+   - Usar skill `changelog-generator` para verificar se o changelog está correto
+   - Usar skill `readme-sync-enforcer` para verificar se o README está sincronizado
+3. Documentar no README.md:
    - Funcionalidades novas
    - Alterações de funcionalidades existentes
    - Novas variáveis de configuração
