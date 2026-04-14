@@ -1,7 +1,8 @@
 .npc-portrait-app {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border: 2px solid #0f3460;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+  background: var(--color-bg-dark);
+  border: 1px solid var(--color-border-dark);
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
 }
 
 .npc-portrait-app .window-title {
@@ -12,49 +13,94 @@
 
 .npc-portrait-container {
   display: flex;
-  height: 100%;
-  padding: 20px;
-  gap: 30px;
-  position: relative;
-  align-items: center;
+  padding: 1rem;
+  gap: 1.5rem;
+  align-items: flex-start;
+  max-height: 400px;
 }
 
 .npc-portrait-image {
-  flex: 0 0 40%;
+  flex: 0 0 200px;
+  max-width: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .npc-portrait-image img {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-  object-fit: contain;
+  width: 150px !important;
+  height: 150px !important;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  border-radius: calc(var(--border-radius) / 2);
+  border: 2px solid var(--color-border-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
 }
 
 .npc-portrait-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding-right: 40px;
+  justify-content: flex-start;
+  padding: 0.5rem;
+  overflow-y: auto;
+  max-height: 350px;
 }
 
 .npc-name {
-  color: #e94560;
-  font-size: 28px;
-  margin-bottom: 15px;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  color: var(--color-text-dark-primary);
+  font-size: var(--font-size-lg);
+  margin: 0 0 0.75rem 0;
+  font-family: var(--font-primary);
+  font-weight: bold;
 }
 
 .npc-dialog-text {
-  color: #111111;
-  font-size: 16px;
-  line-height: 1.6;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  color: var(--color-text-light-primary);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: calc(var(--border-radius) / 2);
   font-style: italic;
+  margin: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .npc-portrait-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    max-height: none;
+  }
+  
+  .npc-portrait-image {
+    flex: 0 0 auto;
+    max-width: 150px;
+  }
+  
+  .npc-portrait-image img {
+    width: 120px !important;
+    height: 120px !important;
+    max-width: 120px !important;
+    max-height: 120px !important;
+  }
+  
+  .npc-portrait-content {
+    padding: 0;
+    max-height: none;
+  }
+  
+  .npc-name {
+    font-size: var(--font-size-md);
+  }
+  
+  .npc-dialog-text {
+    font-size: var(--font-size-sm);
+  }
 }
 
  
