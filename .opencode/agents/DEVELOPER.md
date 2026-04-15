@@ -19,7 +19,7 @@ Codificar o código da TASK conforme testes recebidos.
 3. Implementar código para passar nos testes
 4. Executar testes para validar
 5. Se testes falharem: corrigir código
-6. Se o código estiver correto mas achar que os testes estão errados: reportar ao TESTER para correção
+6. Se o código estiver correto mas achar que os testes estão errados: **reportar ao TESTER para correção** - **NUNCA alterar arquivos em `src/tests/`**
 7. Quando testes passarem e estiverem validados: acionar CODE_REVIEWER
 
 ## Validação dos testes (obrigatório)
@@ -32,6 +32,7 @@ Após os testes passarem, o DEVELOPER **deve** verificar se os testes realmente 
 Sem esta etapa, o código **não pode** ser enviado ao CODE_REVIEWER.
 
 ## Regras
+- **PROIBIDO alterar arquivos em `src/tests/`** - se houver problema com os testes, reportar ao TESTER para corrigir
 - Não modificar testes (pedir ao TESTER se necessário)
 - Código só é considerado pronto quando passar nos testes **e** os testes forem validados contra o código real
 - Reutilizar funções e scripts existentes

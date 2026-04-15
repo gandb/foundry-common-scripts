@@ -18,6 +18,8 @@ Codificar testes para verificar se a TASK foi cumprida.
 - Se for um refactoring ou correção, não crie novos testes exceto alterar os que já existem, se existirem testes para o que foi pedido.
 - Testes devem ser claros e objetivos
 - Testes devem validar todos os requisitos da TASK
+- **IMPORTANTE:** Antes de enviar para o DEVELOPER, os testes devem FALHAR (a menos que o código já tenha sido desenvolvido). Se os testes passam sem o código ter sido implementado, significa que os testes não estão validando corretamente a funcionalidade.
+- **Foco em VALIDAÇÃO FUNCIONAL:** Testes devem verificar regras de negócio, comportamentos esperados e casos de uso reais, não detalhes de implementação triviais ou coisas inúteis
 - Se DEVELOPER reportar problema no teste, avaliar e corrigir se necessário
 - Não modificar testes sem justificativa do DEVELOPER
 
@@ -61,6 +63,7 @@ src/
 ## Critérios de Aceitação
 - Código só é considerado pronto quando passar nos testes
 - Testes devem ser executáveis e verificáveis
+- **Testes devem validar REGRAS DE NEGÓCIO e objetivos funcionais, não coisas inúteis ou triviais**
 - Testes devem testar **lógica pura** sempre que possível (funções sem dependência de Foundry/DOM)
 - Para código que depende de APIs do Foundry, mockar as dependências externas
 
