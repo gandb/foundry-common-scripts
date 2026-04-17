@@ -4,7 +4,9 @@
   "description": "Taulukko Common Scripts for Foundry dnd5ed",
   "main": "dist/taulukko-common-scripts-dnd5ed.iife.js",
   "scripts": {
-    "test": "vitest run",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "build": "node build.mjs && tsc && vite build",
     "vite-version": "vite --version",
     "prepublishOnly": "npm run build"
@@ -22,7 +24,10 @@
   "author": "Edson Vicente Carli Junior",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.3.0",
     "terser": "^5.46.1",
+    "ts-jest": "^29.4.9",
     "typescript": "^5.9.2",
     "vite": "^7.3.0",
     "vite-plugin-dts": "^4.5.4",

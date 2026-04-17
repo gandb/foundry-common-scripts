@@ -170,7 +170,7 @@ export class SocketLib extends SubModuleBase implements Socket {
           }
           return await callback(...data[0].data);
         }
-       
+ 
       }
       logguer.debug("Evento não é específico pra gm nem apenas para players");
       return await callback(...data);

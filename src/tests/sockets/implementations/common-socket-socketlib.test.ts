@@ -1,51 +1,50 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { SocketLib } from "../../../../sockets/implementations/common-socket-socketlib";
+import { SocketLib } from "../../../../src/sockets/implementations/common-socket-socketlib";
 
 // Mock global Foundry objects
-const mockGame = {
+const mockGame: any = {
   users: new Map(),
   user: { id: "gm1", isGM: true },
 };
 
-const mockSocketLib = {
-  registerModule: vi.fn(),
-  executeForEveryone: vi.fn(),
-  executeForUsers: vi.fn(),
-  executeAsGM: vi.fn(),
-  executeForOtherGMs: vi.fn(),
-  executeForOthers: vi.fn(),
-  register: vi.fn(),
+const mockSocketLib: any = {
+  registerModule: jest.fn(),
+  executeForEveryone: jest.fn(),
+  executeForUsers: jest.fn(),
+  executeAsGM: jest.fn(),
+  executeForOtherGMs: jest.fn(),
+  executeForOthers: jest.fn(),
+  register: jest.fn(),
 };
 
-global.game = mockGame;
-global.socketlib = { registerModule: vi.fn(() => mockSocketLib) };
-global.Hooks = {
-  once: vi.fn(),
-  callAll: vi.fn(),
+(global as any).game = mockGame;
+(global as any).socketlib = { registerModule: jest.fn(() => mockSocketLib) };
+(global as any).Hooks = {
+  once: jest.fn(),
+  callAll: jest.fn(),
 };
 
 // Mock injectController
-vi.mock("taulukko-commons", () => ({
-  Log: vi.fn(),
+jest.mock("taulukko-commons", () => ({
+  Log: jest.fn(),
   injectController: {
-    resolve: vi.fn(),
+    resolve: jest.fn(),
   },
 }));
 
-vi.mock("../../../../common-module", () => ({
-  CommonModule: vi.fn(),
+jest.mock("../../../../src/common-module", () => ({
+  CommonModule: jest.fn(),
 }));
 
 describe("SocketLib executeAsGM", () => {
   let socketLib: SocketLib;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     // Setup mock injectController resolves
     const { injectController } = require("taulukko-commons");
     injectController.resolve.mockImplementation((name: string) => {
       if (name === "CommonLogguer") {
-        return { debug: vi.fn(), error: vi.fn() };
+        return { debug: jest.fn(), error: jest.fn() };
       }
       if (name === "CommonModule") {
         return { name: "test-module" };
@@ -57,7 +56,7 @@ describe("SocketLib executeAsGM", () => {
     });
     // Mock game.modules.get
     mockGame.modules = {
-      get: vi.fn(() => ({ active: true })),
+      get: jest.fn(() => ({ active: true })),
     };
     socketLib = new SocketLib();
   });
@@ -76,7 +75,7 @@ describe("SocketLib executeAsGM", () => {
 
     // Mock socketlib.registerModule returns mock socket
     const socketInstance = {
-      executeForUsers: vi.fn(() => Promise.resolve()),
+      executeForUsers: jest.fn(() => Promise.resolve()),
     };
     global.socketlib.registerModule.mockReturnValue(socketInstance);
 
@@ -103,12 +102,12 @@ describe("SocketLib executeAsGM", () => {
     mockGame.user = { id: "gm1", isGM: true };
 
     const socketInstance = {
-      register: vi.fn(),
+      register: jest.fn(),
     };
     socketLib["_socketOriginal"] = socketInstance;
 
     // Register a callback
-    const callback = vi.fn();
+    const callback = jest.fn();
     await socketLib.register("testEvent", callback);
 
     // The registered wrapper should filter out GM when onlyPlayers flag present
@@ -128,11 +127,11 @@ describe("SocketLib executeAsGM", () => {
     mockGame.user = { id: "p1", isGM: false };
 
     const socketInstance = {
-      register: vi.fn(),
+      register: jest.fn(),
     };
     socketLib["_socketOriginal"] = socketInstance;
 
-    const callback = vi.fn(() => "result");
+    const callback = jest.fn(() => "result");
     await socketLib.register("testEvent", callback);
 
     const registeredHandler = socketInstance.register.mock.calls[0][1];
