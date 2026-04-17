@@ -24,7 +24,7 @@ Revisar código após aprovação nos testes.
 4. Se aderente: acionar DOCUMENTATION_WRITER
 
 ## Regras
-- Não aceitar código que viole diretrizes da CONSTITUTION.md
+- Não aceitar código que viole diretrizes da [../docs/CONSTITUTION.md](../docs/CONSTITUTION.md)
 
 ## Interações
 - **Entrada:** Código aprovado do DEVELOPER

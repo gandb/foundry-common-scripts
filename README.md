@@ -1,6 +1,6 @@
 
 # Specific for opencode: Before any action, read:
-- `.opencode/CONSTITUTION.md`
+- `./docs/CONSTITUTION.md`
 - `.opencode/USER.md`
 - Everything below `.opencode/`
 - Available skills at `.opencode/skills/` (loaded automatically on demand)

@@ -134,7 +134,7 @@
   "skills": {
     "path": ".opencode/skills"
   },
-  "instructions": [".opencode/CONSTITUTION.md"],
+  "instructions": ["./docs/CONSTITUTION.md"],
   "formatter": {
     "prettier": {
       "command": ["npx", "prettier", "--write", "$FILE"],
