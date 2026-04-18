@@ -1,6 +1,7 @@
 import { Log, injectController } from "taulukko-commons";
 import { ModuleBase } from "./common/module-base";
 import type { IGameContext, IGameSettings } from "./common/igame-context";
+import type { IFoundryAPI } from "./common/ifoundry-api"; // Caminho corrigido
 import { SubModuleBase } from "./submodules/sub-module-base";
 import { RegionUtils } from "./submodules/region-utils/region-utils";
 import { PlayersTools } from "./submodules/playertools/players-tool";
@@ -11,8 +12,6 @@ import { DummySocket } from "./sockets/implementations/common-socket-dummy";
 import { Socket } from "./sockets/common-socket";
 import { NPCDialog } from "./submodules";
 import { FlightMovement } from "./submodules/flight-movement/flight-movement";
-
-//import "./url-fix"; apenas na necessidade de corrigir
 
 const COMMON_REGISTERED_NAMES = {
   MODULE_VERSION: "common-assets-version",
@@ -79,6 +78,7 @@ export class CommonModule extends ModuleBase {
   protected async waitReady() {
     const logguer: Log = injectController.resolve("CommonLogguer");
     const commonModule: CommonModule = injectController.resolve("CommonModule");
+    const foundry: IFoundryAPI = injectController.resolve("FoundryAPI");
 
     const fiveMinutes = 5 * 60 * 1000;
     await commonModule.whaitFor(
@@ -91,17 +91,18 @@ export class CommonModule extends ModuleBase {
 
     logguer.debug("Módulo Common Assets waitReady finish with success.");
 
-    Hooks.callAll("onReadyCommonModule", {});
+    foundry.hooks.callAll("onReadyCommonModule", {});
   }
 
   protected async initHooks() {
     const commonModule: CommonModule = injectController.resolve("CommonModule");
+    const foundry: IFoundryAPI = injectController.resolve("FoundryAPI");
     commonModule.loadSubModules().then(() => {
       const logguer: Log = injectController.resolve("CommonLogguer");
       logguer.info("All submodules from common modules loaded with success");
     });
 
-    Hooks.once("init", async () => {
+    foundry.hooks.once("init", async () => {
       const commonModule: CommonModule =
         injectController.resolve("CommonModule");
       const logguer: Log = injectController.resolve("CommonLogguer");
@@ -110,7 +111,7 @@ export class CommonModule extends ModuleBase {
       await commonModule.addInitCommonAssetsChanges();
     });
 
-    Hooks.once("ready", async () => {
+    foundry.hooks.once("ready", async () => {
       const commonModule: CommonModule =
         injectController.resolve("CommonModule");
       const logguer: Log = injectController.resolve("CommonLogguer");

@@ -4,6 +4,7 @@ import { SubModuleBase } from "../../submodules/sub-module-base";
 import { Log, injectController } from "taulukko-commons";
 import { CommonModule } from "../../common-module";
 import type { IGameContext } from "../../common/igame-context";
+import type { IFoundryAPI } from "../../common/ifoundry-api"; // O caminho para este módulo estava incorreto.
 
 const CALLBACK_SYSTEM_CALLBACK: string = "common.socket.chatmessage.callback";
 const RETURN_CONTROL_NAME: string = "ChatSocketReturns";
@@ -26,15 +27,16 @@ export class ChatSocket extends SubModuleBase implements Socket {
   protected async initHooks() {
     const logguer: Log = injectController.resolve("CommonLogguer");
     const socket = injectController.resolve("Socket") as ChatSocket;
+    const foundry: IFoundryAPI = injectController.resolve("FoundryAPI");
     logguer.debug("CA: ChatSocket waiting for requirements modules...");
 
-    Hooks.once("onReadyCommonModule", async () => {
+    foundry.hooks.once("onReadyCommonModule", async () => {
       const logguer: Log = injectController.resolve("CommonLogguer");
       logguer.debug("Common Module ready in Chat Socket");
       socket.init();
     });
 
-    Hooks.on("createChatMessage", (message: any) => {
+    foundry.hooks.on("createChatMessage", (message: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
       const commonModule: CommonModule =
         injectController.resolve("CommonModule");
@@ -136,6 +138,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
     const logguer: Log = injectController.resolve("CommonLogguer");
     const commonModule: CommonModule = injectController.resolve("CommonModule");
     const socket = injectController.resolve("Socket") as ChatSocket;
+    const foundry: IFoundryAPI = injectController.resolve("FoundryAPI");
     const module = socket.gameContext.modules.get(commonModule.name);
     logguer.debug(`Common Socket initializing for ${commonModule.name}...`);
 
@@ -161,7 +164,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
       }
       returns.add(data.requestId, data.response);
     });
-    Hooks.callAll(CALLBACK_FUNCTION_EVENT_NAME, {});
+    foundry.hooks.callAll(CALLBACK_FUNCTION_EVENT_NAME, {});
   }
 
   private cleanupRealChatMessage() {
@@ -207,7 +210,8 @@ export class ChatSocket extends SubModuleBase implements Socket {
       payload,
     );
 
-    await ChatMessage.create({
+    const foundry: IFoundryAPI = injectController.resolve("FoundryAPI");
+    await foundry.createChatMessage({
       content: "Common Socket Event - Ignore this message",
       whisper,
       flags: {
