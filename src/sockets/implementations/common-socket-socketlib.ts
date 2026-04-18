@@ -1,7 +1,12 @@
 import { Log, injectController } from "taulukko-commons";
-import { Socket, CALLBACK_FUNCTION_EVENT_NAME } from "../common-socket";
+import {
+  Socket,
+  CALLBACK_FUNCTION_EVENT_NAME,
+  RETURN_CONTROL_NAME,
+} from "../common-socket";
 import { CommonModule } from "../../common-module";
 import { SubModuleBase } from "../../submodules/sub-module-base";
+import { CacheReturnControl } from "../../common/cache-returns-control";
 import type { IGameContext } from "../../common/igame-context";
 
 //socketlib Implementation, documentation: https://github.com/farling42/foundryvtt-socketlib#api
@@ -11,6 +16,10 @@ export class SocketLib extends SubModuleBase implements Socket {
 
   private get gameContext(): IGameContext {
     return injectController.resolve("GameContext") as IGameContext;
+  }
+
+  private get socketOriginal(): any {
+    return this._socketOriginal;
   }
 
   private getNonGMUserIds(): string[] {
@@ -79,11 +88,16 @@ export class SocketLib extends SubModuleBase implements Socket {
       throw new Error("socket not loaded");
     }
 
+    // Armazena a instância original para uso local
+    const returnsControl = new CacheReturnControl<string, any>();
+    injectController.registerByName(RETURN_CONTROL_NAME, returnsControl);
+
     Hooks.callAll(CALLBACK_FUNCTION_EVENT_NAME, {});
   }
 
   public async executeForAll(eventName: string, ...data: any): Promise<any> {
     const logguer: Log = injectController.resolve("CommonLogguer");
+    const socketLib: SocketLib = injectController.resolve("Socket");
     logguer.debug(
       "Socketlib executeForAll for event:",
       eventName,
@@ -92,17 +106,18 @@ export class SocketLib extends SubModuleBase implements Socket {
       "...parameters",
       ...data,
     );
-    return this._socketOriginal.executeForEveryone(eventName, ...data);
+    return socketLib.socketOriginal.executeForEveryone(eventName, ...data);
   }
 
   public async executeAsGM(eventName: string, ...data: any): Promise<any> {
     const logguer: Log = injectController.resolve("CommonLogguer");
+    const socketLib: SocketLib = injectController.resolve("Socket");
     logguer.debug("Socketlib executeAsGM start");
 
     if (
-      !this.gameContext.user ||
-      !this.gameContext.users ||
-      !this.gameContext.user.isGM
+      !socketLib.gameContext.user ||
+      !socketLib.gameContext.users ||
+      !socketLib.gameContext.user.isGM
     ) {
       logguer.debug("Socketlib executeAsGM fail validation");
       throw new Error("Isnt ready to send to gm or you isnt GM");
@@ -110,14 +125,14 @@ export class SocketLib extends SubModuleBase implements Socket {
 
     logguer.debug("Socketlib executeAsGM after validation");
 
-    const nonGMUserIds = this.getNonGMUserIds();
+    const nonGMUserIds = socketLib.getNonGMUserIds();
     if (nonGMUserIds.length === 0) {
       logguer.debug("Socketlib executeAsGM: no non-GM users found, skipping");
       return Promise.resolve();
     }
 
     const payload = { data, onlyPlayers: true };
-    const ret: Promise<any> = this._socketOriginal.executeForUsers(
+    const ret: Promise<any> = socketLib.socketOriginal.executeForUsers(
       eventName,
       nonGMUserIds,
       payload,
@@ -134,8 +149,9 @@ export class SocketLib extends SubModuleBase implements Socket {
   }
 
   public async executeToGM(eventName: string, ...data: any): Promise<any> {
+    const socketLib: SocketLib = injectController.resolve("Socket");
     const newData = { data, toGM: true };
-    return this._socketOriginal.executeForEveryone(eventName, newData);
+    return socketLib.socketOriginal.executeForEveryone(eventName, newData);
   }
 
   public async executeIn(
@@ -144,6 +160,7 @@ export class SocketLib extends SubModuleBase implements Socket {
     ...data: any
   ): Promise<any> {
     const logguer: Log = injectController.resolve("CommonLogguer");
+    const socketLib: SocketLib = injectController.resolve("Socket");
     logguer.debug(
       "Socketlib executeIn for event:",
       eventName,
@@ -152,7 +169,7 @@ export class SocketLib extends SubModuleBase implements Socket {
       "...parameters",
       ...data,
     );
-    return this._socketOriginal.executeForUsers(eventName, users, ...data);
+    return socketLib.socketOriginal.executeForUsers(eventName, users, ...data);
   }
 
   public isReadyToSendToGM(): boolean {
@@ -161,8 +178,9 @@ export class SocketLib extends SubModuleBase implements Socket {
 
   public async register(eventName: string, callback: any): Promise<void> {
     const logguer: Log = injectController.resolve("CommonLogguer");
+    const socketLib: SocketLib = injectController.resolve("Socket");
     logguer.debug("start register,eventName:", eventName);
-    this._socketOriginal.register(eventName, async (...data: any) => {
+    socketLib._socketOriginal.register(eventName, async (...data: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
       logguer.debug(
         "Socketlib new event:",
@@ -175,7 +193,7 @@ export class SocketLib extends SubModuleBase implements Socket {
       if (Array.isArray(data) && data.length == 1) {
         if (data[0].toGM) {
           logguer.debug("Evento pra gm,event:", eventName);
-          if (!this.gameContext.user?.isGM) {
+          if (!socketLib.gameContext.user?.isGM) {
             logguer.debug("Evento pra gm, descartado pois o usuário não é GM");
             return;
           }
@@ -186,8 +204,5 @@ export class SocketLib extends SubModuleBase implements Socket {
       return await callback(...data);
     });
   }
-
-  public get originalSocket(): any {
-    return this._socketOriginal;
-  }
+ 
 }

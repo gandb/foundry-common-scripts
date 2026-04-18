@@ -6,11 +6,10 @@ import { CommonModule } from "../../common-module";
 import type { IGameContext } from "../../common/igame-context";
 
 const CALLBACK_SYSTEM_CALLBACK: string = "common.socket.chatmessage.callback";
+const RETURN_CONTROL_NAME: string = "ChatSocketReturns";
 
-//socketlib Implementation
 export class ChatSocket extends SubModuleBase implements Socket {
   readonly #callbacks: Map<string, any> = new Map();
-  readonly #returns: CacheReturnControl<string, any> = new CacheReturnControl();
 
   private get gameContext(): IGameContext {
     return injectController.resolve("GameContext") as IGameContext;
@@ -30,21 +29,18 @@ export class ChatSocket extends SubModuleBase implements Socket {
       const logguer: Log = injectController.resolve("CommonLogguer");
       const commonModule: CommonModule =
         injectController.resolve("CommonModule");
+
       try {
         logguer.debug("createChatMessage recebido...");
         this.cleanupRealChatMessage();
-        setTimeout(this.cleanupRealChatMessage, 500);
-        // Verifica se é um evento nosso
-        const eventReceived: string = message.flags?.[commonModule.name]?.type;
+        setTimeout(() => this.cleanupRealChatMessage(), 500);
 
-        if (!eventReceived) {
-          return;
-        }
+        const eventReceived: string = message.flags?.[commonModule.name]?.type;
+        if (!eventReceived) return;
 
         const payload: PayloadEvent = message.flags[
           commonModule.name
         ] as PayloadEvent;
-
         const broadcast = payload.users.length == 0;
 
         if (!broadcast) {
@@ -57,16 +53,13 @@ export class ChatSocket extends SubModuleBase implements Socket {
               this.gameContext.user?.id,
               ",payload:",
               payload,
-              ", users:",
-              payload.users,
-              ",usersFiltered:",
-              payload.users.filter((id) => this.gameContext.user?.id == id),
             );
             return;
           }
         }
 
         logguer.debug("[Common Socket Chat Message] Evento recebido:", payload);
+
         if (this.gameContext.user?.isGM && payload.onlyPlayers) {
           logguer.debug(
             "[|Common Socket Chat Message] Evento recebido para players e o receptor é GM, evento descartado :",
@@ -86,27 +79,10 @@ export class ChatSocket extends SubModuleBase implements Socket {
           logguer.debug(
             "[|Common Socket Chat Message] Evento recebido não registrado :",
             payload.type,
-            " para o payload : ",
-            payload,
           );
           return;
         }
-        logguer.debug(
-          "[|Common Socket Chat Message] Chamando callback com dados :",
-          payload,
-        );
 
-        if (typeof callback === "function") {
-          logguer.debug(
-            "[|Common Socket Chat Message] callback é uma função como esperado :",
-            callback,
-          );
-        } else {
-          logguer.debug(
-            "[|Common Socket Chat Message] algo deu erroad, callback não é uma função como esperado :",
-            callback,
-          );
-        }
         if (payload.type == CALLBACK_SYSTEM_CALLBACK) {
           logguer.debug(
             "[|Common Socket Chat Message] Retorno do sistema :",
@@ -132,6 +108,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
           "createChatMessage, devolvendo pra quem pediu o retorno :",
           ret,
         );
+
         this.sendMessage(
           CALLBACK_SYSTEM_CALLBACK,
           { response: ret, originalRequestId: payload.requestId },
@@ -139,12 +116,12 @@ export class ChatSocket extends SubModuleBase implements Socket {
           false,
           [payload.senderId],
         );
-        return;
       } catch (e) {
         logguer.error("[NPC Portrait] Erro ao processar evento:", e);
       }
     });
   }
+
   protected async waitReady() {
     const logguer: Log = injectController.resolve("CommonLogguer");
     const commonModule: CommonModule = injectController.resolve("CommonModule");
@@ -153,28 +130,26 @@ export class ChatSocket extends SubModuleBase implements Socket {
 
     if (!module?.active) {
       logguer.error(
-        `Chat Socket | Someone tried to register module '${commonModule.name}', but no module with that name is active. As a result the registration request has been ignored.`,
+        `Chat Socket | Someone tried to register module '${commonModule.name}', but no module with that name is active.`,
       );
       return undefined;
     }
 
     this.register(CALLBACK_SYSTEM_CALLBACK, (data: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
-      const socket: ChatSocket = injectController.resolve("Socket");
       logguer.debug(
         "ChatSocket adicionando o retorno na pilha de retorno : ",
         data,
       );
-      const anotherUserAnswerBefore: boolean = socket.#returns.has(
-        data.requestId,
-      );
-      if (anotherUserAnswerBefore) {
+      const returns = injectController.resolve(
+        RETURN_CONTROL_NAME,
+      ) as CacheReturnControl<string, any>;
+      if (returns.has(data.requestId)) {
         logguer.debug("CA: Já foi respondido antes : ", data);
         return;
       }
-      socket.#returns.add(data.requestId, data.response);
+      returns.add(data.requestId, data.response);
     });
-
     Hooks.callAll(CALLBACK_FUNCTION_EVENT_NAME, {});
   }
 
@@ -183,13 +158,11 @@ export class ChatSocket extends SubModuleBase implements Socket {
     logguer.debug("[Common Socket Chat Message] cleanupRealChatMessage ");
     let elements = document.querySelectorAll(
       ".chat-message.message:not(.socket-chat-event)",
-    ); // not work the negation
-    logguer.debug(
-      "[Common Socket Chat Message] cleanupRealChatMessage elements size ",
-      elements.length,
     );
     elements.forEach((element) => {
-      if (element.innerHTML.indexOf("Common Socket Event") >= 0) {
+      if (
+        (element as HTMLElement).innerHTML.indexOf("Common Socket Event") >= 0
+      ) {
         element.classList.add("socket-chat-event");
       }
     });
@@ -203,11 +176,8 @@ export class ChatSocket extends SubModuleBase implements Socket {
     userids: Array<string> | undefined = undefined,
   ) {
     const logguer: Log = injectController.resolve("CommonLogguer");
-
     const whisper = Array.from(this.gameContext.users?.values() || []);
-
     const requestId: string = Math.round(Math.random() * 1000000).toString();
-
     const users = userids ?? [];
 
     const payload: PayloadEvent = {
@@ -223,72 +193,39 @@ export class ChatSocket extends SubModuleBase implements Socket {
     logguer.debug(
       "[Common Socket Chat] Enviando mensagem com payload :",
       payload,
-      ",time:",
-      new Date(),
     );
 
     await ChatMessage.create({
-      content: "Common Socket Event - Ignore this message", // Invisível pra maioria
+      content: "Common Socket Event - Ignore this message",
       whisper,
       flags: {
         "common-assets": payload,
       },
     });
 
-    if (eventName == CALLBACK_SYSTEM_CALLBACK) {
-      logguer.debug(
-        "[Common Socket Chat] Ignorando callback pois é mensagem de sistema :",
-        payload,
-      );
-      return;
-    }
+    if (eventName == CALLBACK_SYSTEM_CALLBACK) return;
 
     logguer.debug(
       "[Common Socket Chat] Aguardando retorno do callback :",
       payload,
-      ",time:",
-      new Date(),
     );
 
     await this.whaitFor(
       () => {
-        const logguer: Log = injectController.resolve("CommonLogguer");
-        if (this.#returns.has(requestId)) {
-          logguer.debug(
-            "Encontrado o resultado para requestId:",
-            requestId,
-            " , returns:",
-            this.#returns,
-          );
-          return true;
-        }
-        logguer.debug(
-          "Ainda não encontrado o resultado para requestId:",
-          requestId,
-          " , returns:",
-          this.#returns,
-        );
-
+        const returns = injectController.resolve(
+          RETURN_CONTROL_NAME,
+        ) as CacheReturnControl<string, any>;
+        if (returns.has(requestId)) return true;
         return false;
       },
       60000,
       1000,
     );
 
-    if (!this.#returns.has(requestId)) {
-      logguer.debug(
-        "[Common Socket Chat] Timeout ao processar evento :",
-        payload,
-        ",callbacks:",
-        this.#returns,
-        ",time:",
-        new Date(),
-      );
-      return undefined;
-    }
-    const ret = this.#returns.get(requestId);
-
-    return ret;
+    const returns = injectController.resolve(
+      RETURN_CONTROL_NAME,
+    ) as CacheReturnControl<string, any>;
+    return returns.get(requestId);
   }
 
   public async executeToGM(eventName: string, ...data: any): Promise<any> {
@@ -315,12 +252,11 @@ export class ChatSocket extends SubModuleBase implements Socket {
     ) {
       throw new Error("Isnt ready to send to gm or you arent GM");
     }
-
     return this.sendMessage(eventName, data, true, false);
   }
 
   public isReadyToSendToGM(): boolean {
-    return (this.gameContext.user as any) || (this.gameContext.users as any);
+    return this.gameContext.user?.isGM === true;
   }
 
   public async register(eventName: string, callback: any): Promise<void> {
@@ -342,4 +278,8 @@ interface PayloadEvent {
   data: any;
 }
 
-export const chatSocketImplementation: Socket = new ChatSocket();
+const chatSocketInstance = new ChatSocket();
+const returnsControl = new CacheReturnControl<string, any>();
+injectController.registerByName(RETURN_CONTROL_NAME, returnsControl);
+
+export const chatSocketImplementation: Socket = chatSocketInstance;
