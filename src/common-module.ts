@@ -26,6 +26,14 @@ export class CommonModule extends ModuleBase {
   #debug: boolean = true;
   #hooksRequiredLoaded: boolean = false;
 
+  public get hooksRequiredLoaded(): boolean {
+    return this.#hooksRequiredLoaded;
+  }
+
+  public set hooksRequiredLoaded(val: boolean) {
+    this.#hooksRequiredLoaded = val;
+  }
+
   public async addInitCommonAssetsChanges() {
     const logguer: Log = injectController.resolve("CommonLogguer");
     const commonModule: CommonModule = injectController.resolve("CommonModule");
@@ -35,7 +43,7 @@ export class CommonModule extends ModuleBase {
       commonModule,
     );
 
-    this.registerSetting(COMMON_REGISTERED_NAMES.MODULE_VERSION);
+    commonModule.registerSetting(COMMON_REGISTERED_NAMES.MODULE_VERSION);
   }
 
   public async init() {
@@ -70,10 +78,14 @@ export class CommonModule extends ModuleBase {
 
   protected async waitReady() {
     const logguer: Log = injectController.resolve("CommonLogguer");
+    const commonModule: CommonModule = injectController.resolve("CommonModule");
 
     const fiveMinutes = 5 * 60 * 1000;
-    await this.whaitFor(() => this.#hooksRequiredLoaded, fiveMinutes);
-    if (!this.#hooksRequiredLoaded) {
+    await commonModule.whaitFor(
+      () => commonModule.hooksRequiredLoaded,
+      fiveMinutes,
+    );
+    if (!commonModule.hooksRequiredLoaded) {
       throw new Error("Timeout waiting for hooks");
     }
 
@@ -83,7 +95,8 @@ export class CommonModule extends ModuleBase {
   }
 
   protected async initHooks() {
-    this.loadSubModules().then(() => {
+    const commonModule: CommonModule = injectController.resolve("CommonModule");
+    commonModule.loadSubModules().then(() => {
       const logguer: Log = injectController.resolve("CommonLogguer");
       logguer.info("All submodules from common modules loaded with success");
     });
@@ -130,7 +143,7 @@ export class CommonModule extends ModuleBase {
       //debug only
       //socketTest();
 
-      this.#hooksRequiredLoaded = true;
+      commonModule.hooksRequiredLoaded = true;
 
       if (instalatedVersion === commonModule.version) {
         logguer.info(
@@ -196,30 +209,31 @@ export class CommonModule extends ModuleBase {
 
   public async registerSetting(key: string, type: any = String) {
     const commonModule: CommonModule = injectController.resolve("CommonModule");
-    await this.gameSettings.register(commonModule.name, key, { type });
+    await commonModule.gameSettings.register(commonModule.name, key, { type });
   }
 
   public async setSettings(key: string, value: any) {
     const commonModule: CommonModule = injectController.resolve("CommonModule");
-    await this.gameSettings.set(commonModule.name, key, value);
+    await commonModule.gameSettings.set(commonModule.name, key, value);
   }
 
   public async getSettings(key: string) {
     const commonModule: CommonModule = injectController.resolve("CommonModule");
-    return await this.gameSettings.get(commonModule.name, key);
+    return await commonModule.gameSettings.get(commonModule.name, key);
   }
 
   public async updateVersions(
     instalatedVersion: string,
     nextVersionUpdated: string,
   ) {
+    const commonModule: CommonModule = injectController.resolve("CommonModule");
     if (instalatedVersion !== nextVersionUpdated) {
-      this.warnAboutUpdate(instalatedVersion, nextVersionUpdated);
+      commonModule.warnAboutUpdate(instalatedVersion, nextVersionUpdated);
 
       //code... for old versions
 
       instalatedVersion = nextVersionUpdated;
-      await this.setSettings(
+      await commonModule.setSettings(
         COMMON_REGISTERED_NAMES.MODULE_VERSION,
         instalatedVersion,
       );

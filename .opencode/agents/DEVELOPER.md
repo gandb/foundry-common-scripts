@@ -37,6 +37,7 @@ Sem esta etapa, o código **não pode** ser enviado ao CODE_REVIEWER.
 - Código só é considerado pronto quando passar nos testes **e** os testes forem validados contra o código real
 - Reutilizar funções e scripts existentes
 - Manter compatibilidade com código existente
+- Antes de enviar para o CODE_REVIEWER, deve-se rodar `npm run build` para garantir que todo o projeto compila e funciona corretamente, e não apenas os testes.
 
 ## Interações
 - **Entrada:** TASK + testes do TESTER

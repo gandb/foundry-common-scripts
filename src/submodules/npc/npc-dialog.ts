@@ -11,6 +11,14 @@ export class NPCDialog extends SubModuleBase {
   public buttonloaded: boolean = false;
   #requiredHooksLoaded: boolean = false;
 
+  public get requiredHooksLoaded(): boolean {
+    return this.#requiredHooksLoaded;
+  }
+
+  public set requiredHooksLoaded(val: boolean) {
+    this.#requiredHooksLoaded = val;
+  }
+
   protected async initHooks() {
     Hooks.on("createChatMessage", async (message: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
@@ -60,7 +68,7 @@ export class NPCDialog extends SubModuleBase {
 
   protected async waitReady() {
     const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-    npcDialog.#requiredHooksLoaded = true;
+    npcDialog.requiredHooksLoaded = true;
   }
 
   public async addNPCButtons(controls: any) {

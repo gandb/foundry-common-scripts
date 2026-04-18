@@ -8,9 +8,9 @@ Lista de tarefas do projeto. Quando o usuário pedir "Faça TASK X", o SCRUM_MAS
    - **Descrição:** Adicionar seção "Stack e Versões" no README.md com: Versão do OpenCode (1.4.3), Node (v22.18.0), npm (10.9.3), TypeScript (^5.9.2 - presente no package.json). O DOCUMENTATION_WRITER foi atualizado para incluir esta documentação automaticamente em futuras alterações.
 - 2. ✅ - Corrigir SocketLib executeAsGM() para não enviar para GM
    - **Descrição:** A função executeAsGM() na implementação SocketLib atualmente usa executeForEveryone() que envia mensagens para todos os jogadores incluindo o GM. Deve ser corrigida para usar executeForOthersGM() ou filtrar recipients para enviar apenas para jogadores não-GM, mantendo consistência com a implementação ChatSocket.
-- 3. - Corrigir uso de `this` em `common-socket-socketlib.ts`
+- 3. ✅ - Corrigir uso de `this` em `common-socket-socketlib.ts`
     - **Descrição:** Corrigir a implementação de `common-socket-socketlib.ts` para remover o uso de `this.socketOriginal`. Seguindo a diretriz de "Não Utilizar Contexto Dinâmico de `this`" definida no `ARCHITECT.md`, deve-se resolver a instância de `SocketLib` via `injectController` para garantir a estabilidade do contexto, especialmente em callbacks e eventos.
-- 4. - Expandir correção de contexto de `this` para todo o projeto
+- 4. ✅ - Expandir correção de contexto de `this` para todo o projeto
     - **Descrição:** Aplicar a mesma correção realizada na TASK 3 em todas as demais classes Singletons e Controllers do projeto. Deve-se auditar o código em busca de acessos a propriedades/métodos via `this` que possam ser vulneráveis a perda de contexto, substituindo-os pela resolução via `injectController` conforme a diretriz do `ARCHITECT.md`.
 - 5. - Melhorar testes para usar injeção de dependência
     - **Descrição:** Refatorar o código para usar injeção de dependência ao invés de acessar objetos globais diretamente (como `game`). O código deve verificar se o objeto existe, e se não existir, obtê-lo via injeção de dependência. Isso elimina a necessidade de mocks nos testes e torna os testes mais legíveis e fáceis de manter.

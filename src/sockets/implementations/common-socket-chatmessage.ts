@@ -15,25 +15,35 @@ export class ChatSocket extends SubModuleBase implements Socket {
     return injectController.resolve("GameContext") as IGameContext;
   }
 
+  public getCallback(type: string) {
+    return this.#callbacks.get(type);
+  }
+
+  public setCallback(type: string, callback: any) {
+    this.#callbacks.set(type, callback);
+  }
+
   protected async initHooks() {
     const logguer: Log = injectController.resolve("CommonLogguer");
+    const socket = injectController.resolve("Socket") as ChatSocket;
     logguer.debug("CA: ChatSocket waiting for requirements modules...");
 
     Hooks.once("onReadyCommonModule", async () => {
       const logguer: Log = injectController.resolve("CommonLogguer");
       logguer.debug("Common Module ready in Chat Socket");
-      this.init();
+      socket.init();
     });
 
     Hooks.on("createChatMessage", (message: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
       const commonModule: CommonModule =
         injectController.resolve("CommonModule");
+      const socket = injectController.resolve("Socket") as ChatSocket;
 
       try {
         logguer.debug("createChatMessage recebido...");
-        this.cleanupRealChatMessage();
-        setTimeout(() => this.cleanupRealChatMessage(), 500);
+        socket.cleanupRealChatMessage();
+        setTimeout(() => socket.cleanupRealChatMessage(), 500);
 
         const eventReceived: string = message.flags?.[commonModule.name]?.type;
         if (!eventReceived) return;
@@ -45,12 +55,12 @@ export class ChatSocket extends SubModuleBase implements Socket {
 
         if (!broadcast) {
           const valid: boolean =
-            payload.users.filter((id) => this.gameContext.user?.id == id)
+            payload.users.filter((id) => socket.gameContext.user?.id == id)
               .length == 1;
           if (!valid) {
             logguer.debug(
               "Ignorado pois não é para este usuário :",
-              this.gameContext.user?.id,
+              socket.gameContext.user?.id,
               ",payload:",
               payload,
             );
@@ -60,13 +70,13 @@ export class ChatSocket extends SubModuleBase implements Socket {
 
         logguer.debug("[Common Socket Chat Message] Evento recebido:", payload);
 
-        if (this.gameContext.user?.isGM && payload.onlyPlayers) {
+        if (socket.gameContext.user?.isGM && payload.onlyPlayers) {
           logguer.debug(
             "[|Common Socket Chat Message] Evento recebido para players e o receptor é GM, evento descartado :",
             payload,
           );
           return;
-        } else if (!this.gameContext.user?.isGM && payload.toGM) {
+        } else if (!socket.gameContext.user?.isGM && payload.toGM) {
           logguer.debug(
             "[|Common Socket Chat Message] Evento recebido é pro GM e o receptor não é GM, evento descartado :",
             payload,
@@ -74,7 +84,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
           return;
         }
 
-        const callback = this.#callbacks.get(payload.type);
+        const callback = socket.getCallback(payload.type);
         if (!callback) {
           logguer.debug(
             "[|Common Socket Chat Message] Evento recebido não registrado :",
@@ -109,7 +119,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
           ret,
         );
 
-        this.sendMessage(
+        socket.sendMessage(
           CALLBACK_SYSTEM_CALLBACK,
           { response: ret, originalRequestId: payload.requestId },
           false,
@@ -125,7 +135,8 @@ export class ChatSocket extends SubModuleBase implements Socket {
   protected async waitReady() {
     const logguer: Log = injectController.resolve("CommonLogguer");
     const commonModule: CommonModule = injectController.resolve("CommonModule");
-    const module = this.gameContext.modules.get(commonModule.name);
+    const socket = injectController.resolve("Socket") as ChatSocket;
+    const module = socket.gameContext.modules.get(commonModule.name);
     logguer.debug(`Common Socket initializing for ${commonModule.name}...`);
 
     if (!module?.active) {
@@ -135,7 +146,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
       return undefined;
     }
 
-    this.register(CALLBACK_SYSTEM_CALLBACK, (data: any) => {
+    socket.register(CALLBACK_SYSTEM_CALLBACK, (data: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
       logguer.debug(
         "ChatSocket adicionando o retorno na pilha de retorno : ",
@@ -176,13 +187,14 @@ export class ChatSocket extends SubModuleBase implements Socket {
     userids: Array<string> | undefined = undefined,
   ) {
     const logguer: Log = injectController.resolve("CommonLogguer");
-    const whisper = Array.from(this.gameContext.users?.values() || []);
+    const socket = injectController.resolve("Socket") as ChatSocket;
+    const whisper = Array.from(socket.gameContext.users?.values() || []);
     const requestId: string = Math.round(Math.random() * 1000000).toString();
     const users = userids ?? [];
 
     const payload: PayloadEvent = {
       requestId,
-      senderId: this.gameContext.user?.id || "",
+      senderId: socket.gameContext.user?.id || "",
       type: eventName,
       users,
       onlyPlayers,
@@ -210,7 +222,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
       payload,
     );
 
-    await this.whaitFor(
+    await socket.whaitFor(
       () => {
         const returns = injectController.resolve(
           RETURN_CONTROL_NAME,
@@ -229,11 +241,13 @@ export class ChatSocket extends SubModuleBase implements Socket {
   }
 
   public async executeToGM(eventName: string, ...data: any): Promise<any> {
-    return this.sendMessage(eventName, data, false, true);
+    const socket = injectController.resolve("Socket") as ChatSocket;
+    return socket.sendMessage(eventName, data, false, true);
   }
 
   public async executeForAll(eventName: string, ...data: any): Promise<any> {
-    return this.sendMessage(eventName, data, false, false);
+    const socket = injectController.resolve("Socket") as ChatSocket;
+    return socket.sendMessage(eventName, data, false, false);
   }
 
   public async executeIn(
@@ -241,26 +255,30 @@ export class ChatSocket extends SubModuleBase implements Socket {
     users: Array<string>,
     ...data: any
   ): Promise<any> {
-    return this.sendMessage(eventName, data, false, false, users);
+    const socket = injectController.resolve("Socket") as ChatSocket;
+    return socket.sendMessage(eventName, data, false, false, users);
   }
 
   public async executeAsGM(eventName: string, ...data: any): Promise<any> {
+    const socket = injectController.resolve("Socket") as ChatSocket;
     if (
-      !this.isReady ||
-      !this.isReadyToSendToGM ||
-      !this.gameContext.user?.isGM
+      !socket.isReady ||
+      !socket.isReadyToSendToGM ||
+      !socket.gameContext.user?.isGM
     ) {
       throw new Error("Isnt ready to send to gm or you arent GM");
     }
-    return this.sendMessage(eventName, data, true, false);
+    return socket.sendMessage(eventName, data, true, false);
   }
 
   public isReadyToSendToGM(): boolean {
-    return this.gameContext.user?.isGM === true;
+    const socket = injectController.resolve("Socket") as ChatSocket;
+    return socket.gameContext.user?.isGM === true;
   }
 
   public async register(eventName: string, callback: any): Promise<void> {
-    this.#callbacks.set(eventName, callback);
+    const socket = injectController.resolve("Socket") as ChatSocket;
+    socket.setCallback(eventName, callback);
   }
 
   public get originalSocket(): any {

@@ -76,7 +76,8 @@ export abstract class NPC {
   }
 
   public getAlias() {
-    return this.name.toLocaleLowerCase();
+    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+    return npcDialog.npcSelected.name.toLocaleLowerCase();
   }
 
   public async createDialog(
@@ -355,8 +356,8 @@ export abstract class NPC {
         "npc-talk": {
           type: "npcDialogOnTalk",
           payload: {
-            imageUrl: this.imageUrl,
-            npcName: this.name,
+            imageUrl: npcDialog.npcSelected.imageUrl,
+            npcName: npcDialog.npcSelected.name,
             dialogText: line,
           },
         },
@@ -381,7 +382,7 @@ export abstract class NPC {
     const formatedIndex = lineIndex.toString().padStart(3, "0");
     const name = npcDialog.npcSelected.name;
     const src = `modules/forgotten-realms/sounds/npcs/${name}/${formatedIndex}/${name}${formatedIndex}.${npcDialog.npcSelected.formatSound}`;
-    const ret = await this.playSoundWithNoEffect(src);
+    const ret = await npcDialog.npcSelected.playSoundWithNoEffect(src);
     loguer.debug("Retorno do play:", ret);
   }
 
