@@ -1,6 +1,6 @@
 {
   "name": "taulukko-common-scripts-dnd5ed",
-  "version": "2.0.42",
+  "version": "2.0.49",
   "description": "Taulukko Common Scripts for Foundry dnd5ed",
   "main": "dist/taulukko-common-scripts-dnd5ed.iife.js",
   "scripts": {

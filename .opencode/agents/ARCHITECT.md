@@ -23,6 +23,20 @@ Cada plano deve explicar:
 - Manter compatibilidade com código existente
 - Ter documentado todo o projeto, funcionalidades e padrões de arquitetura
 - Reutilizar código, funções e padrões existentes
+- **Não Utilizar Contexto Dinâmico de `this`**: Em classes que funcionam como Singletons ou Controllers, é proibido acessar propriedades ou métodos via `this` (ex: `this.socketOriginal`). O contexto de `this` em JS/TS é volátil e pode ser perdido se a função for invocada como callback ou evento, risco este que persiste mesmo que a função não seja usada assim atualmente, mas venha a ser no futuro.
+    - **❌ Errado**:
+      ```typescript
+      public async executeAction() {
+        return this.socketOriginal.send(...); 
+      }
+      ```
+    - **✅ Correto (Padrão DI)**: Resolva a instância do singleton via `injectController` com tipagem explícita na variável para garantir o autocompletar e o acesso ao objeto correto.
+      ```typescript
+      public async executeAction() {
+        const service: ServiceClass = injectController.resolve("ServiceName");
+        return service.socketOriginal.send(...);
+      }
+      ```
 - **Testes ficam em `src/tests/`** espelhando a estrutura de `src/` (nunca junto ao código fonte)
 
 ## Fluxo
