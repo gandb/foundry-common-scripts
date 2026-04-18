@@ -1,5 +1,6 @@
 import { Log, injectController } from "taulukko-commons";
 import { DialogUtils } from "../";
+import type { IGameContext } from "../../common/igame-context";
 import { NPCDialog } from "./";
 
 const RANDOM_GROUP: string = "999";
@@ -336,10 +337,20 @@ export abstract class NPC {
 
     loguer.debug("disparando o evento pra todo mundo:");
 
+    const gameContext: IGameContext = injectController.resolve(
+      "GameContext",
+    ) as IGameContext;
+
     // Cria uma mensagem invisível que todos recebem
     await ChatMessage.create({
       content: "NPC Portrait Event", // Invisível pra maioria
-      whisper: Array.from(game.users?.values() || []).map((u: any) => u.id),
+      whisper: Array.from(
+        (
+          gameContext.users as {
+            values(): IterableIterator<{ id: string }>;
+          } | null
+        )?.values() || [],
+      ).map((u: { id: string }) => u.id),
       flags: {
         "npc-talk": {
           type: "npcDialogOnTalk",

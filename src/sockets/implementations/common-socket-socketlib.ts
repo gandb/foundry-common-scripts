@@ -2,17 +2,24 @@ import { Log, injectController } from "taulukko-commons";
 import { Socket, CALLBACK_FUNCTION_EVENT_NAME } from "../common-socket";
 import { CommonModule } from "../../common-module";
 import { SubModuleBase } from "../../submodules/sub-module-base";
+import type { IGameContext } from "../../common/igame-context";
 
 //socketlib Implementation, documentation: https://github.com/farling42/foundryvtt-socketlib#api
 export class SocketLib extends SubModuleBase implements Socket {
   private _socketOriginal: any;
   private _requirementModules: number = 2;
 
+  private get gameContext(): IGameContext {
+    return injectController.resolve("GameContext") as IGameContext;
+  }
+
   private getNonGMUserIds(): string[] {
-    if (!game.users) return [];
-    return Array.from(game.users.values())
-      .filter((user) => !user.isGM)
-      .map((user) => user.id);
+    if (!this.gameContext.users) return [];
+    const users = Array.from(this.gameContext.users.values()) as Array<{
+      isGM: boolean;
+      id: string;
+    }>;
+    return users.filter((user) => !user.isGM).map((user) => user.id);
   }
 
   protected async initHooks() {
@@ -35,7 +42,7 @@ export class SocketLib extends SubModuleBase implements Socket {
       "Socket",
     ) as SocketLib;
 
-    const module = game.modules.get(commonModule.name);
+    const module = this.gameContext.modules.get(commonModule.name);
     logguer.debug(
       `Common Socket initializing using socketlib for ${commonModule.name}...`,
     );
@@ -92,9 +99,13 @@ export class SocketLib extends SubModuleBase implements Socket {
     const logguer: Log = injectController.resolve("CommonLogguer");
     logguer.debug("Socketlib executeAsGM start");
 
-    if (!game.user || !game.users || !game.user.isGM) {
+    if (
+      !this.gameContext.user ||
+      !this.gameContext.users ||
+      !this.gameContext.user.isGM
+    ) {
       logguer.debug("Socketlib executeAsGM fail validation");
-      throw new Error("Isnt ready to send to gm or you arent GM");
+      throw new Error("Isnt ready to send to gm or you isnt GM");
     }
 
     logguer.debug("Socketlib executeAsGM after validation");
@@ -145,7 +156,7 @@ export class SocketLib extends SubModuleBase implements Socket {
   }
 
   public isReadyToSendToGM(): boolean {
-    return game.user?.isGM === true;
+    return this.gameContext.user?.isGM === true;
   }
 
   public async register(eventName: string, callback: any): Promise<void> {
@@ -164,13 +175,12 @@ export class SocketLib extends SubModuleBase implements Socket {
       if (Array.isArray(data) && data.length == 1) {
         if (data[0].toGM) {
           logguer.debug("Evento pra gm,event:", eventName);
-          if (!game.user?.isGM) {
+          if (!this.gameContext.user?.isGM) {
             logguer.debug("Evento pra gm, descartado pois o usuário não é GM");
             return;
           }
           return await callback(...data[0].data);
         }
- 
       }
       logguer.debug("Evento não é específico pra gm nem apenas para players");
       return await callback(...data);

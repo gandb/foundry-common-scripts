@@ -1,6 +1,6 @@
 import { Log, injectController } from "taulukko-commons";
-//import { socketTest } from "./sockets/common-socket-test";
 import { ModuleBase } from "./common/module-base";
+import type { IGameContext } from "./common/igame-context";
 import { SubModuleBase } from "./submodules/sub-module-base";
 import { RegionUtils } from "./submodules/region-utils/region-utils";
 import { PlayersTools } from "./submodules/playertools/players-tool";
@@ -109,7 +109,10 @@ export class CommonModule extends ModuleBase {
         return;
       }
 
-      if (game.user.isGM) {
+      const gameContext: IGameContext = injectController.resolve(
+        "GameContext",
+      ) as IGameContext;
+      if (gameContext.user?.isGM) {
         logguer.debug("GM detected, adding isGM class to body");
         document.body.classList.add("isGM");
       }
@@ -137,7 +140,7 @@ export class CommonModule extends ModuleBase {
       }
 
       await commonModule.updateVersions(
-        instalatedVersion,
+        instalatedVersion as string,
         commonModule.version,
       );
 
@@ -164,33 +167,54 @@ export class CommonModule extends ModuleBase {
     botao.className = "ui-control icon fa-solid fa-help common-assets-help";
     botao.addEventListener("click", (event) => {
       event.preventDefault();
-      const journal = game.journal.getName("Como Rolar Dados");
+      const gameContext: IGameContext = injectController.resolve(
+        "GameContext",
+      ) as IGameContext;
+      const journal = (
+        gameContext.journal as { getName(name: string): unknown }
+      ).getName("Como Rolar Dados");
       logguer.info("Mensagem exibida ao clicar no botão ?");
       if (!journal) {
         logguer.error("Journal não instalado!");
         return;
       }
-      journal.sheet.render(true);
+      (journal as { sheet: { render(show: boolean): void } }).sheet.render(
+        true,
+      );
     });
 
     el.appendChild(botao);
     logguer.info("Botão de ajuda de rolagem criado");
   }
 
+  private get gameSettings() {
+    const gameContext: IGameContext = injectController.resolve(
+      "GameContext",
+    ) as IGameContext;
+    return gameContext.settings as {
+      register(
+        module: string,
+        key: string,
+        config: { type: unknown },
+      ): Promise<void>;
+      set(module: string, key: string, value: unknown): Promise<void>;
+      get(module: string, key: string): Promise<unknown>;
+    };
+  }
+
   public async registerSetting(key: string, type: any = String) {
     const commonModule: CommonModule = injectController.resolve("CommonModule");
-
-    await game.settings.register(commonModule.name, key, { type });
+    await this.gameSettings.register(commonModule.name, key, { type });
   }
 
   public async setSettings(key: string, value: any) {
     const commonModule: CommonModule = injectController.resolve("CommonModule");
-    await game.settings.set(commonModule.name, key, value);
+    await this.gameSettings.set(commonModule.name, key, value);
   }
 
   public async getSettings(key: string) {
     const commonModule: CommonModule = injectController.resolve("CommonModule");
-    return await game.settings.get(commonModule.name, key);
+    return await this.gameSettings.get(commonModule.name, key);
   }
 
   public async updateVersions(

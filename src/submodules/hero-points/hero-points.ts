@@ -1,4 +1,3 @@
-
 /**
  * TODO:
  * 1-Alterar o Atributo Honrror to HERO-OK
@@ -9,140 +8,167 @@
  * 4.2-Adicionar a classe num arquivo CSS se possível-OK
  * 4.3-Ao clicar no atributo, abrir uma janela explicando como usar, como ganhar e pra quele serve. -OK
  * 4.4-Remover os logs indesejáveis. -OK
- * 4.5-Somente chamar tudo isto depois que o componente common estiver criado pois ele chama varias 
+ * 4.5-Somente chamar tudo isto depois que o componente common estiver criado pois ele chama varias
  * funcoes de log do commons por isto tem que aguardar - OK
- * 5-Ao clicar na caixa de texto surge a opção botão 1/2, + e cancelar em vez de ser editável pra 
+ * 5-Ao clicar na caixa de texto surge a opção botão 1/2, + e cancelar em vez de ser editável pra
  * facilitar pro GM.  - OK
- * 6-Adicionar tooltip no - e + explicando como funciona a adição e remoção de pontos. Vai ter que detectar o evento de abertura de edićão pois se não 
+ * 6-Adicionar tooltip no - e + explicando como funciona a adição e remoção de pontos. Vai ter que detectar o evento de abertura de edićão pois se não
  * ele nasce sem o tooltip e quando o gm for editar a tooltip não funciona - OK
  * 7-melhorar pra nem tudo vir do doc, assim funciona pra mais de uma ficha ao mesmo tempo, alem de agilizar a renderizacao
- * 8- Trocar onde tem erro, pra erros verdadeiros usando a api ui, e no caso dos demais logs ver se os warn e info precisam ser exibidos na ui ou só no console. 
- * 9-Adicionar em configurações a opção de habilitar ou não esta feature 
+ * 8- Trocar onde tem erro, pra erros verdadeiros usando a api ui, e no caso dos demais logs ver se os warn e info precisam ser exibidos na ui ou só no console.
+ * 9-Adicionar em configurações a opção de habilitar ou não esta feature
  * 10-Usar o conhecimento do item 7 pra habilitar ou não iniciar com o debug ligado.
  */
 
-import { Log,injectController } from "taulukko-commons";
+import { Log, injectController } from "taulukko-commons";
 import { SubModuleBase } from "../sub-module-base";
-import { DialogUtils } from "../dialog-utils/dialog-utils"; 
+import { DialogUtils } from "../dialog-utils/dialog-utils";
+import type { IGameContext } from "../../common/igame-context";
 
 export class HeroPoints extends SubModuleBase {
+  #requiredHooksLoaded: boolean = false;
 
-	#requiredHooksLoaded: boolean = false;
+  protected async initHooks() {}
 
-	protected async initHooks() {
-	}
+  protected async waitReady() {
+    const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
+    const logguer: Log = injectController.resolve("CommonLogguer");
 
-	protected async waitReady() { 
-		const heroPoints:HeroPoints = injectController.resolve( "HeroPoints"); 
-		const logguer: Log = injectController.resolve("CommonLogguer");
-  
-	 
-		heroPoints.initializeHabilityHero();
+    heroPoints.initializeHabilityHero();
 
+    logguer.debug("Heropoints hooks initialized");
 
-		logguer.debug("Heropoints hooks initialized");
+    heroPoints.#requiredHooksLoaded = true;
 
-		heroPoints.#requiredHooksLoaded = true;
-	
-		Hooks.callAll("onReadyHeroPoints", {});
-	}
+    Hooks.callAll("onReadyHeroPoints", {});
+  }
 
+  removeAttribute(sheet: Sheet) {
+    const logguer: Log = injectController.resolve("CommonLogguer");
+    let htmldivs = document.querySelectorAll(
+      "div.ability-score[data-ability='hon']",
+    );
+    if (htmldivs.length == 0) {
+      logguer.debug(
+        `This sheet not contain honrror field or system not enable honrror field`,
+      );
+      return;
+    }
+    logguer.debug(`Hability hero removed, npc sheet detected`);
+    htmldivs.forEach((div) => div.remove());
+  }
 
-	removeAttribute(sheet: Sheet) {
-		const logguer: Log = injectController.resolve("CommonLogguer");
-		let htmldivs = document.querySelectorAll("div.ability-score[data-ability='hon']");
-		if (htmldivs.length == 0) {
-			logguer.debug(`This sheet not contain honrror field or system not enable honrror field`);
-			return;
-		}
-		logguer.debug(`Hability hero removed, npc sheet detected`);
-		htmldivs.forEach(div => div.remove());
+  addEditButtonsToHeroPoints(parent: HTMLElement) {
+    const gameContext: IGameContext = injectController.resolve(
+      "GameContext",
+    ) as IGameContext;
+    const logguer: Log = injectController.resolve("CommonLogguer");
+    if (!gameContext.user?.isGM) {
+      return;
+    }
 
-	}
+    let elements: NodeList = parent?.querySelectorAll(
+      "div.mod span.operator.increment",
+    ) as NodeList;
+    if (elements.length == 0) {
+      logguer.error(`Hability Hero operator increment not found`);
+      return;
+    }
+    let increment = elements.item(0) as HTMLElement;
 
-	addEditButtonsToHeroPoints(parent: HTMLElement) {
-		const logguer: Log = injectController.resolve("CommonLogguer");
-		if (!game.user.isGM) {
-			return;
-		}
+    increment.onclick = (e) => {
+      e.preventDefault();
+      const scoreInputs = document.querySelectorAll(
+        "form.editable div.ability-score.flipped[data-ability='hon'] input",
+      );
+      if (scoreInputs.length != 1) {
+        logguer.error(
+          `Hability hero increment hero points not found input to increment ore found more then one, close others sheets before changing hero points`,
+        );
+        return;
+      }
+      const scoreInput: HTMLInputElement = scoreInputs.item(
+        0,
+      ) as HTMLInputElement;
+      if (scoreInput.value == undefined || scoreInput.value == "") {
+        logguer.error(
+          `Hability hero increment hero points not found input value to increment`,
+        );
+        return;
+      }
+      const currentScore = Number.parseInt(scoreInput.value, 10);
+      const newScore = currentScore + 1;
+      scoreInput.value = newScore.toString();
+      logguer.debug(`Hability hero increment hero points to ${newScore}`);
+    };
 
-		let elements: NodeList = parent?.querySelectorAll("div.mod span.operator.increment") as NodeList;
-		if (elements.length == 0) {
-			logguer.error(`Hability Hero operator increment not found`);
-			return;
-		}
-		let increment = elements.item(0) as HTMLElement;
+    elements = parent?.querySelectorAll(
+      "div.mod span.operator.reduce",
+    ) as NodeList;
+    if (elements.length == 0) {
+      logguer.error(`Hability Hero operator reduce not found`);
+      return;
+    }
+    increment = elements.item(0) as HTMLElement;
+    increment.onclick = (e) => {
+      e.preventDefault();
+      const scoreInputs = document.querySelectorAll(
+        "form.editable div.ability-score.flipped[data-ability='hon'] input",
+      );
+      if (scoreInputs.length != 1) {
+        logguer.error(
+          `Hability hero increment hero points not found input to increment ore found more then one, close others sheets before changing hero points`,
+        );
+        return;
+      }
+      const scoreInput: HTMLInputElement = scoreInputs.item(
+        0,
+      ) as HTMLInputElement;
+      if (scoreInput.value == undefined || scoreInput.value == "") {
+        logguer.error(
+          `Hability hero increment hero points not found input value to increment, close others sheets before changing hero points`,
+        );
+        return;
+      }
+      const currentScore = Number.parseInt(scoreInput.value, 10);
+      if (currentScore == 0) {
+        logguer.error(`You haven´t hero points to decrement`);
+        return;
+      }
+      const newScore = Math.floor(currentScore / 2);
+      scoreInput.value = newScore.toString();
+      logguer.debug(`Hability hero decrement hero points to ${newScore}`);
+    };
+  }
 
-		increment.onclick = (e) => {
-			e.preventDefault();
-			const scoreInputs = document.querySelectorAll("form.editable div.ability-score.flipped[data-ability='hon'] input");
-			if (scoreInputs.length != 1) {
-				logguer.error(`Hability hero increment hero points not found input to increment ore found more then one, close others sheets before changing hero points`);
-				return;
-			}
-			const scoreInput: HTMLInputElement = scoreInputs.item(0) as HTMLInputElement;
-			if (scoreInput.value == undefined || scoreInput.value == "") {
-				logguer.error(`Hability hero increment hero points not found input value to increment`);
-				return;
-			}
-			const currentScore = Number.parseInt(scoreInput.value, 10);
-			const newScore = currentScore + 1;
-			scoreInput.value = newScore.toString();
-			logguer.debug(`Hability hero increment hero points to ${newScore}`);
-		};
+  createDialog(element: HTMLElement) {
+    const logguer: Log = injectController.resolve("CommonLogguer");
+    const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
 
-		elements = parent?.querySelectorAll("div.mod span.operator.reduce") as NodeList;
-		if (elements.length == 0) {
-			logguer.error(`Hability Hero operator reduce not found`);
-			return;
-		}
-		increment = elements.item(0) as HTMLElement;
-		increment.onclick = (e) => {
-			e.preventDefault();
-			const scoreInputs = document.querySelectorAll("form.editable div.ability-score.flipped[data-ability='hon'] input");
-			if (scoreInputs.length != 1) {
-				logguer.error(`Hability hero increment hero points not found input to increment ore found more then one, close others sheets before changing hero points`);
-				return;
-			}
-			const scoreInput: HTMLInputElement = scoreInputs.item(0) as HTMLInputElement;
-			if (scoreInput.value == undefined || scoreInput.value == "") {
-				logguer.error(`Hability hero increment hero points not found input value to increment, close others sheets before changing hero points`);
-				return;
-			}
-			const currentScore = Number.parseInt(scoreInput.value, 10);
-			if (currentScore == 0) {
-				logguer.error(`You haven´t hero points to decrement`);
-				return;
-			}
-			const newScore = Math.floor(currentScore / 2);
-			scoreInput.value = newScore.toString();
-			logguer.debug(`Hability hero decrement hero points to ${newScore}`);
-		};
-	}
+    if (!dialogUtils.isReady()) {
+      throw new Error("HeroPoint.createDialog :  dialogUtils isnt ready");
+    }
 
+    let dialog: any = {};
 
-	createDialog(element: HTMLElement) {
-		const logguer: Log = injectController.resolve("CommonLogguer");
-		const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
+    element.onclick = (e) => {
+      e.preventDefault();
+      logguer.debug(`clicou na habilidade`);
 
-
-		if(!dialogUtils.isReady())
-		{
-			throw new Error("HeroPoint.createDialog :  dialogUtils isnt ready");
-		}
-
-		let dialog: any = {};
-
-		element.onclick = (e) => {
-			e.preventDefault();
-			logguer.debug(`clicou na habilidade`);
-
-
-			const cancelButton = dialogUtils.createButton("cancel", "Cancelar", true, "action", (html: any) => {
-				dialog.close();
-			});
-			logguer.debug("Hero Points dialog closed.");
-			dialog = dialogUtils.createDialog("Sobre Hero Points", "", `
+      const cancelButton = dialogUtils.createButton(
+        "cancel",
+        "Cancelar",
+        true,
+        "action",
+        (html: any) => {
+          dialog.close();
+        },
+      );
+      logguer.debug("Hero Points dialog closed.");
+      dialog = dialogUtils.createDialog(
+        "Sobre Hero Points",
+        "",
+        `
 		<div class="hero-points-info-content"> 
 			<img class="heroic-action-img"
 				src="/modules/common-assets/images/cover/heropoint.webp"
@@ -188,66 +214,72 @@ export class HeroPoints extends SubModuleBase {
 				Exemplos: se você tem 5 pontos, passa a ter 2; se tem 3, passa a ter 1; se tem 1 ponto, passa a ter 0.
 			</p>
 		</div>
-					`, [cancelButton] );
+					`,
+        [cancelButton],
+      );
+    };
+  }
 
-		};
-	}
+  changeHabilityHonrrorToHeroPoints(sheet: Sheet) {
+    const logguer: Log = injectController.resolve("CommonLogguer");
 
+    const forms = document.querySelectorAll("form.sheet");
+    const isEditable: boolean =
+      forms.item(0)?.classList.contains("editable") ?? false;
 
-	changeHabilityHonrrorToHeroPoints(sheet: Sheet) {
-		const logguer: Log = injectController.resolve("CommonLogguer");
+    if (forms.length == 0) {
+      logguer.error(
+        `Hability hero not enable to convert for hero, your cmpaing not use? Code error: 01`,
+      );
+      return;
+    }
 
-		const forms = document.querySelectorAll("form.sheet");
-		const isEditable: boolean = forms.item(0)?.classList.contains("editable") ?? false;
+    logguer.debug(`Hability hero found : ` + forms.length);
 
+    forms.forEach((form) => {
+      const htmldivs = form.querySelectorAll(
+        "div.ability-score.flipped[data-ability='hon']",
+      );
 
-		if (forms.length == 0) {
+      htmldivs.forEach((divElement) => {
+        const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
 
-			logguer.error(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 01`);
-			return;
-		}
+        const logguer: Log = injectController.resolve("CommonLogguer");
 
-		logguer.debug(`Hability hero found : ` + forms.length);
+        const div: HTMLElement = divElement as HTMLElement;
 
-		forms.forEach(form => {
-			const htmldivs = form.querySelectorAll("div.ability-score.flipped[data-ability='hon']");
+        logguer.debug(
+          `found one hability ` + div.innerHTML,
+          ",isEditable",
+          isEditable,
+        );
 
-			htmldivs.forEach(divElement => {
+        let htmlScores = div.querySelectorAll("div.score");
 
-				const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
+        if (htmlScores.length != 1) {
+          logguer.error(
+            `Hability hero not enable to convert for hero, your cmpaing not use? Code error: 02`,
+          );
+          return;
+        }
 
-				const logguer: Log = injectController.resolve("CommonLogguer");
+        let score: string =
+          div.querySelectorAll("div.score").item(0)?.innerHTML ?? "0";
 
-				const div: HTMLElement = divElement as HTMLElement;
+        const gameContext: IGameContext = injectController.resolve(
+          "GameContext",
+        ) as IGameContext;
+        if (!gameContext.user?.isGM) {
+          let scoreInput = div.querySelectorAll("input");
 
+          if (isEditable) {
+            score = (scoreInput.item(0) as HTMLInputElement).value;
+          }
+        }
 
-				logguer.debug(`found one hability ` + div.innerHTML, ",isEditable", isEditable);
+        logguer.debug(`Hability hero score: `, score);
 
-				let htmlScores = div.querySelectorAll("div.score");
-
-				if (htmlScores.length != 1) {
-					logguer.error(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 02`);
-					return;
-				}
-
-				let score: string = div.querySelectorAll("div.score").item(0)?.innerHTML ?? "0";
-
-				if (!game.user.isGM) {
-
-
-					let scoreInput = div.querySelectorAll("input");
-
-					if (isEditable) {
-						score = (scoreInput.item(0) as HTMLInputElement).value;
-					}
-				}
-
-
-
-				logguer.debug(`Hability hero score: `, score);
-
-
-				div.innerHTML = `
+        div.innerHTML = `
 				<label class="common-assets attribute" title="clique para mais informações">hero</label>
 				<div class="mod">
 					<span class="operator reduce" title"para editar, altere o personagem para o modo editável"></span>
@@ -256,53 +288,47 @@ export class HeroPoints extends SubModuleBase {
 				<div class="score">${score}</div>
 				`;
 
+        heroPoints.addEditButtonsToHeroPoints(div);
 
-				heroPoints.addEditButtonsToHeroPoints(div);
+        const label: HTMLElement = div
+          .querySelectorAll("label")
+          ?.item(0) as HTMLElement;
 
+        if (label == undefined) {
+          logguer.warn(
+            `Hability hero not enable to convert for hero, your cmpaing not use? Code error: 01`,
+          );
+          return;
+        }
 
-				const label: HTMLElement = div.querySelectorAll("label")?.item(0) as HTMLElement;
+        heroPoints.createDialog(label);
+      });
+    });
+  }
 
-				if (label == undefined) {
-					logguer.warn(`Hability hero not enable to convert for hero, your cmpaing not use? Code error: 01`);
-					return;
-				}
+  initializeHabilityHero() {
+    Hooks.on("renderDocumentSheetV2", async (data: any) => {
+      const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
+      const logguer: Log = injectController.resolve("CommonLogguer");
+      const sheet: Sheet = data as Sheet;
 
-				heroPoints.createDialog(label);
+      if (!sheet.actor) {
+        logguer.debug(`Isnt a actor sheet`);
+        return;
+      }
 
-			});
+      logguer.debug(`Hability hero called  `, sheet);
 
-		});
+      if (sheet.actor.type != "character") {
+        heroPoints.removeAttribute(sheet);
+        logguer.debug(
+          `Hability hero ignoreted sheet because isnt a player sheet, type:`,
+          sheet.actor.type!,
+        );
+        return;
+      }
 
-
-
-	}
-
-
-	initializeHabilityHero() {
-		Hooks.on("renderDocumentSheetV2", async (data: any) => {
-			const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
-			const logguer: Log = injectController.resolve("CommonLogguer");
-			const sheet: Sheet = data as Sheet;
-
-			if (!sheet.actor) {
-				logguer.debug(`Isnt a actor sheet`);
-				return;
-			}
-
-			logguer.debug(`Hability hero called  `, sheet);
-
-
-			if (sheet.actor.type != "character") {
-				heroPoints.removeAttribute(sheet);
-				logguer.debug(`Hability hero ignoreted sheet because isnt a player sheet, type:`, sheet.actor.type!);
-				return;
-			}
-
-			heroPoints.changeHabilityHonrrorToHeroPoints(sheet);
-
-		});
-
-	}
-
-
+      heroPoints.changeHabilityHonrrorToHeroPoints(sheet);
+    });
+  }
 }

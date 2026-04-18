@@ -1,5 +1,6 @@
 import { injectController, Level, LogGenericImpl } from "taulukko-commons";
 import { CommonModule } from "./common-module";
+import type { IGameContext } from "./common/igame-context";
 import {
   NPC,
   NPCDialog,
@@ -58,6 +59,13 @@ async function initModule() {
   injectController.registerByName("FoundryDocument", document);
   injectController.registerByName("CommonModule", commonModule);
   injectController.registerByName("CommonLogguer", logguer);
+
+  if (typeof game !== "undefined") {
+    injectController.registerByName(
+      "GameContext",
+      game as unknown as IGameContext,
+    );
+  }
 
   commonModule.init();
 }

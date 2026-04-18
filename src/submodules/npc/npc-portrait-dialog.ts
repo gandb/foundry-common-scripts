@@ -1,3 +1,5 @@
+import { injectController } from "taulukko-commons";
+import type { IGameContext } from "../../common/igame-context";
 
 interface NPCPortraitOptions {
   imageUrl: string;
@@ -6,7 +8,7 @@ interface NPCPortraitOptions {
 }
 
 interface NPCPortraitSocketPayload {
-  type: 'showNPCPortrait';
+  type: "showNPCPortrait";
   data: NPCPortraitOptions;
 }
 
@@ -21,16 +23,16 @@ export class NPCPortraitDialog extends Application {
 
   constructor(options: Partial<NPCPortraitOptions> & any = {}) {
     super();
-    this.imageUrl = options.imageUrl || 'YOUR_IMAGE_URL_HERE';
-    this.npcName = options.npcName || 'NPC';
-    this.dialogText = options.dialogText || 'Olá, aventureiro...';
+    this.imageUrl = options.imageUrl || "YOUR_IMAGE_URL_HERE";
+    this.npcName = options.npcName || "NPC";
+    this.dialogText = options.dialogText || "Olá, aventureiro...";
   }
 
   static get defaultOptions(): any {
     return foundry.utils.mergeObject(Application.defaultOptions, {
-      id: 'npc-portrait-dialog',
-      classes: ['npc-portrait-app'],
-      title: '',
+      id: "npc-portrait-dialog",
+      classes: ["npc-portrait-app"],
+      title: "",
       width: 600,
       height: 400,
       resizable: false,
@@ -40,7 +42,7 @@ export class NPCPortraitDialog extends Application {
   }
 
   get template(): string {
-    return 'modules/common-scripts-dnd5ed/scripts/templates/npc-talk.hbs';
+    return "modules/common-scripts-dnd5ed/scripts/templates/npc-talk.hbs";
   }
 
   async getData(): Promise<NPCPortraitOptions> {
@@ -55,7 +57,7 @@ export class NPCPortraitDialog extends Application {
     super.activateListeners(html);
 
     // Botão de fechar (X)
-    html.on('click', '.close-button', () => {
+    html.on("click", ".close-button", () => {
       this.close();
     });
   }
@@ -77,13 +79,17 @@ export class NPCPortraitDialog extends Application {
    * Exibe o diálogo para todos os jogadores
    */
   async showToAllPlayers(): Promise<void> {
+    const gameContext: IGameContext = injectController.resolve(
+      "GameContext",
+    ) as IGameContext;
+
     // Renderiza localmente
     this.render(true);
 
     // Se for GM, sincroniza com os outros jogadores via socket
-    if (game.user?.isGM) {
+    if (gameContext.user?.isGM) {
       const socketPayload: NPCPortraitSocketPayload = {
-        type: 'showNPCPortrait',
+        type: "showNPCPortrait",
         data: {
           imageUrl: this.imageUrl,
           npcName: this.npcName,
@@ -91,7 +97,7 @@ export class NPCPortraitDialog extends Application {
         },
       };
 
-      (game.socket as any).emit('module.seu-modulo', socketPayload);
+      (gameContext.socket as any).emit("module.seu-modulo", socketPayload);
     }
   }
 }

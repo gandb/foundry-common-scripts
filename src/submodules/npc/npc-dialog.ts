@@ -3,6 +3,7 @@ import { SubModuleBase } from "../sub-module-base";
 import { DialogUtils } from "../dialog-utils/dialog-utils";
 import { NPC } from "./npc";
 import { NPCPortraitDialog } from "./npc-portrait-dialog";
+import type { IGameContext } from "../../common/igame-context";
 
 export class NPCDialog extends SubModuleBase {
   public npcSelected: NPC | any;
@@ -63,10 +64,13 @@ export class NPCDialog extends SubModuleBase {
   }
 
   public async addNPCButtons(controls: any) {
+    const gameContext: IGameContext = injectController.resolve(
+      "GameContext",
+    ) as IGameContext;
     const logguer: Log = injectController.resolve("CommonLogguer");
     const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
 
-    if (!game.user.isGM) {
+    if (!gameContext.user?.isGM) {
       logguer.debug("NPC Buttons off");
       return;
     }
