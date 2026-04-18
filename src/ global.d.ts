@@ -177,14 +177,14 @@ declare interface FoundryWindow extends Window {
 }
 
 
-declare namespace global {
-    const socketlib: {
-        registerModule: (moduleName: string) => {
+declare const global = {
+    socketlib: {
+         registerModule:{mockReturnValue: (moduleName: any) => {
             executeForUsers: (eventName: string, userIds: string[], ...args: any[]) => Promise<void>;
             executeForAll: (eventName: string, ...args: any[]) => Promise<void>;
             executeAsGM: (eventName: string, ...args: any[]) => Promise<void>;
-        };
-    };
+        }}
+    }
 }
 
 declare const docs: any | FoundryDocument;

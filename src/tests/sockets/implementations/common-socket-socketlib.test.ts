@@ -93,8 +93,11 @@ describe("SocketLib executeAsGM", () => {
 
     // Verify executeForUsers was called with list of player IDs (non-GM)
     expect(socketInstance.executeForUsers).toHaveBeenCalledTimes(1);
-    const [eventName, recipients, ...data] =
+    const result:any =
       socketInstance.executeForUsers.mock.calls[0];
+    const eventName = result[0];
+    const recipients = result[1];
+    const data =  result[2];
     expect(eventName).toBe("testEvent");
     expect(recipients).toEqual(["p1", "p2"]); // only non-GM users
     // Should include onlyPlayers flag in data
