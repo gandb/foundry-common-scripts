@@ -1,6 +1,6 @@
 import { Log, injectController } from "taulukko-commons";
 import { ModuleBase } from "./common/module-base";
-import type { IGameContext } from "./common/igame-context";
+import type { IGameContext, IGameSettings } from "./common/igame-context";
 import { SubModuleBase } from "./submodules/sub-module-base";
 import { RegionUtils } from "./submodules/region-utils/region-utils";
 import { PlayersTools } from "./submodules/playertools/players-tool";
@@ -187,19 +187,11 @@ export class CommonModule extends ModuleBase {
     logguer.info("Botão de ajuda de rolagem criado");
   }
 
-  private get gameSettings() {
+  private get gameSettings(): IGameSettings {
     const gameContext: IGameContext = injectController.resolve(
       "GameContext",
     ) as IGameContext;
-    return gameContext.settings as {
-      register(
-        module: string,
-        key: string,
-        config: { type: unknown },
-      ): Promise<void>;
-      set(module: string, key: string, value: unknown): Promise<void>;
-      get(module: string, key: string): Promise<unknown>;
-    };
+    return gameContext.settings;
   }
 
   public async registerSetting(key: string, type: any = String) {
