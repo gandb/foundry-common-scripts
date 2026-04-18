@@ -16,20 +16,22 @@ Lista de tarefas do projeto. Quando o usuário pedir "Faça TASK X", o SCRUM_MAS
     - **Descrição:** Refatorar o código para usar injeção de dependência ao invés de acessar objetos globais diretamente (como `game`). O código deve verificar se o objeto existe, e se não existir, obtê-lo via injeção de dependência. Isso elimina a necessidade de mocks nos testes e torna os testes mais legíveis e fáceis de manter.
 - 6. - Implementar filtro onlyPlayers no SocketLib
     - **Descrição:** Adicionar filtro similar ao que existe no ChatSocket para descartar mensagens marcadas como onlyPlayers quando o receptor é GM. Atualmente o SocketLib não tem este mecanismo, causando inconsistência entre implementações.
-- 7. - Melhorar validação isReadyToSendToGM()
+- 7. - Corrigir e habilitar teste de envio exclusivo para non-GMs no SocketLib
+    - **Descrição:** O teste `"should send to non-GM users only"` em `common-socket-socketlib.test.ts` está atualmente ignorado (`it.skip`) pois não possui asserções (está apenas chamando o método). A tarefa consiste em refatorar o teste para verificar se `executeAsGM` filtra corretamente a lista de usuários via `getNonGMUserIds` e chama `executeForUsers` com os IDs corretos e o payload `onlyPlayers: true`, habilitando-o em seguida.
+- 8. - Melhorar validação isReadyToSendToGM()
     - **Descrição:** A função isReadyToSendToGM() atualmente retorna (game.user as any) || (game.users as any) que sempre retorna true se os objetos existirem. Deve ser melhorada para verificar game.user?.isGM e garantir que o usuário atual seja GM antes de permitir envio de mensagens como GM.
-- 8. - Teste se mensagens apenas pra players em socketlib funciona, teste manual feito pelo usuario
-- 9. - Teste se um player calculando algo em everyone em socketlib funciona, teste manual feito pelo usuario
-- 10. - Teste se um player calculando algo em gm em socketlib funciona, teste manual feito pelo usuario
-- 11. - Teste para apenas um player em socketlib funciona, teste manual feito pelo usuario
-- 12. - Teste para a resposta vir de apenas um player no execin mesmo que seja mandato varios  em socketlib funciona, teste manual feito pelo usuario 
-- 13. - Teste evento que nao existe, erro se não em socketlib funciona, teste manual feito pelo usuario 
-- 14. - Teste eventoPlayer sempre envia pra gm mesmo que filtre, testar em chat implementation funciona, teste manual feito pelo usuario  
-- 15. - Teste player sempre envia pra gm mesmo que filtre, testar em socketlib implementation
-- 16. - Alternar a configuração de qual implementação usar a depender de uma configuração. Alterar no factory de mensageria.
-- 17. - Corrigir pro createDialog usar options em vez de depender da ordem dos parâmetros, criar uma interface pra options e documentar os campos.
-- 18. - o último voltar deveria reabrir a tela de escolha de npc, se isso for possível ser tratado nas classes bases e nao de quem usa o npcdialog.
-- 19. - corrigir bug que ao abrir duas telas de npc diferentes a primeira passa a se portar como a segunda, alguma variavel global esta sendo poluída, e e o título deve constar o nome do npc em questao para ajudar a nao se confundir.
-- 20. - Trocar em  npcTalkDialog.ts  pra uar a nova implementacao usando socket a interface inicialmente do chat
-- 21. - Trocar em  npcTalkDialog.ts  pra uar a nova implementacao usando a interface do socketlib  
-- 22. - Verificar que no projeto ../../../../forgotten-realms/scripts/ nos npcs no lugar onde tem "action", "screen", "screen-context", criar um enum neste projeto e documentar isto, pra que os projetos que usarem fazerem uso do enum e nao uma string, para evitar erros de digitacao
+- 9. - Teste se mensagens apenas pra players em socketlib funciona, teste manual feito pelo usuario
+- 10. - Teste se um player calculando algo em everyone em socketlib funciona, teste manual feito pelo usuario
+- 11. - Teste se um player calculando algo em gm em socketlib funciona, teste manual feito pelo usuario
+- 12. - Teste para apenas um player em socketlib funciona, teste manual feito pelo usuario
+- 13. - Teste para a resposta vir de apenas um player no execin mesmo que seja mandato varios  em socketlib funciona, teste manual feito pelo usuario 
+- 14. - Teste evento que nao existe, erro se não em socketlib funciona, teste manual feito pelo usuario 
+- 15. - Teste eventoPlayer sempre envia pra gm mesmo que filtre, testar em chat implementation funciona, teste manual feito pelo usuario  
+- 16. - Teste player sempre envia pra gm mesmo que filtre, testar em socketlib implementation
+- 17. - Alternar a configuração de qual implementação usar a depender de uma configuração. Alterar no factory de mensageria.
+- 18. - Corrigir pro createDialog usar options em vez de depender da ordem dos parâmetros, criar uma interface pra options e documentar os campos.
+- 19. - o último voltar deveria reabrir a tela de escolha de npc, se isso for possível ser tratado nas classes bases e nao de quem usa o npcdialog.
+- 20. - corrigir bug que ao abrir duas telas de npc diferentes a primeira passa a se portar como a segunda, alguma variavel global esta sendo poluída, e e o título deve constar o nome do npc em questao para ajudar a nao se confundir.
+- 21. - Trocar em  npcTalkDialog.ts  pra uar a nova implementacao usando socket a interface inicialmente do chat
+- 22. - Trocar em  npcTalkDialog.ts  pra uar a nova implementacao usando a interface do socketlib  
+- 23. - Verificar que no projeto ../../../../forgotten-realms/scripts/ nos npcs no lugar onde tem "action", "screen", "screen-context", criar um enum neste projeto e documentar isto, pra que os projetos que usarem fazerem uso do enum e nao uma string, para evitar erros de digitacao
