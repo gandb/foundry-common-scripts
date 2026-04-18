@@ -1,8 +1,18 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "github-copilot/claude-opus-4",
-  "small_model": "github-copilot/gpt-4o-mini",
+  "model": "opencode-zen/big-pickle",
+  "small_model": "opencode-zen/minimax-m2.5-free",
   "provider": {
+    "opencode-zen": {
+      "options": {
+        "baseURL": "https://opencode.ai/zen/v1"
+      },
+      "models": {
+        "nemotron-3-super-free": {
+          "name": "Nemotron 3 Super Free"
+        }
+      }
+    },
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "Ollama (local)",
@@ -12,7 +22,7 @@
       "models": {
         "qwen3:8b": {
           "name": "Qwen3 8B (local)",
-               "tools": true,
+          "tools": true,
           "reasoning": true,
           "limit": {
             "context": 16384,
@@ -21,25 +31,24 @@
         },
         "qwen2.5-coder:7b": {
           "name": "Qwen2.5 Coder 7B (local)",
-                "tools": true,
+          "tools": true,
           "reasoning": true,
-          "limit": { "context": 16384,
-            "output": 4096
-          }
+          "limit": { "context": 16384, "output": 4096 }
         },
         "falcon3:10b": {
           "name": "falcon3:10b  (local)",
-                 "tools": true,
+          "tools": true,
           "reasoning": true,
           "limit": {
             "context": 16384,
             "output": 4096
           }
-        }, 
+        },
         "gemma4:latest": {
           "name": "gemma4:latest (local)",
-                     "tools": true,
-          "reasoning": true,          "limit": {
+          "tools": true,
+          "reasoning": true,
+          "limit": {
             "context": 16384,
             "output": 4096
           }
