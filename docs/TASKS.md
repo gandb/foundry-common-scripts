@@ -6,7 +6,7 @@ Lista de tarefas do projeto. Quando o usuário pedir "Faça TASK X", o SCRUM_MAS
 
 - 1. ✅ - Documentar a stack no README.md
    - **Descrição:** Adicionar seção "Stack e Versões" no README.md com: Versão do OpenCode (1.4.3), Node (v22.18.0), npm (10.9.3), TypeScript (^5.9.2 - presente no package.json). O DOCUMENTATION_WRITER foi atualizado para incluir esta documentação automaticamente em futuras alterações.
-- 2. - Corrigir SocketLib executeAsGM() para não enviar para GM
+- 2. ✅ - Corrigir SocketLib executeAsGM() para não enviar para GM
    - **Descrição:** A função executeAsGM() na implementação SocketLib atualmente usa executeForEveryone() que envia mensagens para todos os jogadores incluindo o GM. Deve ser corrigida para usar executeForOthersGM() ou filtrar recipients para enviar apenas para jogadores não-GM, mantendo consistência com a implementação ChatSocket.
 - 3. - Implementar filtro onlyPlayers no SocketLib
    - **Descrição:** Adicionar filtro similar ao que existe no ChatSocket para descartar mensagens marcadas como onlyPlayers quando o receptor é GM. Atualmente o SocketLib não tem este mecanismo, causando inconsistência entre implementações.
