@@ -2,10 +2,22 @@ export interface IGameSettings {
   register(
     module: string,
     key: string,
-    config: { type: unknown; default?: unknown },
+    config: { type: unknown },
   ): Promise<void>;
   set(module: string, key: string, value: unknown): Promise<void>;
   get(module: string, key: string): Promise<unknown>;
+}
+
+export interface IGameJournalSheet {
+  render(show: boolean): void;
+}
+
+export interface IGameJournalEntry {
+  sheet: IGameJournalSheet;
+}
+
+export interface IGameJournal {
+  getName(name: string): IGameJournalEntry | null;
 }
 
 export interface IGameContext {
@@ -16,6 +28,6 @@ export interface IGameContext {
   modules: { get(name: string): { active: boolean } | undefined };
   socket: any;
   settings: IGameSettings;
-  journal: { getName(name: string): unknown | null };
+  journal: IGameJournal;
   keybindings: any;
 }
