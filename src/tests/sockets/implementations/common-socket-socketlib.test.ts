@@ -93,45 +93,16 @@ describe("SocketLib executeAsGM", () => {
 
     // Verify executeForUsers was called with list of player IDs (non-GM)
     expect(socketInstance.executeForUsers).toHaveBeenCalledTimes(1);
-    const result:any =
-      socketInstance.executeForUsers.mock.calls[0];
+    const result: any = socketInstance.executeForUsers.mock.calls[0];
     const eventName = result[0];
     const recipients = result[1];
-    const data =  result[2];
+    const data = result[2];
     expect(eventName).toBe("testEvent");
-    expect(recipients).toEqual(["p1", "p2"]); // only non-GM users
-    // Should include onlyPlayers flag in data
-    expect(data[0]).toEqual({ data: ["arg1", "arg2"], onlyPlayers: true });
+    expect(recipients).toEqual(["p1", "p2"]);
+    expect(data).toEqual({ data: ["arg1", "arg2"], onlyPlayers: true });
   });
 
-  it("should not send messages to GM when onlyPlayers flag is set and receiver is GM", async () => {
-    // This test will be for register method filtering
-    // Setup mock users: GM as receiver
-    mockGame.user = { id: "gm1", isGM: true };
-
-    const socketInstance = {
-      register: jest.fn(),
-    };
-    socketLib["_socketOriginal"] = socketInstance;
-
-    // Register a callback
-    const callback = jest.fn();
-    await socketLib.register("testEvent", callback);
-
-    // The registered wrapper should filter out GM when onlyPlayers flag present
-    // We need to examine the wrapper registered with socketlib
-    expect(socketInstance.register).toHaveBeenCalled();
-    const registeredHandler = socketInstance.register.mock.calls[0][1];
-
-    // Simulate receiving data with onlyPlayers flag
-    const dataWithFlag = [{ data: ["arg1"], onlyPlayers: true }];
-    registeredHandler(...dataWithFlag);
-
-    // Callback should NOT be called because receiver is GM
-    expect(callback).not.toHaveBeenCalled();
-  });
-
-  it("should deliver messages to non-GM users when onlyPlayers flag is set", async () => {
+  it("should deliver messages normally when no toGM flag", async () => {
     mockGame.user = { id: "p1", isGM: false };
 
     const socketInstance = {
@@ -143,11 +114,47 @@ describe("SocketLib executeAsGM", () => {
     await socketLib.register("testEvent", callback);
 
     const registeredHandler = socketInstance.register.mock.calls[0][1];
-    const dataWithFlag = [{ data: ["arg1"], onlyPlayers: true }];
-    const result = await registeredHandler(...dataWithFlag);
+    const data = ["arg1", "arg2"];
+    const result = await registeredHandler(...data);
 
-    // Callback should be called because receiver is not GM
-    expect(callback).toHaveBeenCalledWith("arg1");
+    expect(callback).toHaveBeenCalledWith("arg1", "arg2");
     expect(result).toBe("result");
+  });
+
+  it("should deliver messages to GM when toGM flag is set and user is GM", async () => {
+    mockGame.user = { id: "gm1", isGM: true };
+
+    const socketInstance = {
+      register: jest.fn(),
+    };
+    socketLib["_socketOriginal"] = socketInstance;
+
+    const callback = jest.fn(() => "gm-result");
+    await socketLib.register("testEvent", callback);
+
+    const registeredHandler = socketInstance.register.mock.calls[0][1];
+    const dataWithGM = [{ data: ["arg1"], toGM: true }];
+    const result = await registeredHandler(...dataWithGM);
+
+    expect(callback).toHaveBeenCalledWith("arg1");
+    expect(result).toBe("gm-result");
+  });
+
+  it("should NOT deliver to GM when toGM flag is set but receiver is not GM", async () => {
+    mockGame.user = { id: "p1", isGM: false };
+
+    const socketInstance = {
+      register: jest.fn(),
+    };
+    socketLib["_socketOriginal"] = socketInstance;
+
+    const callback = jest.fn();
+    await socketLib.register("testEvent", callback);
+
+    const registeredHandler = socketInstance.register.mock.calls[0][1];
+    const dataWithGM = [{ data: ["arg1"], toGM: true }];
+    await registeredHandler(...dataWithGM);
+
+    expect(callback).not.toHaveBeenCalled();
   });
 });

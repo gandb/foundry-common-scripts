@@ -88,7 +88,10 @@ scripts/
 |---------|-----------|
 | `npm run build` | Executa `build.mjs` (incrementa versao) + `tsc` (compila TS) + `vite build` (bundle IIFE) |
 | `npm run prepublishOnly` | Alias para `npm run build` |
-| `npm test` | Executa testes unitarios via Vitest (`npx vitest run`) |
+| `npm test` | Executa testes unitarios via Jest (`npx jest`) |
+| `npm run test:watch` | Executa testes em modo watch |
+| `npm run test:coverage` | Executa testes com cobertura |
+| `npm run vite-version` | Exibe versao do Vite |
 
 ### Processo de build
 
@@ -124,19 +127,23 @@ Configuracao de logging carregada em runtime pelo `CommonModule`:
 
 ```json
 {
-  "prefix": "CS",
-  "level": "INFO",
-  "showDate": true,
-  "showLevel": true
+  "log": {
+    "format": "",
+    "prefix": "CS",
+    "hasDate": true,
+    "hasLevel": true,
+    "level": "INFO"
+  }
 }
 ```
 
 | Campo | Descricao | Valores |
 |-------|-----------|---------|
-| `prefix` | Prefixo das mensagens de log | String (ex: `"CS"`) |
-| `level` | Nivel minimo de log | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"` |
-| `showDate` | Exibir data/hora no log | `true` / `false` |
-| `showLevel` | Exibir nivel no log | `true` / `false` |
+| `log.format` | Formato customizado das mensagens | String |
+| `log.prefix` | Prefixo das mensagens de log | String (ex: `"CS"`) |
+| `log.hasDate` | Exibir data/hora no log | `true` / `false` |
+| `log.hasLevel` | Exibir nivel no log | `true` / `false` |
+| `log.level` | Nivel minimo de log | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"` |
 
 ---
 
@@ -319,13 +326,20 @@ Valores negativos retornam 0. Hipotenusa menor que cateto retorna 0 (triangulo i
 
 #### Testes
 
-20 testes unitarios em `src/tests/submodules/flight-movement/flight-movement-calc.test.ts` cobrindo:
+20 testes unitarios via Jest em `src/tests/submodules/flight-movement/flight-movement-calc.test.ts`:
 - Triangulos pitagoricos classicos (3-4-5, 5-12-13)
 - Valores zero
 - Valores negativos
 - Decimais e arredondamento
 - Triangulo impossivel (hipotenusa < cateto)
 - Valores tipicos de D&D 5e (30ft, 60ft)
+
+### Testes de Socket
+
+4 testes unitarios via Jest em `src/tests/sockets/implementations/common-socket-socketlib.test.ts`:
+- executeForAll, executeAsGM (toGM flag), registro de callbacks
+
+**Total: 24 testes** - Executar com `npm test`
 
 ---
 
