@@ -55,10 +55,10 @@ src/
 5. **Nunca colocar `.test.ts` junto ao código fonte** em `src/submodules/`, `src/sockets/`, etc.
 
 ### Framework de testes
-- **Vitest** é o framework de testes do projeto
-- Configuração em `vitest.config.ts` na raiz
+- **Jest** é o framework de testes do projeto
+- Configuração em `jest.config.js` na raiz
 - O glob de inclusão é `src/tests/**/*.test.ts`
-- Executar com `npm test` ou `npx vitest run`
+- Executar com `npm test` ou `npx jest`
 
 ## Critérios de Aceitação
 - Código só é considerado pronto quando passar nos testes

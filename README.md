@@ -38,7 +38,7 @@ scripts/
 ├── config.json                      # Configuracao de logging (prefix, level)
 ├── package.json                     # Dependencias e scripts npm
 ├── tsconfig.json                    # Configuracao TypeScript (ES2022, strict)
-├── vitest.config.ts                 # Configuracao de testes Vitest
+├── jest.config.js                # Configuracao de testes Jest
 ├── vite.config.ts                   # Build Vite (IIFE, terser, dts)
 ├── styles/
 │   └── module.css                   # Estilos do modulo (hero points, socket, NPC)
@@ -91,7 +91,6 @@ scripts/
 | `npm test` | Executa testes unitarios via Jest (`npx jest`) |
 | `npm run test:watch` | Executa testes em modo watch |
 | `npm run test:coverage` | Executa testes com cobertura |
-| `npm run vite-version` | Exibe versao do Vite |
 
 ### Processo de build
 
@@ -115,7 +114,7 @@ scripts/
 | `vite` | ^7.3.0 | Bundler (dev) |
 | `vite-plugin-dts` | ^4.5.4 | Geracao de `.d.ts` (dev) |
 | `terser` | ^5.46.1 | Minificador JS (dev) |
-| `vitest` | ^4.1.4 | Framework de testes unitarios (dev) |
+| `jest` | ^30.3.0 | Framework de testes unitarios (dev) |
 
 ---
 

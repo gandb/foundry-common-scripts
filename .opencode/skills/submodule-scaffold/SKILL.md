@@ -1,6 +1,6 @@
 ---
 name: submodule-scaffold
-description: Gera a estrutura completa de um novo submodule incluindo arquivo TypeScript, registro no CommonModule, hook lifecycle, teste vitest e entrada no README
+description: Gera a estrutura completa de um novo submodule incluindo arquivo TypeScript, registro no CommonModule, hook lifecycle, teste Jest e entrada no README
 ---
 
 ## O que esta skill faz
@@ -77,37 +77,36 @@ Se o submodule precisa ser exposto globalmente via `win.TaulukkoCommon`, adicion
 1. Import no `src/module.ts`
 2. Propriedade no objeto `win.TaulukkoCommon`
 
-### 6. Criar teste vitest
+### 6. Criar teste Jest
 
-Gerar `src/__tests__/nome-do-submodule.test.ts`:
+Gerar `src/tests/nome-do-submodule.test.ts`:
 
 ```typescript
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NomeDoSubmodule } from "../submodules/nome-do-submodule/nome-do-submodule";
 
 // Mock taulukko-commons
-vi.mock("taulukko-commons", () => ({
+jest.mock("taulukko-commons", () => ({
     injectController: {
-        resolve: vi.fn().mockReturnValue({
-            debug: vi.fn(),
-            info: vi.fn(),
-            error: vi.fn(),
+        resolve: jest.fn().mockReturnValue({
+            debug: jest.fn(),
+            info: jest.fn(),
+            error: jest.fn(),
         }),
-        registerByClass: vi.fn(),
-        registerByName: vi.fn(),
+        registerByClass: jest.fn(),
+        registerByName: jest.fn(),
     },
-    Log: vi.fn(),
+    Log: jest.fn(),
 }));
 
 // Mock Foundry globals
 (globalThis as any).Hooks = {
-    once: vi.fn(),
-    on: vi.fn(),
-    callAll: vi.fn(),
+    once: jest.fn(),
+    on: jest.fn(),
+    callAll: jest.fn(),
 };
 (globalThis as any).game = {
     user: { isGM: false },
-    settings: { register: vi.fn(), get: vi.fn(), set: vi.fn() },
+    settings: { register: jest.fn(), get: jest.fn(), set: jest.fn() },
 };
 
 describe("NomeDoSubmodule", () => {
@@ -149,7 +148,7 @@ Descricao do que faz.
 - [ ] `initHooks()` e `waitReady()` implementados
 - [ ] Export adicionado em `src/submodules/index.ts`
 - [ ] Instancia adicionada em `CommonModule.loadSubModules()`
-- [ ] Teste vitest criado com mocks corretos
+- [ ] Teste Jest criado com mocks corretos
 - [ ] README.md atualizado
 - [ ] Build passa sem erros (`npm run build`)
 

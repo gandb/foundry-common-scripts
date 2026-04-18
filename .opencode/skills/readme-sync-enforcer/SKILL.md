@@ -23,8 +23,8 @@ Buscar todos os `.ts` e `.mjs` nas pastas do projeto (excluindo `.git/`, `node_m
 - `src/submodules/`: submodules do Foundry VTT (NPC, HeroPoints, etc.)
 - `src/socket/`: implementacoes de socket
 - `src/util/`: utilitarios e helpers
-- `src/__tests__/`: testes com vitest
-- Raiz: `build.mjs`, `vite.config.ts`, `tsconfig.json`
+- `src/tests/`: testes com Jest
+- Raiz: `build.mjs`, `vite.config.ts`, `tsconfig.json`, `jest.config.js`
 
 ### 2. Verificar presenca no README.md
 
@@ -60,7 +60,7 @@ Para submodules ja documentados, comparar:
 Todo arquivo em `src/__tests__/` deve estar documentado na secao de testes do README.md com:
 - Nome do teste
 - O que testa
-- Comando de execucao (`npx vitest run`)
+- Comando de execucao (`npm test` ou `npx jest`)
 
 ## Formato de saida
 
