@@ -1,6 +1,11 @@
+/// <reference types="jest" />
+/// <reference path="../../../../types/test-globals.d.ts" />
+
 import { SocketLib } from "../../../../src/sockets/implementations/common-socket-socketlib";
 
-// Mock global Foundry objects
+/**
+ * Mock global Foundry objects
+ */
 const mockGame: any = {
   users: new Map(),
   user: { id: "gm1", isGM: true },

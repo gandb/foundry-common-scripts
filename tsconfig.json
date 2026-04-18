@@ -13,7 +13,7 @@
     "strict": true,
     "alwaysStrict": true,
 
-    "typeRoots": ["types"],
+    "typeRoots": ["types", "node_modules/@types"],
 
     // Output
     "sourceMap": true,
