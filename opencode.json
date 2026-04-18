@@ -12,16 +12,36 @@
       "models": {
         "qwen3:8b": {
           "name": "Qwen3 8B (local)",
+               "tools": true,
+          "reasoning": true,
           "limit": {
-            "context": 32768,
-            "output": 8192
+            "context": 16384,
+            "output": 4096
           }
         },
         "qwen2.5-coder:7b": {
           "name": "Qwen2.5 Coder 7B (local)",
+                "tools": true,
+          "reasoning": true,
+          "limit": { "context": 16384,
+            "output": 4096
+          }
+        },
+        "falcon3:10b": {
+          "name": "falcon3:10b  (local)",
+                 "tools": true,
+          "reasoning": true,
           "limit": {
-            "context": 32768,
-            "output": 8192
+            "context": 16384,
+            "output": 4096
+          }
+        }, 
+        "gemma4:latest": {
+          "name": "gemma4:latest (local)",
+                     "tools": true,
+          "reasoning": true,          "limit": {
+            "context": 16384,
+            "output": 4096
           }
         }
       }
