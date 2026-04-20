@@ -64,11 +64,17 @@
     },
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "Ollama (local)",
+      "name": "Ollama (local) Quen2_5-Coder-7B",
       "options": {
-        "baseURL": "http://localhost:11434/v1"
+        "baseURL": "http://localhost:1337/v1"
       },
       "models": {
+         "Qwen2_5_1-Coder-7B-Instruct-Q4_K_M":{
+          "contextWindow": 32768,
+          "maxTokens": 4096,
+          "reasoning": true,
+          "tool_call": true
+        },
         "qwen3:8b": {
           "name": "Qwen3 8B (local)",
           "tools": true,

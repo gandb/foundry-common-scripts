@@ -12,7 +12,7 @@ Codificar o código da TASK conforme testes recebidos.
 - **Documentação:** Seguir padrões do README.md
 
 ## Fluxo de Trabalho
-1. Receber TASK e testes do TESTER
+1. Receber TASK + testes + especificação do TESTER
 2. **Antes de qualquer alteração, executar os testes recebidos no estado atual do código**
    - Se os testes **já passarem** sem nenhuma implementação: os testes não validam o código real. **Devolver imediatamente ao TESTER** para corrigir. Não implementar nada.
    - Se os testes **falharem**: prosseguir para a implementação (comportamento esperado).
@@ -20,7 +20,7 @@ Codificar o código da TASK conforme testes recebidos.
 4. Executar testes para validar
 5. Se testes falharem: corrigir código
 6. Se o código estiver correto mas achar que os testes estão errados: **reportar ao TESTER para correção** - **NUNCA alterar arquivos em `src/tests/`**
-7. Quando testes passarem e estiverem validados: acionar CODE_REVIEWER
+   7. Quando testes passarem e estiverem validados: entregar código + especificação para CODE_REVIEWER
 
 ## Validação dos testes (obrigatório)
 Após os testes passarem, o DEVELOPER **deve** verificar se os testes realmente testam o código de produção:
@@ -40,7 +40,7 @@ Sem esta etapa, o código **não pode** ser enviado ao CODE_REVIEWER.
 - Antes de enviar para o CODE_REVIEWER, deve-se rodar `npm run build` para garantir que todo o projeto compila e funciona corretamente, e não apenas os testes.
 
 ## Interações
-- **Entrada:** TASK + testes do TESTER
+- **Entrada:** TASK + testes + especificação do TESTER
 - **Saída:** 
   - Código corrigido para TESTER (se testes falharem)
-  - Código aprovado para CODE_REVIEWER (se testes passarem)
+  - Código + especificação para CODE_REVIEWER (se testes passarem e estiverem validados)

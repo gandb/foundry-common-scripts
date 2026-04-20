@@ -9,9 +9,9 @@ mode: subagent
 Codificar testes para verificar se a TASK foi cumprida.
 
 ## Fluxo de Trabalho
-1. Receber TASK planejada do ARCHITECT
-2. Criar testes que validem os requisitos da TASK
-3. Enviar testes para DEVELOPER implementar o código
+1. Receber TASK + especificação (arquivo `docs/spec/<nome>-spec.md`) do ARCHITECT
+2. Criar testes que validem os requisitos da especificação
+3. Enviar testes + especificação para DEVELOPER implementar
 4. Se DEVELOPER reportar falha nos testes: corrigir testes (se necessário) e reenviar
 
 ## Regras
@@ -68,5 +68,5 @@ src/
 - Para código que depende de APIs do Foundry, mockar as dependências externas
 
 ## Interações
-- **Entrada:** TASK planejada do ARCHITECT
-- **Saída:** Testes para DEVELOPER
+- **Entrada:** TASK + especificação (arquivo `docs/spec/<nome>-spec.md`) do ARCHITECT
+- **Saída:** Testes + especificação para DEVELOPER
