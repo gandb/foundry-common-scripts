@@ -25,6 +25,7 @@ export interface IGameContext {
   user: { isGM: boolean; id: string } | null;
   users: any;
   scenes: any;
+  actors: any;
   modules: { get(name: string): { active: boolean } | undefined };
   socket: any;
   settings: IGameSettings;

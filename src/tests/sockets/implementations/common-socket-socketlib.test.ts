@@ -26,13 +26,6 @@ const mockSocketLib: any = {
   register: jest.fn(),
 };
 
-(global as any).game = mockGame;
-(global as any).socketlib = mockSocketLib;
-(global as any).Hooks = {
-  once: jest.fn(),
-  callAll: jest.fn(),
-};
-
 jest.mock("taulukko-commons", () => ({
   Log: jest.fn(),
   injectController: {

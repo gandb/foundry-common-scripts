@@ -1,23 +1,22 @@
+import { IGameContext } from "../igame-context";
 
 //UTILITARIO PARA CORRIGIR URL DE IMAGENS DE NPCS NO MUNDO ATUAL
 const FIX_NPCs = false;
 
-
 const newImgPath = "modules/candlekeep-5ed/images/mobs"; //substitua com o caminho desejado
 
-Hooks.on("ready", async () => { 
+Hooks.on("ready", async () => {
   await updateNpcImageBaseUrl(newImgPath);
 });
 
 /**
  * Atualiza a URL base da imagem de todos os NPCs do mundo,
  * mantendo o nome original do arquivo.
- * 
+ *
  * @param {string} newBaseUrl - A nova base da URL (sem o nome do arquivo).
  * */
 
 async function updateNpcImageBaseUrl(newBaseUrl: any) {
-
   if (!FIX_NPCs) {
     return;
   }
@@ -26,7 +25,18 @@ async function updateNpcImageBaseUrl(newBaseUrl: any) {
     newBaseUrl = newBaseUrl.slice(0, -1);
   }
 
-  const npcs = game.actors.filter((actor: any) => actor.type === "npc");
+  const { injectController } = require("taulukko-commons");
+  let gameContext:IGameContext | null= null;
+  if (injectController.has("GameContext")) {
+    gameContext = injectController.resolve("GameContext") as IGameContext;
+  } else if (typeof game !== "undefined") {
+    gameContext = (game as any) as IGameContext;
+  }
+  if (!gameContext?.actors) {
+    ui.notifications.warn("GameContext não disponível.");
+    return;
+  }
+  const npcs = gameContext.actors.filter((actor: any) => actor.type === "npc");
 
   if (npcs.length === 0) {
     ui.notifications.warn("Nenhum NPC encontrado.");
@@ -37,7 +47,7 @@ async function updateNpcImageBaseUrl(newBaseUrl: any) {
     const oldImg = npc.img;
     const oldTokenImg = npc.prototypeToken?.texture?.src ?? oldImg;
 
-    // Extrai o nome do arquivo da imagem antiga 
+    // Extrai o nome do arquivo da imagem antiga
     const filenamePortrait = oldImg.split("/").pop();
     const filenameToken = oldTokenImg.split("/").pop();
 
@@ -50,11 +60,11 @@ async function updateNpcImageBaseUrl(newBaseUrl: any) {
       img: newPortrait,
       prototypeToken: {
         texture: {
-          src: newToken
-        }
-      }
+          src: newToken,
+        },
+      },
     });
   }
 
   ui.notifications.info(`Atualizadas as imagens de ${npcs.length} NPC(s).`);
-} 
+}

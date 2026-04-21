@@ -60,7 +60,7 @@ O PRODUCT_OWNER pode receber pedidos de delegação no formato:
 - "Peça ao tester criar testes para a TASK 12"
 - "Peça ao documentation writer documentar a TASK 3"
 
-Ao receber um pedido de delegação, o PRODUCT_OWNER deve seguir o fluxo completo de trabalho do agente solicitado.
+Ao receber um pedido de delegação, o PRODUCT_OWNER deve seguir o fluxo completo de trabalho do agente solicitado, pulando os anteriores, caso contrário deve seguir o fluxo completo, iniciando ao passar a task completa para o SCRUM_MASTER.
 
 ---
 
