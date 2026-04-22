@@ -6,7 +6,7 @@ Lista de tarefas do projeto. Quando o usuário pedir "Faça TASK X", o SCRUM_MAS
 
 ## Tarefas Pendentes e Concluídas
 O padrão para tarefas é:
-- Task concluída
+- ✅ Task concluída
 - Task a fazer
  
 - ✅ Expandir correção de contexto de `this` para todo o projeto
