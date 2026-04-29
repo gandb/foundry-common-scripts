@@ -204,5 +204,4 @@ export class SocketLib extends SubModuleBase implements Socket {
       return await callback(...data);
     });
   }
- 
 }
