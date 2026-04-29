@@ -1,12 +1,16 @@
+a.header-button.control.close {
+  color: #cccccc;
+  margin-right: 0.5rem;
+}
 .npc-portrait-app {
-  background: var(--color-bg-dark);
-  border: 1px solid var(--color-border-dark);
+  background: #333333;
+  border: 1px solid #333333;
   box-shadow: var(--shadow);
   border-radius: var(--border-radius);
 }
 
-.npc-portrait-app .window-title {
-  background: transparent;
+.npc-portrait-app .window-header {
+  background-color: #333333;
   border-bottom: none;
   padding: 0;
 }
@@ -33,7 +37,7 @@
   max-width: 150px !important;
   max-height: 150px !important;
   border-radius: calc(var(--border-radius) / 2);
-  border: 2px solid var(--color-border-light);
+  border: 2px solid #333333;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   object-fit: cover;
 }
@@ -49,7 +53,7 @@
 }
 
 .npc-name {
-  color: var(--color-text-dark-primary);
+  color: #333333;
   font-size: var(--font-size-lg);
   margin: 0 0 0.75rem 0;
   font-family: var(--font-primary);
@@ -57,7 +61,7 @@
 }
 
 .npc-dialog-text {
-  color: var(--color-text-light-primary);
+  color: #333333;
   font-size: var(--font-size-md);
   line-height: 1.5;
   padding: 0.75rem;
@@ -76,31 +80,29 @@
     gap: 1rem;
     max-height: none;
   }
-  
+
   .npc-portrait-image {
     flex: 0 0 auto;
     max-width: 150px;
   }
-  
+
   .npc-portrait-image img {
     width: 120px !important;
     height: 120px !important;
     max-width: 120px !important;
     max-height: 120px !important;
   }
-  
+
   .npc-portrait-content {
     padding: 0;
     max-height: none;
   }
-  
+
   .npc-name {
     font-size: var(--font-size-md);
   }
-  
+
   .npc-dialog-text {
     font-size: var(--font-size-sm);
   }
 }
-
- 
