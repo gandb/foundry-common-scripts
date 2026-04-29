@@ -11,7 +11,7 @@
 
 Common Scripts for Foundry VTT D&D 5e - Modulo TypeScript com submodules, sockets e utilitarios para o Foundry VTT.
 
-- **Versao:** 1.11.60
+- **Versao:** 2.0.70
 - **Autor:** Edson Vicente Carli Junior
 - **Licenca:** MIT
 - **Linguagem primaria:** TypeScript
@@ -68,14 +68,23 @@ scripts/
     │   ├── flight-movement/         # Calculadora de movimento em voo (Pitagoras)
     │   ├── playertools/             # Ferramentas de jogador (placeholder)
     │   └── region-utils/            # Toggle de visibilidade de regioes
-    └── sockets/
-        ├── index.ts                 # Barrel: Socket, DummySocket, ChatSocket, SocketLib
-        ├── common-socket.ts         # Interface Socket
-        ├── common-socket-test.ts    # Harness de testes de socket
-        └── implementations/
-            ├── common-socket-dummy.ts       # DummySocket (no-op)
-            ├── common-socket-chatmessage.ts # ChatSocket (via ChatMessage flags)
-            └── common-socket-socketlib.ts   # SocketLib (via foundryvtt-socketlib)
+    ├── sockets/
+    │   ├── index.ts                 # Barrel: Socket, DummySocket, ChatSocket, SocketLib
+    │   ├── common-socket.ts         # Interface Socket
+    │   ├── common-socket-test.ts    # Harness de testes de socket
+    │   └── implementations/
+    │       ├── common-socket-dummy.ts       # DummySocket (no-op)
+    │       ├── common-socket-chatmessage.ts # ChatSocket (via ChatMessage flags)
+    │       └── common-socket-socketlib.ts   # SocketLib (via foundryvtt-socketlib)
+    └── tests/
+        ├── sockets/
+        │   └── implementations/
+        │       ├── common-socket-chatmessage.test.ts  # Testes ChatSocket (8 testes)
+        │       ├── common-socket-context.test.ts      # Testes estabilidade contexto (5 testes)
+        │       └── common-socket-socketlib.test.ts   # Testes SocketLib (10 testes)
+        └── submodules/
+            └── flight-movement/
+                └── flight-movement-calc.test.ts       # Testes calculadora voo (20 testes)
 ```
 
 ---
@@ -335,10 +344,27 @@ Valores negativos retornam 0. Hipotenusa menor que cateto retorna 0 (triangulo i
 
 ### Testes de Socket
 
-4 testes unitarios via Jest em `src/tests/sockets/implementations/common-socket-socketlib.test.ts`:
-- executeForAll, executeAsGM (toGM flag), registro de callbacks
+Testes unitarios via Jest em `src/tests/sockets/implementations/`:
 
-**Total: 24 testes** - Executar com `npm test`
+**common-socket-socketlib.test.ts:**
+- `getNonGMUserIds`: retorna apenas IDs de usuários não-GM, trata casos sem usuários ou apenas GMs (3 testes)
+- `executeAsGM`: validação de GM, envio apenas para não-GMs com flag `onlyPlayers: true`, múltiplos argumentos, propagação de retorno (8 testes)
+- Total: 11 testes
+
+**common-socket-chatmessage.test.ts (novo):**
+- `executeAsGM` com flag `onlyPlayers`: validação de GM, verificação de `sendMessage` com parâmetros corretos
+- Consistência entre SocketLib e ChatSocket quanto ao mecanismo `onlyPlayers`
+- `isReadyToSendToGM`: validação baseada em `game.user.isGM`
+- Registro de callbacks
+- Total: 8 testes
+
+**common-socket-context.test.ts:**
+- Estabilidade de contexto (`this`) para métodos desacoplados: `executeForAll`, `executeAsGM`, `executeToGM`, `executeIn`, `register`
+- Total: 5 testes
+
+**Total de testes de socket: 24 testes**
+
+**Total geral: 44 testes** - Executar com `npm test`
 
 ---
 
