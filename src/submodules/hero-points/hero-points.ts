@@ -25,20 +25,30 @@ import { SubModuleBase } from "../sub-module-base";
 import { DialogUtils } from "../dialog-utils/dialog-utils";
 import type { IGameContext } from "../../common/igame-context";
 
+let heroPoints: HeroPoints | undefined = undefined;
+
 export class HeroPoints extends SubModuleBase {
+  constructor() {
+    super();
+    heroPoints = this;
+  }
   #requiredHooksLoaded: boolean = false;
 
   protected async initHooks() {}
 
   protected async waitReady() {
-    const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
+    const heroPointsInstance: HeroPoints = (
+      injectController.has("HeroPoints")
+        ? injectController.resolve("HeroPoints")
+        : heroPoints
+    ) as HeroPoints;
     const logguer: Log = injectController.resolve("CommonLogguer");
 
-    heroPoints.initializeHabilityHero();
+    heroPointsInstance.initializeHabilityHero();
 
     logguer.debug("Heropoints hooks initialized");
 
-    heroPoints.#requiredHooksLoaded = true;
+    heroPointsInstance.#requiredHooksLoaded = true;
 
     Hooks.callAll("onReadyHeroPoints", {});
   }
@@ -242,7 +252,11 @@ export class HeroPoints extends SubModuleBase {
       );
 
       htmldivs.forEach((divElement) => {
-        const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
+        const heroPointsInstance: HeroPoints = (
+          injectController.has("HeroPoints")
+            ? injectController.resolve("HeroPoints")
+            : heroPoints
+        ) as HeroPoints;
 
         const logguer: Log = injectController.resolve("CommonLogguer");
 
@@ -288,7 +302,7 @@ export class HeroPoints extends SubModuleBase {
 				<div class="score">${score}</div>
 				`;
 
-        heroPoints.addEditButtonsToHeroPoints(div);
+        heroPointsInstance.addEditButtonsToHeroPoints(div);
 
         const label: HTMLElement = div
           .querySelectorAll("label")
@@ -301,14 +315,18 @@ export class HeroPoints extends SubModuleBase {
           return;
         }
 
-        heroPoints.createDialog(label);
+        heroPointsInstance.createDialog(label);
       });
     });
   }
 
   initializeHabilityHero() {
     Hooks.on("renderDocumentSheetV2", async (data: any) => {
-      const heroPoints: HeroPoints = injectController.resolve("HeroPoints");
+      const heroPointsInstance: HeroPoints = (
+        injectController.has("HeroPoints")
+          ? injectController.resolve("HeroPoints")
+          : heroPoints
+      ) as HeroPoints;
       const logguer: Log = injectController.resolve("CommonLogguer");
       const sheet: Sheet = data as Sheet;
 
@@ -320,7 +338,7 @@ export class HeroPoints extends SubModuleBase {
       logguer.debug(`Hability hero called  `, sheet);
 
       if (sheet.actor.type != "character") {
-        heroPoints.removeAttribute(sheet);
+        heroPointsInstance.removeAttribute(sheet);
         logguer.debug(
           `Hability hero ignoreted sheet because isnt a player sheet, type:`,
           sheet.actor.type!,
@@ -328,7 +346,7 @@ export class HeroPoints extends SubModuleBase {
         return;
       }
 
-      heroPoints.changeHabilityHonrrorToHeroPoints(sheet);
+      heroPointsInstance.changeHabilityHonrrorToHeroPoints(sheet);
     });
   }
 }

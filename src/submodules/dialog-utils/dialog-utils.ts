@@ -3,8 +3,8 @@ import { Log, injectController } from "taulukko-commons";
 import { Button } from "../npc/button";
 import { SubModuleBase } from "../sub-module-base";
 import { NPC } from "../npc/npc";
-import { NPCDialog } from "../npc/npc-dialog";
-import { CommonModule } from "../../common-module";
+
+var dialogUtils: DialogUtils | undefined = undefined;
 
 export class DialogUtils extends SubModuleBase {
 
@@ -14,6 +14,11 @@ export class DialogUtils extends SubModuleBase {
 	#requiredHooksLoaded: boolean = false;
 
 
+	constructor() {
+		super();
+		dialogUtils = this;
+	}
+
 	protected async waitReady() {
 		const logguer: Log = injectController.resolve("CommonLogguer"); 
  
@@ -22,9 +27,11 @@ export class DialogUtils extends SubModuleBase {
 	}
 
 
-	protected async initHooks() { 
-		const dialogUtils:DialogUtils = injectController.resolve( "DialogUtils"); 
-		dialogUtils.#requiredHooksLoaded = true;
+	protected async initHooks() {
+		if(injectController.has("DialogUtils")) {
+			dialogUtils = injectController.resolve("DialogUtils") as DialogUtils;
+		} 
+		(dialogUtils as DialogUtils).#requiredHooksLoaded = true;
 	}
 
 

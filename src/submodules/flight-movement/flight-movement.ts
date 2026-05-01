@@ -14,14 +14,26 @@ import { calcHypotenuse, calcCathetus } from "./flight-movement-calc";
  * O usuário preenche 2 dos 3 campos e o terceiro é calculado
  * automaticamente pelo Teorema de Pitágoras.
  */
+
+let flightMovement: FlightMovement | undefined = undefined;
+
 export class FlightMovement extends SubModuleBase {
+
   #requiredHooksLoaded: boolean = false;
+
+  constructor() {
+    super();
+    flightMovement = this;
+  }
 
   protected async initHooks() {
     Hooks.on("getSceneControlButtons", async (controls: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
-      const flightMovement: FlightMovement =
-        injectController.resolve("FlightMovement");
+      flightMovement = (
+        injectController.has("FlightMovement")
+          ? injectController.resolve("FlightMovement")
+          : flightMovement
+      ) as FlightMovement;
 
       await flightMovement.addFlightButton(controls);
 
@@ -30,15 +42,21 @@ export class FlightMovement extends SubModuleBase {
   }
 
   protected async waitReady() {
-    const flightMovement: FlightMovement =
-      injectController.resolve("FlightMovement");
-    flightMovement.#requiredHooksLoaded = true;
+    const flightMovementInstance: FlightMovement = (
+      injectController.has("FlightMovement")
+        ? injectController.resolve("FlightMovement")
+        : flightMovement
+    ) as FlightMovement;
+    flightMovementInstance.#requiredHooksLoaded = true;
   }
 
   public async addFlightButton(controls: any) {
     const logguer: Log = injectController.resolve("CommonLogguer");
-    const flightMovement: FlightMovement =
-      injectController.resolve("FlightMovement");
+    const flightMovementInstance: FlightMovement = (
+      injectController.has("FlightMovement")
+        ? injectController.resolve("FlightMovement")
+        : flightMovement
+    ) as FlightMovement;
 
     logguer.debug("FlightMovement: Criando botão de cálculo de voo", controls);
 
@@ -50,7 +68,7 @@ export class FlightMovement extends SubModuleBase {
       toggle: false,
       onClick: () => {
         logguer.debug("FlightMovement: Botão de voo pressionado");
-        flightMovement.showFlightDialog();
+        flightMovementInstance.showFlightDialog();
       },
     };
 
@@ -59,11 +77,14 @@ export class FlightMovement extends SubModuleBase {
 
   public async showFlightDialog() {
     const logguer: Log = injectController.resolve("CommonLogguer");
-    const flightMovement: FlightMovement =
-      injectController.resolve("FlightMovement");
+    const flightMovementInstance: FlightMovement = (
+      injectController.has("FlightMovement")
+        ? injectController.resolve("FlightMovement")
+        : flightMovement
+    ) as FlightMovement;
 
     const fiveMinutes: number = 5 * 60 * 1000;
-    await flightMovement.whaitFor(
+    await flightMovementInstance.whaitFor(
       () => injectController.has("DialogUtils"),
       fiveMinutes,
     );

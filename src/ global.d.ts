@@ -76,10 +76,7 @@ private class Game {
     actors: Array<Actor>;
     socket: Socket;
 }
-
-declare interface Socket {
-    emit(event: string, ...args: any[]): any;
-}
+ 
 
 declare class RegisterKeyBinding implements Register {
     public register(key: string, value: any, options: any);

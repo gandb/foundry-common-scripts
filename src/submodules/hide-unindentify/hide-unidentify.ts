@@ -2,7 +2,13 @@ import { Log, injectController } from "taulukko-commons";
 import { SubModuleBase } from "../sub-module-base";
 import type { IGameContext } from "../../common/igame-context";
 
+let hideUnidentify: HideUnidentify | undefined = undefined;
+
 export class HideUnidentify extends SubModuleBase {
+  constructor() {
+    super();
+    hideUnidentify = this;
+  }
   readonly #requiredHooksLoaded: boolean = true;
 
   protected async waitReady() {
@@ -19,19 +25,31 @@ export class HideUnidentify extends SubModuleBase {
       "renderItemSheet5e",
       (sheet: any | undefined, options: any | undefined) => {
         const logguer: Log = injectController.resolve("CommonLogguer");
-        const hideUnidentify: HideUnidentify =
-          injectController.resolve("HideUnidentify");
+        const hideUnidentifyInstance: HideUnidentify = (
+          injectController.has("HideUnidentify")
+            ? injectController.resolve("HideUnidentify")
+            : hideUnidentify
+        ) as HideUnidentify;
         logguer.debug("dnd5e.renderItemSheet5e called");
-        hideUnidentify.removeItemSheetIdentifyInformations(sheet, options);
+        hideUnidentifyInstance.removeItemSheetIdentifyInformations(
+          sheet,
+          options,
+        );
       },
     );
 
     Hooks.on("dnd5e.getItemContextOptions", (item, buttons) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
-      const hideUnidentify: HideUnidentify =
-        injectController.resolve("HideUnidentify");
+      const hideUnidentifyInstance: HideUnidentify = (
+        injectController.has("HideUnidentify")
+          ? injectController.resolve("HideUnidentify")
+          : hideUnidentify
+      ) as HideUnidentify;
       logguer.debug("dnd5e.getItemContextOptions called");
-      hideUnidentify.removeButtonsFromItemContext(item, buttons as any[]);
+      hideUnidentifyInstance.removeButtonsFromItemContext(
+        item,
+        buttons as any[],
+      );
     });
   }
 

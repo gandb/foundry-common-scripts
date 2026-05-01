@@ -1,13 +1,20 @@
 import { Log, injectController } from "taulukko-commons";
 import { SubModuleBase } from "../sub-module-base";
 import type { IGameContext } from "../../common/igame-context";
-
+ 
 const REGION_UTILS_REGISTERED_NAMES = {
   MODULE_NAME: "common-assets",
   TOOGLE_VISIBILITY: "common-assets-toogle-visibility-regions",
 };
 
+var regionUtils :  RegionUtils | undefined = undefined;
+
 export class RegionUtils extends SubModuleBase {
+  constructor() {
+    super();
+    regionUtils = this;
+  }
+
   #requiredHooksLoaded: boolean = false;
 
   protected async initHooks() {
@@ -18,7 +25,11 @@ export class RegionUtils extends SubModuleBase {
         "RegionUtils.initHooks: init event, registering key bindings",
       );
 
-      const regionUtils: RegionUtils = injectController.resolve("RegionUtils");
+      regionUtils = (
+        injectController.has("RegionUtils")
+          ? injectController.resolve("RegionUtils")
+          : regionUtils
+      ) as RegionUtils;
 
       regionUtils.registerKeybindings();
 
@@ -105,12 +116,15 @@ export class RegionUtils extends SubModuleBase {
           },
         ],
         onDown: async () => {
-          const regionUtils: RegionUtils =
-            injectController.resolve("RegionUtils");
+          const regionUtilsInstance: RegionUtils = (
+            injectController.has("RegionUtils")
+              ? injectController.resolve("RegionUtils")
+              : regionUtils
+          ) as RegionUtils;
           const logguer: Log = injectController.resolve("CommonLogguer");
           logguer.debug("onDown will be called");
 
-          regionUtils.toggleVisibilityRegions();
+          regionUtilsInstance.toggleVisibilityRegions();
         },
         restricted: true, // true = só GM
         reservedModifiers: [], // normalmente vazio

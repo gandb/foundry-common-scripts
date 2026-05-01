@@ -5,7 +5,13 @@ import { NPC } from "./npc";
 import { NPCPortraitDialog } from "./npc-portrait-dialog";
 import type { IGameContext } from "../../common/igame-context";
 
+let npcDialog: NPCDialog | undefined = undefined;
+
 export class NPCDialog extends SubModuleBase {
+  constructor() {
+    super();
+    npcDialog = this;
+  }
   public npcSelected: NPC | any;
   public npcs: Map<string, NPC> = new Map();
   public buttonloaded: boolean = false;
@@ -38,7 +44,11 @@ export class NPCDialog extends SubModuleBase {
 
     Hooks.on("getSceneControlButtons", async (controls: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
-      const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+      npcDialog  = (
+        injectController.has("NPCDialog")
+          ? injectController.resolve("NPCDialog")
+          : npcDialog
+      ) as NPCDialog;
 
       await npcDialog.addNPCButtons(controls);
 
@@ -67,8 +77,12 @@ export class NPCDialog extends SubModuleBase {
   }
 
   protected async waitReady() {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-    npcDialog.requiredHooksLoaded = true;
+    const npcDialogInstance: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialog
+    ) as NPCDialog;
+    npcDialogInstance.requiredHooksLoaded = true;
   }
 
   public async addNPCButtons(controls: any) {
@@ -76,7 +90,11 @@ export class NPCDialog extends SubModuleBase {
       "GameContext",
     ) as IGameContext;
     const logguer: Log = injectController.resolve("CommonLogguer");
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+    const npcDialogInstance: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialog
+    ) as NPCDialog;
 
     if (!gameContext.user?.isGM) {
       logguer.debug("NPC Buttons off");
@@ -93,7 +111,7 @@ export class NPCDialog extends SubModuleBase {
       onClick: () => {
         logguer.debug("Botão de NPCs especiais pressionado");
 
-        npcDialog.showNPCChooseDialog();
+        npcDialogInstance.showNPCChooseDialog();
         logguer.debug("Após abrir janela de NPCs especiais");
       },
     };
@@ -103,10 +121,14 @@ export class NPCDialog extends SubModuleBase {
 
   public async showNPCChooseDialog() {
     const logguer: Log = injectController.resolve("CommonLogguer");
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+    const npcDialogInstance: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialog
+    ) as NPCDialog;
 
     const fiveMinute: number = 5 * 60 * 1000;
-    await npcDialog.whaitFor(
+    await npcDialogInstance.whaitFor(
       () => injectController.has("DialogUtils"),
       fiveMinute,
     );
@@ -132,11 +154,14 @@ export class NPCDialog extends SubModuleBase {
 					<H1>Escolha uma opção:</H1> 
 					</div>`;
 
-    logguer.debug("showNPCChooseDialog:10 before creating buttons", npcDialog);
+    logguer.debug(
+      "showNPCChooseDialog:10 before creating buttons",
+      npcDialogInstance,
+    );
 
     let buttons = [];
 
-    npcDialog.npcs.forEach((npc) => {
+    npcDialogInstance.npcs.forEach((npc) => {
       const label: string = npc.name.toLowerCase();
       injectController.registerByName("npc:" + label, npc);
 
@@ -144,9 +169,13 @@ export class NPCDialog extends SubModuleBase {
 
       buttons.push(
         dialogUtils.createButton(label, npc.name, true, "screen", () => {
-          const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+          const npcDialogCbInstance: NPCDialog = (
+            injectController.has("NPCDialog")
+              ? injectController.resolve("NPCDialog")
+              : npcDialog
+          ) as NPCDialog;
           const npc: NPC = injectController.resolve("npc:" + label);
-          npcDialog.callNPC(npc);
+          npcDialogCbInstance.callNPC(npc);
         }),
       );
     });
@@ -178,10 +207,14 @@ export class NPCDialog extends SubModuleBase {
 			`;
 
   public async callNPC(npc: NPC) {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+    const npcDialogInstance: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialog
+    ) as NPCDialog;
     const logguer: Log = injectController.resolve("CommonLogguer");
     logguer.debug("Selecionado ...", npc);
-    npcDialog.npcSelected = npc;
-    await npcDialog.npcSelected.startScreen();
+    npcDialogInstance.npcSelected = npc;
+    await npcDialogInstance.npcSelected.startScreen();
   }
 }

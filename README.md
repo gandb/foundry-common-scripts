@@ -165,6 +165,43 @@ Configuracao de logging carregada em runtime pelo `CommonModule`:
 4. **Strategy Pattern (Sockets)** - Interface `Socket` com 3 implementacoes intercambiaveis
 5. **Bundle IIFE** - Script unico carregado pelo Foundry, expoe `window.TaulukkoCommon` e `window.CommonScripts`
 
+### Padrão: Auto-Referência em Singletons
+
+Quando uma classe Singleton precisa referenciar a si mesma, **não deve** usar `injectController.resolve("NomeDaClasse")`, pois isso causa dependência circular.
+
+#### Solução:
+
+1. **Variável global de instância** no topo do arquivo:
+   ```typescript
+   let minhaClasse: MinhaClasse | undefined = undefined;
+   ```
+
+2. **Atribuição no construtor**:
+   ```typescript
+   constructor() {
+     super();
+     minhaClasse = this; // Auto-atribuição
+   }
+   ```
+
+3. **Uso da variável global** ao invés de resolve:
+   ```typescript
+   const instance: MinhaClasse = minhaClasse as MinhaClasse;
+   ```
+
+#### Classes que seguem este padrão:
+
+| Classe | Arquivo |
+|--------|---------|
+| `PlayersTools` | `src/submodules/playertools/players-tool.ts` |
+| `HeroPoints` | `src/submodules/hero-points/hero-points.ts` |
+| `RegionUtils` | `src/submodules/region-utils/region-utils.ts` |
+| `NPCDialog` | `src/submodules/npc/npc-dialog.ts` |
+| `HideUnidentify` | `src/submodules/hide-unindentify/hide-unidentify.ts` |
+| `FlightMovement` | `src/submodules/flight-movement/flight-movement.ts` |
+
+Para mais detalhes, consulte `docs/spec/inject-controller-audit-spec.md` e `docs/spec/auto-injection-fix-spec.md`.
+
 ### Entry Points
 
 #### `src/module.ts` - Bootstrap IIFE
@@ -199,6 +236,18 @@ Classe base para todos os modulos:
 - `whaitFor(test, timeout, sleep)`: utilitario de espera async baseado em polling
 - Metodos abstratos: `initHooks()`, `waitReady()`
 
+### `igame-context.ts` - IGameContext (interface)
+
+Interface para tipagem do objeto `game` do Foundry VTT:
+- `name`, `user`, `users`, `scenes`, `actors`, `modules`, `socket`, `settings`, `journal`, `keybindings`
+- Sub-interfaces: `IGameSettings`, `IGameJournalSheet`, `IGameJournalEntry`, `IGameJournal`
+
+Usada para tipar o registro `"GameContext"` no container DI (via `game as unknown as IGameContext`).
+
+**Arquivo:** `src/common/igame-context.ts`
+
+---
+
 ### `cache-returns-control.ts` - CacheReturnControl<K, V>
 
 Cache generico com capacidade configuravel (default 1000):
@@ -211,6 +260,34 @@ Cache generico com capacidade configuravel (default 1000):
 Script standalone (nao importado por padrao):
 - Quando `FIX_NPCs = true`, atualiza em massa URLs de imagens de atores NPC para novo caminho base
 - Preserva nomes de arquivo originais
+
+---
+
+### `ifoundry-api.ts` - IFoundryAPI (interface)
+
+Interface para abstração da API do Foundry VTT:
+- `hooks`: objeto com métodos `on`, `once`, `callAll` para manipulação de hooks
+- `createChatMessage(payload)`: método para criar mensagens de chat
+
+Permite injeção de dependência e mocking em testes.
+
+**Arquivo:** `src/common/ifoundry-api.ts`
+
+---
+
+### `foundry-api.ts` - FoundryAPI (implementação)
+
+Implementação concreta de IFoundryAPI:
+- Abstração sobre a API global do Foundry VTT (`Hooks`, `game`, etc.)
+- **Registro DI:** `"FoundryAPI"` via `injectController.registerByName()` em `module.ts:69`
+- **Dependência:** Requer `game` estar disponível (runtime do Foundry VTT)
+
+```typescript
+const foundryApi = injectController.resolve<IFoundryAPI>("FoundryAPI");
+foundryApi.hooks.on("init", () => console.log("Init!"));
+```
+
+**Arquivo:** `src/common/foundry-api.ts`
 
 ---
 
@@ -364,7 +441,22 @@ Testes unitarios via Jest em `src/tests/sockets/implementations/`:
 
 **Total de testes de socket: 24 testes**
 
-**Total geral: 44 testes** - Executar com `npm test`
+**Total geral: 51 testes** - Executar com `npm test`
+
+---
+
+### Testes de Auditoria DI
+
+Testes de auditoria de injeção de dependência via Jest em `src/tests/dependency-injection/`:
+
+**audit.test.ts:**
+- Verifica que todos os nomes resolvidos via `injectController.resolve()` estão registrados no container
+- Valida registros: `GameContext`, `FoundryAPI`, `CommonLogguer`, `CommonModule`, `Socket`, `ReturnsControl`
+- Total: 7 testes
+
+**Setup:** `src/tests/setup-jest.ts` - Popula o container DI com mocks que representam os registros em runtime:
+- `CommonModule`, `CommonLogguer`, `GameContext`, `FoundryAPI`, `Socket`, `ReturnsControl`
+- Permite testes unitários sem depender do Foundry VTT
 
 ---
 

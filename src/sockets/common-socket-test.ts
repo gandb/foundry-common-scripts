@@ -20,6 +20,7 @@ export function socketTest() {
     "GameContext",
   ) as IGameContext;
 
+    
   Hooks.once("onReadyCommonSocket", async () => {
     const logguer: Log = injectController.resolve("CommonLogguer");
     const commonSocket: Socket = injectController.resolve("Socket");

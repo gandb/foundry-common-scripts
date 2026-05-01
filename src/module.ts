@@ -1,6 +1,7 @@
 import { injectController, Level, LogGenericImpl } from "taulukko-commons";
 import { CommonModule } from "./common-module";
 import type { IGameContext } from "./common/igame-context";
+import { FoundryAPI } from "./common/foundry-api";
 import {
   NPC,
   NPCDialog,
@@ -60,12 +61,15 @@ async function initModule() {
   injectController.registerByName("CommonModule", commonModule);
   injectController.registerByName("CommonLogguer", logguer);
 
-  if (typeof game !== "undefined") {
-    injectController.registerByName(
-      "GameContext",
-      game as unknown as IGameContext,
-    );
-  }
+  Hooks.once("init", () => {
+    if (typeof game !== "undefined") {
+      injectController.registerByName(
+        "GameContext",
+        game as unknown as IGameContext,
+      );
+      injectController.registerByName("FoundryAPI", new FoundryAPI());
+    }
+  });
 
   commonModule.init();
 }
