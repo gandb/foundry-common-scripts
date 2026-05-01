@@ -12,6 +12,7 @@ import { DummySocket } from "./sockets/implementations/common-socket-dummy";
 import { Socket } from "./sockets/common-socket";
 import { NPCDialog } from "./submodules";
 import { FlightMovement } from "./submodules/flight-movement/flight-movement";
+import { socketTest } from "./sockets/common-socket-test";
 
 const COMMON_REGISTERED_NAMES = {
   MODULE_VERSION: "common-assets-version",
@@ -142,7 +143,7 @@ export class CommonModule extends ModuleBase {
       await commonModule.addReadyCommonAssetsChanges();
 
       //debug only
-      //socketTest();
+      socketTest();
 
       commonModule.hooksRequiredLoaded = true;
 

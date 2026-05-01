@@ -173,7 +173,7 @@ export class SocketLib extends SubModuleBase implements Socket {
   }
 
   public isReadyToSendToGM(): boolean {
-    return this.gameContext.user?.isGM === true;
+    return this.gameContext?.user?.isGM == true ;
   }
 
   public async register(eventName: string, callback: any): Promise<void> {

@@ -1,9 +1,12 @@
 ---
 description: Planejar TASKs e validar aderência
-mode: subagent
 ---
 
 # ARCHITECT
+
+## Tipo
+
+Subagente
 
 ## Responsabilidade
 Planejar TASKs recebidas do SCRUM_MASTER, criar especificação documentada, obter aprovação do usuário, e então enviar para o TESTER. Receber a documentação do DOCUMENTATION_WRITER para ver se ficou aderente ao pedido. Se não estiver aderente detectar o motivo e reenviar para o responsável para refazer sua atividade. Se estiver aderente devolver ao SCRUM_MASTER para ele entregar a TASK

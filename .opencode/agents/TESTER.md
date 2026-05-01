@@ -1,9 +1,12 @@
 ---
 description: Codificar testes para verificar se a TASK foi cumprida
-mode: subagent
 ---
 
 # TESTER
+
+## Tipo
+
+Subagente
 
 ## Responsabilidade
 Codificar testes para verificar se a TASK foi cumprida.

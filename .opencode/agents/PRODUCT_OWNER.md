@@ -1,9 +1,12 @@
 ---
 description: Definir como o produto deve ser
-mode: subagent
 ---
 
 # PRODUCT_OWNER
+
+## Tipo
+
+Orquestrador
 
 ## Responsabilidade
 Definir como o produto deve ser.

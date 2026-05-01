@@ -9,8 +9,6 @@
         "baseURL": "https://openrouter.ai/api/v1"
       },
       "models": {
-        
-        
         "nvidia/nemotron-nano-12b-v2-vl:free": {
           "name": "Nvidia Nemotron Nano 12B V2 VL Free"
         },
@@ -23,21 +21,24 @@
         "meta-llama/llama-3.3-70b-instruct:free": {
           "name": "Meta Llama 3.3 70B Instruct Free"
         },
-          "qwen/qwen3-coder:free": {
+        "qwen/qwen3-coder:free": {
           "name": "Qwen3 Coder Free"
-        },  
+        },
         "z-ai/glm-4.5-air:free": {
           "name": "Z-AI GLM 4.5 Air Free"
-        },"openai/gpt-oss-120b:free": {
+        },
+        "openai/gpt-oss-120b:free": {
           "name": " OpenAI GPT OSS 120B Free"
-        },"nvidia/nemotron-3-nano-30b-a3b:free": {
+        },
+        "nvidia/nemotron-3-nano-30b-a3b:free": {
           "name": "Nvidia Nemotron 3 Nano 30B A3B Free"
-        },"openrouter/elephant-alpha": {
+        },
+        "openrouter/elephant-alpha": {
           "name": "Elephant Alpha Free"
         },
         "moonshotai/kimi-k2.5": {
           "name": "Kimi K2.5 Free"
-        }, 
+        },
         "meta-llama/Llama-3.1-8B-Instruct-Free": {
           "name": "Llama 3.1 8B Instruct Free"
         },
@@ -69,7 +70,7 @@
         "baseURL": "http://localhost:1337/v1"
       },
       "models": {
-         "Qwen2_5_1-Coder-7B-Instruct-Q4_K_M":{
+        "Qwen2_5_1-Coder-7B-Instruct-Q4_K_M": {
           "contextWindow": 32768,
           "maxTokens": 4096,
           "reasoning": true,
@@ -158,13 +159,20 @@
   },
   "agent": {
     "SCRUM_MASTER": {
-      "mode": "subagent",
+      "type": "orchestrator",
+      "mode": "primary",
       "permission": {
         "edit": "allow",
         "bash": "deny"
+      },
+      "responsibilities": {
+        "monitor_next_agent": true,
+        "takeover_if_no_response": true,
+        "continue_flow_after_takeover": true
       }
     },
     "PRODUCT_OWNER": {
+      "type": "orchestrator",
       "mode": "primary",
       "permission": {
         "edit": "allow",
@@ -172,6 +180,7 @@
       }
     },
     "DOCUMENTATION_WRITER": {
+      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "allow",
@@ -179,6 +188,7 @@
       }
     },
     "ARCHITECT": {
+      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "allow",
@@ -186,6 +196,7 @@
       }
     },
     "CODE_REVIEWER": {
+      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "deny",
@@ -193,6 +204,7 @@
       }
     },
     "TESTER": {
+      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "deny",
@@ -200,6 +212,7 @@
       }
     },
     "DEVELOPER": {
+      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "allow",

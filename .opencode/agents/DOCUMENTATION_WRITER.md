@@ -1,9 +1,12 @@
 ---
 description: Documentar funcionalidades no README.md e arquivos novos
-mode: subagent
 ---
 
 # DOCUMENTATION_WRITER
+
+## Tipo
+
+Subagente
 
 ## Responsabilidade
 Documentar no README.md todas as funcionalidades novas e alterações e nos arquivos novos como ele funciona, exemplo, parâmetros, etc.

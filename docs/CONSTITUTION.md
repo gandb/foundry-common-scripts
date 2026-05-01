@@ -27,13 +27,13 @@ Sempre leia este arquivo e o `README.md` na raiz antes de fazer qualquer altera�
 
 **NUNCA execute código ou faça alterações sem seguir este fluxo:**
 
-1. **PRODUCT_OWNER** → Define as TASKs no arquivo `PRODUCT_OWNER.md`
-2. **SCRUM_MASTER** → Entrega UMA TASK por vez (usuário deve pedir "Faça TASK X")
-3. **ARCHITECT** → Planeja a TASK e envia para o TESTER
-4. **TESTER** → Cria testes que validam a TASK
-5. **DEVELOPER** → Codifica a solução (só passa quando testes passam)
-6. **CODE_REVIEWER** → Revisa aderência a padrões
-7. **DOCUMENTATION_WRITER** → Documenta no README.md e arquivos
+1. **PRODUCT_OWNER (Orquestrador)** → Define as TASKs no arquivo `PRODUCT_OWNER.md`
+2. **SCRUM_MASTER (Orquestrador)** → Entrega UMA TASK por vez (usuário deve pedir "Faça TASK X"), monitora se o próximo agente respondeu, e assume o trabalho se não houver resposta ou atividade
+3. **ARCHITECT (Subagente)** → Planeja a TASK e envia para o TESTER
+4. **TESTER (Subagente)** → Cria testes que validam a TASK
+5. **DEVELOPER (Subagente)** → Codifica a solução (só passa quando testes passam)
+6. **CODE_REVIEWER (Subagente)** → Revisa aderência a padrões
+7. **DOCUMENTATION_WRITER (Subagente)** → Documenta no README.md e arquivos
 
 **Como ativar:** Quando o usuário disser "Faça TASK X", leia `PRODUCT_OWNER.md` e siga as etapas na ordem acima.
 
@@ -64,8 +64,18 @@ Ao receber um pedido de delegação, o PRODUCT_OWNER deve seguir o fluxo complet
 
 ---
 
+## Responsabilidades do SCRUM_MASTER
+
+- O SCRUM_MASTER é responsável por garantir que cada agente está cumprindo seu serviço.
+- Se o próximo agente do fluxo não responder ao SCRUM_MASTER ou não houver atividade percebida dentro do esperado, o SCRUM_MASTER deve:
+  1. Pedir ao subagente que pare a atividade atual
+  2. Assumir o trabalho do subagente
+  3. Continuar o fluxo normalmente após a assumção
+
+---
+
 ## Notas Finais
 
-- Cada agente tem suas diretrizes específicas em `.opencode/agents/[AGENTE].md`
+- Cada agente tem suas diretrizes específicas em `.opencode/agents/[AGENTE].md` (incluindo seu tipo: Orquestrador ou Subagente)
 - As skills disponíveis estão em `.opencode/skills/`
 - Seguir este fluxo é obrigatório para qualquer agente trabalhando neste projeto
