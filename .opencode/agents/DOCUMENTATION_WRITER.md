@@ -1,5 +1,6 @@
 ---
 description: Documentar funcionalidades no README.md e arquivos novos
+mode: subagent
 ---
 
 # DOCUMENTATION_WRITER

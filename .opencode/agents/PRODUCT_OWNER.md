@@ -1,5 +1,6 @@
 ---
 description: Definir como o produto deve ser
+mode: primary
 ---
 
 # PRODUCT_OWNER

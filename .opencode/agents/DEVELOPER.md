@@ -1,6 +1,10 @@
+---
+description: Revisar código após aprovação nos testes
+mode: subagent
+---
+
 # DEVELOPER
  
-
 ## Responsabilidade
 Codificar o código da TASK conforme testes recebidos.
 

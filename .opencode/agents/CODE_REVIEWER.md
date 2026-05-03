@@ -1,5 +1,6 @@
 ---
 description: Revisar código após aprovação nos testes
+mode: subagent
 ---
 
 # CODE_REVIEWER

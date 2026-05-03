@@ -1,5 +1,6 @@
 ---
 description: Planejar TASKs e validar aderência
+mode: subagent
 ---
 
 # ARCHITECT

@@ -1,5 +1,6 @@
 ---
 description: Gerenciar TASKs e coordenar fluxo entre agentes
+mode: primary
 ---
 
 # SCRUM_MASTER
