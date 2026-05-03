@@ -3,10 +3,7 @@ description: Definir como o produto deve ser
 ---
 
 # PRODUCT_OWNER
-
-## Tipo
-
-Orquestrador
+ 
 
 ## Responsabilidade
 Definir como o produto deve ser.

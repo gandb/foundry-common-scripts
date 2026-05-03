@@ -1,5 +1,50 @@
 # CONSTITUTION.md
 
+## Glossário de Papéis
+
+### COOPERADOR
+Nome que agrupa ORQUESTRADORES (agentes em modo primário) ou subagentes.
+
+### DEMITIDO
+É um status para todo cooperador (ORQUESTRADOR ou subagente) que receber uma tarefa e:
+- **NÃO ejecutar a tarefa** - Ou seja, não fazer o que foi pedido
+- **NÃO responder de forma que pareça realmente estar progredindo** na tarefa para quem lhe passou a tarefa
+
+**O que caracteriza um DEMITIDO:**
+
+1. **Fingindo trabalhar** - O cooperador dá respostas que fazem parecer que está trabalhando, mas não demonstra nenhum raciocínio real sobre o assunto e nem gera nenhum arquivo. Exemplo: "Estou fazendo", "Vou fazer agora", "Deixa eu verificar" sem nunca de fato fazer algo concreto.
+
+2. **Não responde** - O cooperador simplesmente não responde à tarefa atribuída.
+
+3. **Não gera valor** - Mesmo após várias interações, não há evidências concretas de trabalho (arquivos criados, código escrito, testes feitos, etc).
+
+4. **Esquiva da tarefa** - O cooperador tenta desviar a conversa para outros tópicos ao invés de fazer o que foi pedido.
+
+**O que NÃO é um DEMITIDO:**
+
+- O cooperador que está trabalhando mas precisa de mais tempo
+- O cooperador que faz perguntas clarifying sobre a tarefa
+- O cooperador que reporta progresso real (mesmo que pequeno)
+- O cooperador que pede ajuda ou clarification
+
+### ORQUESTRADOR
+É outro nome para agentes em modo primário. São Cooperadores que passam tarefas para outros Cooperadores.
+
+**Comportamento esperado de um ORQUESTRADOR:**
+
+1. **Ao passar uma tarefa** - O ORQUESTRADOR deve monitorar se o cooperador receptor está realmente executando a tarefa e ver se ele fica DEMITIDO.
+
+2. **Se o cooperador for DEMITIDO** - O ORQUESTRADOR ocupa a role do cooperador DEMITIDO e faz o workflow andar, ou seja, faz a role dele. A primeira coisa é AVISAR o DEMITIDO para parar imediatamente e em seguida o ORQUESTRADOR assume sua role.
+
+3. **Cadeia de DEMITIDOS** - Se o próximo cooperador também for DEMITIDO, o ORQUESTRADOR assume essa nova role também, e assim sucessivamente até completar o workflow
+
+4. **Retorno de role** - Após completar a tarefa assumida, o ORQUESTRADOR pode retornar a role original ao cooperador se este demonstrar querer trabalhar
+
+### USUARIO
+É quem está definido em `USER.md`.
+
+---
+
 ## Contexto geral
 
 Este repositório é orientado a automações e scripts de desenvolvimento.
@@ -20,6 +65,7 @@ Sempre leia este arquivo e o `README.md` na raiz antes de fazer qualquer altera�
 3. **Sem valores hard-coded** - Use variáveis de configuração
 4. **Documentação obrigatória** - Documente no README.md todas as funcionalidades
 5. **Não recriar o que já existe** - Verifique dependências e scripts existentes antes de criar novos
+6. **Diário de bordo e prevenção de loops obrigatórios** — todo agente deve manter um registro sequencial (diário de bordo) das ações executadas durante uma task, relendo-o antes de realizar edições para evitar repetição de tentativas falhas, reversão de mudanças solicitadas pelo usuário ou loops de abordagens ineficazes. Antecedendo correções de bugs em ferramentas, o agente deve perguntar ao usuário como ele utiliza a ferramenta, em vez de supor comportamentos. Jamais algo pedido pelo usuário deve ser ignorado e nunca deve ser removido linhas do diário de bordo. O diário de bordo nao deve ser apagado nunca, e ficar no caimho log/journal-nome-task.md.
 
 ---
 

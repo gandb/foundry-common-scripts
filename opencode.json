@@ -159,7 +159,6 @@
   },
   "agent": {
     "SCRUM_MASTER": {
-      "type": "orchestrator",
       "mode": "primary",
       "permission": {
         "edit": "allow",
@@ -172,7 +171,6 @@
       }
     },
     "PRODUCT_OWNER": {
-      "type": "orchestrator",
       "mode": "primary",
       "permission": {
         "edit": "allow",
@@ -180,7 +178,6 @@
       }
     },
     "DOCUMENTATION_WRITER": {
-      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "allow",
@@ -188,7 +185,6 @@
       }
     },
     "ARCHITECT": {
-      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "allow",
@@ -196,7 +192,6 @@
       }
     },
     "CODE_REVIEWER": {
-      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "deny",
@@ -204,7 +199,6 @@
       }
     },
     "TESTER": {
-      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "deny",
@@ -212,7 +206,6 @@
       }
     },
     "DEVELOPER": {
-      "type": "subagent",
       "mode": "subagent",
       "permission": {
         "edit": "allow",

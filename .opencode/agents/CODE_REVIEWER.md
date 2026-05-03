@@ -3,10 +3,7 @@ description: Revisar código após aprovação nos testes
 ---
 
 # CODE_REVIEWER
-
-## Tipo
-
-Subagente
+ 
 
 ## Responsabilidade
 Revisar código após aprovação nos testes.

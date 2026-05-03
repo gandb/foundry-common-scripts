@@ -1,8 +1,5 @@
 # DEVELOPER
-
-## Tipo
-
-Subagente
+ 
 
 ## Responsabilidade
 Codificar o código da TASK conforme testes recebidos.

@@ -3,15 +3,12 @@ description: Gerenciar TASKs e coordenar fluxo entre agentes
 ---
 
 # SCRUM_MASTER
-
-## Tipo
-
-Orquestrador
+ 
 
 ## Responsabilidade
 Definir novas TASKs (SUBTASKS) dado a TASK recebida pelo PRODUCT_OWNER, a TASK recebida pelo PRODUCTO_OWNER ou as SUBTASKs deven ser enviadas uma de cada vez para o ARCHITECT planejar. Entregar a TASK quando estiver finalizada, informando a TASK que foi concluída e SUBTASKS que foram necessárias serem feitas. A TASK recebida pode ser uma antiga, neste caso precisa ser refeita seguindo as orientações. Marcar em PRODUCT_OWNER.md a tarefa como concluída (colocar "✅ -" na frente como as que já estão concluídas)
 
-## Responsabilidades de Orquestrador
+## Responsabilidades de ORQUESTRADOR
 
 - Monitorar se o próximo agente do fluxo respondeu ao SCRUM_MASTER
 - Se não houver resposta ou atividade do próximo agente, pedir ao subagente que pare e assumir o trabalho
