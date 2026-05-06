@@ -1,74 +1,47 @@
 ---
 name: clean-tasks
-description: Limpa o arquivo docs/TASKS.md mantendo sempre as ultimas 10 tarefas (feitas ou nao feitas). Remove tarefas antigas do inicio da lista.
+description: Limpa docs/TASKS.md preservando todas as pendências atuais e limitando o histórico concluído quando possível
 ---
 
-## O que esta skill faz
+## Objetivo
 
-Limpa o arquivo docs/TASKS.md mantendo sempre as últimas 10 tarefas (feitas ou não feitas). Remove as tarefas mais antigas do início da lista.
+Reduzir o tamanho de `docs/TASKS.md` sem destruir a prioridade atual das tasks pendentes.
+
+## Regras
+
+1. Preservar integralmente a seção de cabeçalho do arquivo.
+2. Preservar a ordem atual de todas as tasks pendentes.
+3. Manter no máximo 10 tasks visíveis no total apenas quando isso não conflitar com a preservação integral das pendências atuais.
+4. Quando houver conflito entre limite total e pendências atuais, preservar todas as pendências e reduzir apenas o histórico concluído.
 
 ## Procedimento
 
-### 1. Ler o arquivo docs/TASKS.md
+### 1. Ler `docs/TASKS.md`
 
-Carregar o conteúdo atual do arquivo docs/TASKS.md na raiz do projeto.
+Carregue a seção `## TAREFAS` e separe:
 
-### 2. Separar tarefas feitas e não feitas
+- tasks concluídas (- ✅ descricao)
+- tasks pendentes (- sem  o símbolo ✅ e em seguida a descriçñao)
 
-- Tarefas com `- ✅` no início são concluídas
-- Tarefas com `- [ ]` no início são pendentes
+### 2. Definir o conjunto a manter
 
-### 3. Calcular quantas tarefas manter
+- mantenha **todas** as tasks pendentes atuais, na ordem existente
+- se o total de pendências for menor que 10, preencha o restante até 10 com as tasks concluídas mais recentes
+- se já houver mais de 10 pendências, mantenha apenas as pendências e não preserve concluídas antigas
+- se já houver 10 ou menos tasks no total, não remova nada
 
-- Se houver 10 ou menos tarefas no total: manter todas
-- Se houver mais de 10 tarefas: manter apenas as últimas 10 (feitas ou não feitas)
+### 3. Reconstruir a lista
 
-### 4. Reconstruir o arquivo
+- primeiro mantenha as concluídas selecionadas
+- depois mantenha a fila pendente atual intacta
+- preserve qualquer texto fora da lista de tasks
 
-Manter o cabeçalho original (formato das tarefas) e reconstruir a lista de tarefas:
-1. Juntar tarefas feitas e não feitas na ordem original
-2. Manter apenas as últimas 10 da lista
+## Quando usar
 
-### 5. Preservar estrutura original
+- quando `docs/TASKS.md` crescer demais
+- após várias tasks concluídas
+- quando for necessário enxugar histórico sem perder a fila pendente prioritária
 
-Manter qualquer texto antes e depois da lista de tarefas original.
+## Autoevolução
 
-## Exemplo
-
-**Antes (20 tarefas - 10 feitas, 10 não feitas):**
-```
-- ✅ Tarefa 1
-- ✅ Tarefa 2
-...
-- ✅ Tarefa 10
-- [ ] Tarefa 11
-- [ ] Tarefa 12
-...
-- [ ] Tarefa 20
-```
-
-**Depois (10 tarefas - 5 feitas, 5 não feitas):**
-```
-- ✅ Tarefa 6
-- ✅ Tarefa 7
-...
-- ✅ Tarefa 10
-- [ ] Tarefa 11
-- [ ] Tarefa 12
-...
-- [ ] Tarefa 20
-```
-
-## Quando usar esta skill
-
-- Periodicamente para manter o arquivo limpo
-- Quando o arquivo docs/TASKS.md ficar muito grande
-- Após muitas tarefas serem concluídas
-
-## Arquivo de entrada
-
-- `docs/TASKS.md` na raiz do projeto atual
-
-## Arquivo de saída
-
-- `docs/TASKS.md` atualizado (mesmo arquivo)
+Se surgir conflito estável entre limpeza e priorização do backlog, use `skill-autoevolution`.

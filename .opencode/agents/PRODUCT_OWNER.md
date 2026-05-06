@@ -1,6 +1,9 @@
 ---
 description: Definir como o produto deve ser
 mode: primary
+permission:
+  edit: deny
+  bash: deny
 ---
 
 # PRODUCT_OWNER

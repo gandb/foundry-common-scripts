@@ -1,6 +1,9 @@
 ---
 description: Gerenciar TASKs e coordenar fluxo entre agentes
 mode: primary
+permission:
+  edit: allow
+  bash: allow
 ---
 
 # SCRUM_MASTER

@@ -1,5 +1,9 @@
 ---
 description: Codificar testes para verificar se a TASK foi cumprida
+mode: subagent
+permission:
+  edit: allow
+  bash: allow
 ---
 
 # TESTER

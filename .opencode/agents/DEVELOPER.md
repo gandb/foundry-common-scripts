@@ -1,6 +1,9 @@
 ---
 description: Revisar código após aprovação nos testes
 mode: subagent
+permission:
+  edit: allow
+  bash: allow
 ---
 
 # DEVELOPER
