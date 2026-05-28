@@ -26,6 +26,10 @@ O padrão para tarefas é:
     - **Descrição:** A função isReadyToSendToGM() atualmente retorna (game.user as any) || (game.users as any) que sempre retorna true se os objetos existirem. Deve ser melhorada para verificar game.user?.isGM e garantir que o usuário atual seja GM antes de permitir envio de mensagens como GM.
     - **Resultado:** Testado em `common-socket-chatmessage.test.ts` com casos para usuário GM e não-GM. Validação implementada com `game.user?.isGM`.
 - ✅ Corrigir tods os casos onde a classe tenta resolver via injectcontroller a propria casa, como no caso do players-tools.ts na linha 12 onde a classe PlayersTools tenta resolver ela propria. Casos assim tem que ser tratados como exceção , uma vez que ele é singleton então pode ter uma variavel global chamada nomeDaClasse exemplo var playerTools:PlayerTools|undefinded = undefined; e no construtor, assim que ele entra na classe ele deve preencher esta variável pra uso próprio. No final do init deve-se remover o waitfor neste caso pois sempre estara pronto- Atenção apenas usa-se em injetores que tentam resolver a propria classe.
+-   Ocultar mensagem "NPC Portrait Event" do chat do Foundry (spec: docs/spec/npc-portrait-event-ocultar-spec.md):
+  - Alterar `ChatMessage.create` em `npc.ts` para usar `type: CONST.CHAT_MESSAGE_TYPES.OTHER`
+  - Remover `whisper` e `content` do objeto da mensagem
+  - Verificar se hook `createChatMessage` continua disparando
     - **Resultado:** Padrão implementado em 6 classes (PlayersTools, HeroPoints, RegionUtils, NPCDialog, HideUnidentify, FlightMovement). Variável global + has() + resolve(). Documentado em docs/spec/inject-controller-audit-spec.md e README.md.
 - Auditar todos os usages de `injectController.resolve` para usar `injectController.has` antes quando não há certeza de que o objeto está registrado
     -- **Descrição:** O injectController dá erro no resolve() se o objeto não existe. Deve-se auditar todos os 161 usages de injectController.resolve no projeto e adicionar verificação com injectController.has() antes quando não há certeza de que o objeto está no container. Seguir o padrão já usado em npc-dialog.ts e flight-movement.ts.

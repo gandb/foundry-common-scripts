@@ -89,7 +89,10 @@
           "name": "Qwen2.5 Coder 7B (local)",
           "tools": true,
           "reasoning": true,
-          "limit": { "context": 16384, "output": 4096 }
+          "limit": {
+            "context": 16384,
+            "output": 4096
+          }
         },
         "falcon3:10b": {
           "name": "falcon3:10b  (local)",
@@ -142,7 +145,6 @@
       }
     }
   },
-
   "permission": {
     "bash": {
       "*": "ask",
@@ -158,25 +160,6 @@
     "list": "allow"
   },
   "agent": {
-    "SCRUM_MASTER": {
-      "mode": "primary",
-      "permission": {
-        "edit": "allow",
-        "bash": "deny"
-      },
-      "responsibilities": {
-        "monitor_next_agent": true,
-        "takeover_if_no_response": true,
-        "continue_flow_after_takeover": true
-      }
-    },
-    "PRODUCT_OWNER": {
-      "mode": "primary",
-      "permission": {
-        "edit": "allow",
-        "bash": "deny"
-      }
-    },
     "DOCUMENTATION_WRITER": {
       "mode": "subagent",
       "permission": {
@@ -219,16 +202,32 @@
     "reserved": 10000
   },
   "watcher": {
-    "ignore": ["node_modules/**", "dist/**", ".git/**", "bkp/**"]
+    "ignore": [
+      "node_modules/**",
+      "dist/**",
+      ".git/**",
+      "bkp/**"
+    ]
   },
   "skills": {
     "path": ".opencode/skills"
   },
-  "instructions": ["./docs/CONSTITUTION.md"],
+  "instructions": [
+    "./docs/CONSTITUTION.md"
+  ],
   "formatter": {
     "prettier": {
-      "command": ["npx", "prettier", "--write", "$FILE"],
-      "extensions": [".ts", ".mjs", ".json"]
+      "command": [
+        "npx",
+        "prettier",
+        "--write",
+        "$FILE"
+      ],
+      "extensions": [
+        ".ts",
+        ".mjs",
+        ".json"
+      ]
     }
   },
   "share": "manual",

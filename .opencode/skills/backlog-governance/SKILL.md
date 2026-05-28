@@ -1,24 +1,23 @@
 ---
-name: finish-task
-description: Descreve como concluuir uma task aprovada em docs/TASKS.md
+name: backlog-governance
+description: Centraliza leitura, priorização e atualização do backlog em docs/TASKS.md
 ---
 
 ## Objetivo
 
-Se for uma subtask, pode ignorar este documento e por aqui. Caso contrário, termine de ler o resto do documento e o execute.
-Usar `docs/TASKS.md` para marcar a task que foi aprovada pelo usuário, e somente neste caso onde o usuário aprovou.
+Usar `docs/TASKS.md` apenas quando a task envolver backlog, priorização, abertura, fechamento ou criação de task derivada.
 
 ## Carregamento mínimo
 
-- `docs/TASKS.md` se necessário para marcar a task como concluída, mas sem releitura global de backlog por padrão.
+- `docs/TASKS.md`
 - agente ativo (`PRODUCT_OWNER` ou `SCRUM_MASTER`)
 - aprovação do usuário quando houver criação ou reordenação de tasks
 
 ## Regras
 
 1. Não reler backlog fora de tarefas de backlog.
-2. Considerar concluída apenas a linha que começa com - ✅.
-3. Considerar pendente a primeira task de topo que começa com - e não começa com - ✅.
+2. Considerar concluída apenas a linha que começa com - ✅ descrição da task.
+3. Considerar pendente a primeira task de topo que começa com - descrição da task e não começa com - ✅ descrição da task.
 4. Preservar a ordem das tasks já concluídas.
 5. Inserir novas tasks derivadas aprovadas **antes da primeira task pendente existente**.
 6. Se várias tasks forem aprovadas em lote, inseri-las como bloco no topo da fila pendente, preservando a prioridade aprovada.
