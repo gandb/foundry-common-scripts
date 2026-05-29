@@ -1,5 +1,10 @@
 # Changelog - common-scripts-dnd5ed
 
+## [2.0.1] - 2026-05-28
+
+### Corrigido
+- Mensagens "NPC Portrait Event" ocultadas do chat do Foundry VTT: `NPC.speak()` agora usa `type: CONST.CHAT_MESSAGE_TYPES.OTHER` e `content: ""`, impedindo a renderização no chat mas mantendo o hook `createChatMessage` para o `NPCPortraitDialog` abrir normalmente em todos os clientes.
+
 ## [2.0.0] - 2026-04-13
 
 ### Compatibilidade

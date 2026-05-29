@@ -5,32 +5,17 @@ Lista de tarefas do projeto. Quando o usuário pedir "Faça TASK X", o SCRUM_MAS
 
 
 ## Tarefas Pendentes e Concluídas
-O padrão para tarefas é:
-- ✅ Task concluída
-- Task a fazer
- 
-- ✅ Expandir correção de contexto de `this` para todo o projeto
-    - **Descrição:** Aplicar a mesma correção realizada na TASK 3 em todas as demais classes Singletons e Controllers do projeto. Deve-se auditar o código em busca de acessos a propriedades/métodos via `this` que possam ser vulneráveis a perda de contexto, substituindo-os pela resolução via `injectController` conforme a diretriz do `ARCHITECT.md`.
-- ✅ Melhorar testes para usar injeção de dependência
-    - **Descrição:** Refatorar o código para usar injeção de dependência ao invés de acessar objetos globais diretamente (como `game`). O código deve verificar se o objeto existe, e se não existir, obtê-lo via injeção de dependência. Isso elimina a necessidade de mocks nos testes e torna os testes mais legíveis e fáceis de manter.
-- ✅ Checar os testes do projeto pois tem um com skip
-    -- **Descrição:** Analisar o motivo de ter um teste marcado com skip. Questione ao usuário depois de dar o relatório com o motivo, se ele quer remover o teste, manter como skip e se ele estiver funcionando e não ter motivos para skip, de a opcao de ativar o teste.
-    - **Resultado:** Teste ativado com sucesso. Adicionados testes em `common-socket-socketlib.test.ts` (agora 11 testes) e criado `common-socket-chatmessage.test.ts` com 8 testes. Total de testes de socket: 24. Total geral: 44 testes.
-- ✅ Implementar filtro onlyPlayers no SocketLib
-    - **Descrição:** Adicionar filtro similar ao que existe no ChatSocket para descartar mensagens marcadas como onlyPlayers quando o receptor é GM. Atualmente o SocketLib não tem este mecanismo, causando inconsistência entre implementações.
-    - **Resultado:** Implementado e testado. SocketLib define `onlyPlayers: true` no payload e ChatSocket usa parâmetro `onlyPlayers=true` em `sendMessage`. Testado em `common-socket-chatmessage.test.ts`.
-- ✅ Corrigir e habilitar teste de envio exclusivo para non-GMs no SocketLib
-    - **Descrição:** O teste `"should send to non-GM users only"` em `common-socket-socketlib.test.ts` está atualmente ignorado (`it.skip`) pois não possui asserções (está apenas chamando o método). A tarefa consiste em refatorar o teste para verificar se `executeAsGM` filtra corretamente a lista de usuários via `getNonGMUserIds` e chama `executeForUsers` com os IDs corretos e o payload `onlyPlayers: true`, habilitando-o em seguida.
-    - **Resultado:** Teste ativado com sucesso. Adicionados 6 novos testes em `common-socket-socketlib.test.ts` e criado `common-socket-chatmessage.test.ts` com testes de consistência entre implementações.
+O padrão para tarefas é: 
 - ✅ Melhorar validação isReadyToSendToGM()
     - **Descrição:** A função isReadyToSendToGM() atualmente retorna (game.user as any) || (game.users as any) que sempre retorna true se os objetos existirem. Deve ser melhorada para verificar game.user?.isGM e garantir que o usuário atual seja GM antes de permitir envio de mensagens como GM.
     - **Resultado:** Testado em `common-socket-chatmessage.test.ts` com casos para usuário GM e não-GM. Validação implementada com `game.user?.isGM`.
 - ✅ Corrigir tods os casos onde a classe tenta resolver via injectcontroller a propria casa, como no caso do players-tools.ts na linha 12 onde a classe PlayersTools tenta resolver ela propria. Casos assim tem que ser tratados como exceção , uma vez que ele é singleton então pode ter uma variavel global chamada nomeDaClasse exemplo var playerTools:PlayerTools|undefinded = undefined; e no construtor, assim que ele entra na classe ele deve preencher esta variável pra uso próprio. No final do init deve-se remover o waitfor neste caso pois sempre estara pronto- Atenção apenas usa-se em injetores que tentam resolver a propria classe.
--   Ocultar mensagem "NPC Portrait Event" do chat do Foundry (spec: docs/spec/npc-portrait-event-ocultar-spec.md):
+- ✅ Ocultar mensagem "NPC Portrait Event" do chat do Foundry (spec: docs/spec/npc-portrait-event-ocultar-spec.md):
   - Alterar `ChatMessage.create` em `npc.ts` para usar `type: CONST.CHAT_MESSAGE_TYPES.OTHER`
   - Remover `whisper` e `content` do objeto da mensagem
   - Verificar se hook `createChatMessage` continua disparando
     - **Resultado:** Padrão implementado em 6 classes (PlayersTools, HeroPoints, RegionUtils, NPCDialog, HideUnidentify, FlightMovement). Variável global + has() + resolve(). Documentado em docs/spec/inject-controller-audit-spec.md e README.md.
+- Corrigir o src/submodules/npc/index.ts pois atualmente esta dando alguns bugs mas acho que sao poucos
 - Auditar todos os usages de `injectController.resolve` para usar `injectController.has` antes quando não há certeza de que o objeto está registrado
     -- **Descrição:** O injectController dá erro no resolve() se o objeto não existe. Deve-se auditar todos os 161 usages de injectController.resolve no projeto e adicionar verificação com injectController.has() antes quando não há certeza de que o objeto está no container. Seguir o padrão já usado em npc-dialog.ts e flight-movement.ts.
 - Corrigir a tipagem pra facilitar o auto-completar:
