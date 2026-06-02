@@ -1,13 +1,13 @@
 {
   "name": "taulukko-common-scripts-dnd5ed",
-  "version": "2.0.94",
+  "version": "2.0.132",
   "description": "Taulukko Common Scripts for Foundry dnd5ed",
   "main": "dist/taulukko-common-scripts-dnd5ed.iife.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "build": "node build.mjs && node node_modules/typescript/bin/tsc && vite build",
+    "build": "node build.mjs && node node_modules/typescript/bin/tsc -p ./tsconfig.json && vite build",
     "vite-version": "vite --version",
     "prepublishOnly": "npm run build"
   },
