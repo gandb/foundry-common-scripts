@@ -11,15 +11,11 @@ O padrão para tarefas é:
     - **Resultado:** Testado em `common-socket-chatmessage.test.ts` com casos para usuário GM e não-GM. Validação implementada com `game.user?.isGM`.
 - ✅ Corrigir tods os casos onde a classe tenta resolver via injectcontroller a propria casa, como no caso do players-tools.ts na linha 12 onde a classe PlayersTools tenta resolver ela propria. Casos assim tem que ser tratados como exceção , uma vez que ele é singleton então pode ter uma variavel global chamada nomeDaClasse exemplo var playerTools:PlayerTools|undefinded = undefined; e no construtor, assim que ele entra na classe ele deve preencher esta variável pra uso próprio. No final do init deve-se remover o waitfor neste caso pois sempre estara pronto- Atenção apenas usa-se em injetores que tentam resolver a propria classe.
 - ✅ Ocultar mensagem "NPC Portrait Event" do chat do Foundry (spec: docs/spec/npc-portrait-event-ocultar-spec.md):
-  - Alterar `ChatMessage.create` em `npc.ts` para usar `type: CONST.CHAT_MESSAGE_TYPES.OTHER`
-  - Remover `whisper` e `content` do objeto da mensagem
-  - Verificar se hook `createChatMessage` continua disparando
-    - **Resultado:** Padrão implementado em 6 classes (PlayersTools, HeroPoints, RegionUtils, NPCDialog, HideUnidentify, FlightMovement). Variável global + has() + resolve(). Documentado em docs/spec/inject-controller-audit-spec.md e README.md.
-- Corrigir o src/submodules/npc/index.ts pois atualmente esta dando alguns bugs mas acho que sao poucos
+- ✅ Corrigir o src/submodules/npc/index.ts pois atualmente esta dando alguns bugs mas acho que sao poucos
 - Auditar todos os usages de `injectController.resolve` para usar `injectController.has` antes quando não há certeza de que o objeto está registrado
     -- **Descrição:** O injectController dá erro no resolve() se o objeto não existe. Deve-se auditar todos os 161 usages de injectController.resolve no projeto e adicionar verificação com injectController.has() antes quando não há certeza de que o objeto está no container. Seguir o padrão já usado em npc-dialog.ts e flight-movement.ts.
 - Corrigir a tipagem pra facilitar o auto-completar:
- - **Descrição:** : corrigir casos existentes e documentar em CONSTITUITION.md que, ao declarar TODAS as variáveis deve-se usar o padrão (<let|const|var> nomeVariavel:<tipo esperado>=valor; ). SE for necessário colocar any porque a variável usa null, undefined ou qualquer outro tipo, faça a declaração de ambos os tipos pra permitir o autocompletar, exemplo: const idade:number|any= (isNaN(getIdade())?null|getIdade();
+ - **Descrição:** : corrigir casos existentes e documentar em PROJECT.md que, ao declarar TODAS as variáveis deve-se usar o padrão (<let|const|var> nomeVariavel:<tipo esperado>=valor; ). SE for necessário colocar any porque a variável usa null, undefined ou qualquer outro tipo, faça a declaração de ambos os tipos pra permitir o autocompletar, exemplo: const idade:number|any= (isNaN(getIdade())?null|getIdade();
 - Teste se mensagens apenas pra players em socketlib funciona, teste manual feito pelo usuario
 - Teste se um player calculando algo em everyone em socketlib funciona, teste manual feito pelo usuario
 - Teste se um player calculando algo em gm em socketlib funciona, teste manual feito pelo usuario
