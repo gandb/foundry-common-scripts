@@ -28,6 +28,6 @@ O padrão para tarefas é:
 - Corrigir pro createDialog usar options em vez de depender da ordem dos parâmetros, criar uma interface pra options e documentar os campos.
 - o último voltar deveria reabrir a tela de escolha de npc, se isso for possível ser tratado nas classes bases e nao de quem usa o npcdialog.
 - corrigir bug que ao abrir duas telas de npc diferentes a primeira passa a se portar como a segunda, alguma variavel global esta sendo poluída, e e o título deve constar o nome do npc em questao para ajudar a nao se confundir.
-- Trocar em  npcTalkDialog.ts  pra uar a nova implementacao usando socket a interface inicialmente do chat
-- Trocar em  npcTalkDialog.ts  pra uar a nova implementacao usando a interface do socketlib  
+- Trocar em  npcTalkDialog.ts  pra usar a nova implementacao usando socket a interface inicialmente do chat
+- Trocar em  npcTalkDialog.ts  pra usar a nova implementacao usando a interface do socketlib  
 - Verificar que no projeto ../../../../forgotten-realms/scripts/ nos npcs no lugar onde tem "action", "screen", "screen-context", criar um enum neste projeto e documentar isto, pra que os projetos que usarem fazerem uso do enum e nao uma string, para evitar erros de digitacao

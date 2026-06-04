@@ -4,6 +4,6 @@
     "prefix": "CS",
     "hasDate": true,
     "hasLevel": true,
-    "level":"DEBUG"
+    "level":"INFO"
   }
 }
