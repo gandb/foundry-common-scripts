@@ -1,68 +1,69 @@
-# Especificação: Auditoria de injectController.resolve
+# Spec: injectController.resolve Audit
 
-## Objetivo
-Auditar todos os usages de `injectController.resolve` no projeto para garantir que o objeto existe no container no ponto onde é resolvido. Se não existe, é um BUG no código - deve ser corrigido, não tratado com fallback.
+## Objective
 
-## Regra Principal
-- Se foi programado para pegar do inject controller, o objeto **DEVE** existir naquele ponto
-- O `injectController.has()` só deve ser usado quando há um **fallback preparado** (ex: objeto opcional)
-- Se não existe e não há fallback, **corrigir o código** (o objeto deveria ter sido registrado antes)
+Audit all usages of `injectController.resolve` in the project to ensure the object exists in the container at the point where it's resolved. If it doesn't exist, it's a BUG in the code — must be fixed, not handled with fallback.
 
-## Arquivos a modificar
-- Todos os arquivos `.ts` em `src/` que contenham `injectController.resolve` sem verificação prévia
+## Main Rule
+- If it was coded to fetch from inject controller, the object **MUST** exist at that point
+- `injectController.has()` should only be used when there's a **prepared fallback** (e.g., optional object)
+- If it doesn't exist and there's no fallback, **fix the code** (the object should have been registered before)
 
-## Procedimento
+## Files to modify
+- All `.ts` files in `src/` that contain `injectController.resolve` without prior verification
 
-### 1. Mapear todos os usages
-Buscar todos os `injectController.resolve` no projeto (~159 ocorrências)
+## Procedure
 
-### 2. Categorizar cada usage
-- **Tem garantia**: O objeto é registrado antes deste ponto no fluxo de execução → OK, não precisa de mudança
-- **Tem fallback**: O código trata o caso de objeto não existir com fallback → OK, mas documentar o fallback
-- **Não tem fallback**: Se o objeto não existir, é um bug → **CORRIGIR** (registrar o objeto ou ajustar o fluxo)
+### 1. Map all usages
+Search for all `injectController.resolve` in the project (~159 occurrences)
 
-### 3. Corrigir casos problemáticos
-Para usages sem fallback onde o objeto deveria existir:
-- Verificar se o objeto está sendo registrado corretamente no container
-- Se não está, adicionar o registro no local apropriado (ex: module.ts, common-module.ts)
-- Se está registrado mas em momento errado, ajustar a ordem de registro
+### 2. Categorize each usage
+- **Has guarantee:** The object is registered before this point in execution flow → OK, no change needed
+- **Has fallback:** Code handles non-existent object with fallback → OK, but document the fallback
+- **No fallback:** If the object doesn't exist, it's a bug → **FIX** (register the object or adjust the flow)
 
-## Padrão de Referência
-- `npc-dialog.ts` linhas 110-120: Exemplo de verificação com fallback
-- `flight-movement.ts` linhas 67-71: Exemplo de verificação com fallback
+### 3. Fix problematic cases
+For usages without fallback where the object should exist:
+- Verify if the object is being registered correctly in the container
+- If not, add registration in the appropriate location (e.g., module.ts, common-module.ts)
+- If registered but at wrong time, adjust registration order
 
-## Padrão: Auto-Referência em Singletons
+## Reference Pattern
+- `npc-dialog.ts` lines 110-120: Example of verification with fallback
+- `flight-movement.ts` lines 67-71: Example of verification with fallback
 
-Quando uma classe Singleton precisa referenciar a si mesma:
+## Pattern: Auto-Reference in Singletons
 
-### Não fazer:
+When a Singleton class needs to reference itself:
+
+### Don't do:
 ```typescript
-const minhaClasse: MinhaClasse = injectController.resolve("MinhaClasse");
+const myClass: MyClass = injectController.resolve("MyClass");
 ```
 
-### Fazer:
-1. Criar variável global de instância no topo do arquivo:
-   ```typescript
-   let minhaClasse: MinhaClasse | undefined = undefined;
-   ```
-2. Atribuir no construtor:
-   ```typescript
-   constructor() {
-     super();
-     minhaClasse = this;
-   }
-   ```
-3. Usar a variável global ao invés do resolve:
-   ```typescript
-   const instance: MinhaClasse = minhaClasse as MinhaClasse;
-   ```
+### Do:
+1. Create instance global variable at the top of the file:
+    ```typescript
+    let myClass: MyClass | undefined = undefined;
+    ```
+2. Assign in constructor:
+    ```typescript
+    constructor() {
+      super();
+      myClass = this;
+    }
+    ```
+3. Use the global variable instead of resolve:
+    ```typescript
+    const instance: MyClass = myClass as MyClass;
+    ```
 
-### Quando usar:
-- Classes que são Singletons registrados via `injectController.registerByClass()`
-- Classes que precisam referenciar a si mesmas em métodos como `initHooks()` ou `waitReady()`
-- Não usar para dependências externas (CommonLogguer, CommonModule, etc)
+### When to use:
+- Classes that are Singletons registered via `injectController.registerByClass()`
+- Classes that need to reference themselves in methods like `initHooks()` or `waitReady()`
+- Don't use for external dependencies (CommonLogguer, CommonModule, etc)
 
-### Classes que seguem este padrão:
+### Classes that follow this pattern:
 - `PlayersTools` (`src/submodules/playertools/players-tool.ts`)
 - `HeroPoints` (`src/submodules/hero-points/hero-points.ts`)
 - `RegionUtils` (`src/submodules/region-utils/region-utils.ts`)
@@ -70,6 +71,6 @@ const minhaClasse: MinhaClasse = injectController.resolve("MinhaClasse");
 - `HideUnidentify` (`src/submodules/hide-unindentify/hide-unidentify.ts`)
 - `FlightMovement` (`src/submodules/flight-movement/flight-movement.ts`)
 
-## Testes esperados
-1. Todos os testes existentes (`npm test`) devem continuar passando
-2. Não deve haver regressões em funcionalidades existentes
+## Expected tests
+1. All existing tests (`npm test`) must continue passing
+2. No regressions in existing functionality

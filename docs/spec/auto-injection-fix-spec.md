@@ -1,11 +1,12 @@
-# Especificação: Corrigir Auto-injeção em Singletons
+# Spec: Fix Auto-Injection in Singletons
 
-## Objetivo
-Identificar e corrigir todas as classes Singletons que tentam resolver a si mesmas através de `injectController.resolve()`, criando uma exceção reutilizável. Substituir por variável global de instância, remover o `waitFor` desnecessário.
+## Objective
 
-## Classes Identificadas com Auto-Referência
+Identify and fix all Singleton classes that try to resolve themselves through `injectController.resolve()`, creating a reusable exception. Replace with instance global variable, remove unnecessary `waitFor`.
 
-| Classe | Arquivo | Linhas com auto-resolve |
+## Identified Classes with Self-Reference
+
+| Class | File | Lines with self-resolve |
 |--------|---------|-------------------------|
 | PlayersTools | `src/submodules/playertools/players-tool.ts` | 12, 23, 24 |
 | HeroPoints | `src/submodules/hero-points/hero-points.ts` | 34, 245, 311 |
@@ -14,43 +15,43 @@ Identificar e corrigir todas as classes Singletons que tentam resolver a si mesm
 | HideUnidentify | `src/submodules/hide-unindentify/hide-unidentify.ts` | 23, 32 |
 | FlightMovement | `src/submodules/flight-movement/flight-movement.ts` | 24, 34, 41, 63 |
 
-## Padrão de Correção
+## Correction Pattern
 
-Para cada classe identificada, implementar:
+For each identified class, implement:
 
-### 1. Variável Global de Instância
+### 1. Instance Global Variable
 ```typescript
-// No topo do arquivo, fora da classe
+// At the top of the file, outside the class
 let playersTools: PlayersTools | undefined = undefined;
 ```
 
-### 2. Atribuição no Construtor
+### 2. Assignment in Constructor
 ```typescript
 export class PlayersTools extends SubModuleBase {
   constructor() {
     super();
-    playersTools = this; // Atribuição própria
+    playersTools = this; // Self-assignment
   }
-  // ... resto do código
+  // ... rest of code
 }
 ```
 
-### 3. Substituir injectController.resolve("NomeClasse")
+### 3. Replace injectController.resolve("ClassName")
 ```typescript
-// Antes (problema)
+// Before (problem)
 const playerTools: PlayersTools = injectController.resolve("PlayersTools");
 
-// Depois (solução) - verifica injectController primeiro, senão usa variável global
+// After (solution) — checks injectController first, then uses global variable
 const playerTools: PlayersTools = 
   (injectController.has("PlayersTools") ? injectController.resolve("PlayersTools") : playersTools) as PlayersTools;
 ```
 
-**Nota:** Este padrão permite que os testes continuem funcionando com injeção de dependência, enquanto o código de produção usa a variável global quando não há registro no container.
+**Note:** This pattern allows tests to continue working with dependency injection, while production code uses the global variable when there's no container registration.
 
-### 4. Remover waitFor desnecessário
-Nos métodos `initHooks()` ou `waitReady()`, onde a classe espera por ela mesma via `whaitFor()`, remover essa espera pois a variável global já está disponível.
+### 4. Remove unnecessary waitFor
+In `initHooks()` or `waitReady()` methods, where the class waits for itself via `whaitFor()`, remove that wait since the global variable is already available.
 
-## Arquivos que serão modificados
+## Files to be modified
 
 1. `src/submodules/playertools/players-tool.ts`
 2. `src/submodules/hero-points/hero-points.ts`
@@ -59,56 +60,56 @@ Nos métodos `initHooks()` ou `waitReady()`, onde a classe espera por ela mesma 
 5. `src/submodules/hide-unindentify/hide-unidentify.ts`
 6. `src/submodules/flight-movement/flight-movement.ts`
 
-## Testes esperados
+## Expected tests
 
-1. Todos os testes existentes (`npm test`) devem continuar passando
-2. O teste `audit.test.ts` deve continuar validando que os resolved names estão registrados
-3. Verificar que as classes funcionam corretamente após a mudança
+1. All existing tests (`npm test`) must continue passing
+2. The `audit.test.ts` test must continue validating that resolved names are registered
+3. Verify classes work correctly after changes
 
-## Atualização da Documentação
+## Documentation Update
 
-A especificação de como implementar este padrão deve ser documentada no arquivo `docs/spec/inject-controller-audit-spec.md` (ou criar nova seção) para que DEVELOPER e DOCUMENTATION_WRITER saibam como trabalhar com esse padrão no futuro.
+The specification for implementing this pattern should be documented in `docs/spec/inject-controller-audit-spec.md` (or create new section) so DEVELOPER and DOCUMENTATION_WRITER know how to work with this pattern in the future.
 
-### Seção a ser adicionada em inject-controller-audit-spec.md:
+### Section to add in inject-controller-audit-spec.md:
 
 ```markdown
-## Padrão: Auto-Referência em Singletons
+## Pattern: Auto-Reference in Singletons
 
-Quando uma classe Singleton precisa referenciar a si mesma:
+When a Singleton class needs to reference itself:
 
-### Não fazer:
+### Don't do:
 ```typescript
-const minhaClasse: MinhaClasse = injectController.resolve("MinhaClasse");
+const myClass: MyClass = injectController.resolve("MyClass");
 ```
 
-### Fazer:
-1. Criar variável global de instância no topo do arquivo:
-   ```typescript
-   let minhaClasse: MinhaClasse | undefined = undefined;
-   ```
-2. Atribuir no construtor:
-   ```typescript
-   constructor() {
-     super();
-     minhaClasse = this;
-   }
-   ```
-3. Usar a variável global ao invés do resolve:
-   ```typescript
-   const instance: MinhaClasse = minhaClasse as MinhaClasse;
-   ```
+### Do:
+1. Create instance global variable at the top of the file:
+    ```typescript
+    let myClass: MyClass | undefined = undefined;
+    ```
+2. Assign in constructor:
+    ```typescript
+    constructor() {
+      super();
+      myClass = this;
+    }
+    ```
+3. Use the global variable instead of resolve:
+    ```typescript
+    const instance: MyClass = myClass as MyClass;
+    ```
 
-### Quando usar:
-- Classes que são Singletons registrados via `injectController.registerByClass()`
-- Classes que precisam referenciar a si mesmas em métodos como `initHooks()` ou `waitReady()`
-- Não usar para dependências externas (CommonLogguer, CommonModule, etc)
+### When to use:
+- Classes that are Singletons registered via `injectController.registerByClass()`
+- Classes that need to reference themselves in methods like `initHooks()` or `waitReady()`
+- Don't use for external dependencies (CommonLogguer, CommonModule, etc)
 ```
 
-## Critérios de Aceite
+## Acceptance Criteria
 
-1. ✅ Auditoria completa - todas as 6 classes identificadas
-2. ✅ Padrão implementado - variável global, atribuição no construtor, remover waitFor
-3. ✅ Consistência verificada - mesmas mudanças em todas as classes
-4. ✅ Sem regressões - testes passando após mudanças
-5. ✅ Documentação mínima no código - comentários explicativos
-6. ✅ Documentação do padrão em `docs/spec/inject-controller-audit-spec.md`
+1. ✅ Complete audit — all 6 classes identified
+2. ✅ Pattern implemented — global variable, assignment in constructor, remove waitFor
+3. ✅ Consistency verified — same changes across all classes
+4. ✅ No regressions — tests passing after changes
+5. ✅ Minimal documentation in code — explanatory comments
+6. ✅ Pattern documented in `docs/spec/inject-controller-audit-spec.md`

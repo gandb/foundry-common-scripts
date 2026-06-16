@@ -9,19 +9,19 @@
 
 # taulukko-common-scripts-dnd5ed
 
-Common Scripts for Foundry VTT D&D 5e - Modulo TypeScript com submodules, sockets e utilitarios para o Foundry VTT.
+Common Scripts for Foundry VTT D&D 5e - TypeScript module with submodules, sockets and utilities for Foundry VTT.
 
-- **Versao:** 2.0.70
-- **Autor:** Edson Vicente Carli Junior
-- **Licenca:** MIT
-- **Linguagem primaria:** TypeScript
-- **Linguagem secundaria:** JavaScript (`*.mjs`) - apenas para scripts pre-build
+- **Version:** 2.0.70
+- **Author:** Edson Vicente Carli Junior
+- **License:** MIT
+- **Primary language:** TypeScript
+- **Secondary language:** JavaScript (`*.mjs`) — only for pre-build scripts
 
 ---
 
-## Stack e Versões
+## Stack and Versions
 
-| Ferramenta | Versão |
+| Tool | Version |
 |------------|--------|
 | OpenCode | 1.4.3 |
 | Node | v22.18.0 |
@@ -30,48 +30,48 @@ Common Scripts for Foundry VTT D&D 5e - Modulo TypeScript com submodules, socket
 
 ---
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 scripts/
-├── build.mjs                        # Pre-build: auto-incrementa versao patch
-├── config.json                      # Configuracao de logging (prefix, level)
-├── package.json                     # Dependencias e scripts npm
-├── tsconfig.json                    # Configuracao TypeScript (ES2022, strict)
-├── jest.config.js                # Configuracao de testes Jest
-├── vite.config.ts                   # Build Vite (IIFE, terser, dts)
+├── build.mjs                        # Pre-build: auto-increments patch version
+├── config.json                      # Logging configuration (prefix, level)
+├── package.json                     # Dependencies and npm scripts
+├── tsconfig.json                    # TypeScript configuration (ES2022, strict)
+├── jest.config.js                # Jest test configuration
+├── vite.config.ts                   # Vite build (IIFE, terser, dts)
 ├── styles/
-│   └── module.css                   # Estilos do modulo (hero points, socket, NPC)
+│   └── module.css                   # Module styles (hero points, socket, NPC)
 ├── templates/
-│   └── npc-talk.hbs                 # Template Handlebars do retrato NPC
+│   └── npc-talk.hbs                 # NPC portrait Handlebars template
 ├── types/
-│   └── foundry-api.d.ts             # Tipagens minimas da API Foundry
-├── dist/                            # Output do build (IIFE bundle)
+│   └── foundry-api.d.ts             # Minimal Foundry API typings
+├── dist/                            # Build output (IIFE bundle)
 └── src/
-    ├── global.d.ts                  # Declaracoes globais do Foundry VTT
-    ├── index.ts                     # Barrel exports (API publica da lib)
-    ├── module.ts                    # Entry point IIFE (bootstrap runtime)
-    ├── common-module.ts             # CommonModule - orquestrador principal
+    ├── global.d.ts                  # Foundry VTT global declarations
+    ├── index.ts                     # Barrel exports (public library API)
+    ├── module.ts                    # IIFE entry point (runtime bootstrap)
+    ├── common-module.ts             # CommonModule - main orchestrator
     ├── common/
     │   ├── index.ts                 # Barrel: CacheReturnControl, SubModuleBase, ModuleBase
-    │   ├── module-base.ts           # Classe abstrata ModuleBase
-    │   ├── cache-returns-control.ts # Cache generico K,V com capacidade
+    │   ├── module-base.ts           # Abstract ModuleBase class
+    │   ├── cache-returns-control.ts # Generic K,V cache with capacity
     │   └── script-helpers/
-    │       └── url-fix.ts           # Utilitario para corrigir URLs de imagens NPC
+    │       └── url-fix.ts           # Utility to fix NPC image URLs
     ├── submodules/
-    │   ├── index.ts                 # Barrel: todos os submodules
-    │   ├── sub-module-base.ts       # Classe abstrata SubModuleBase extends ModuleBase
-    │   ├── npc/                     # Sistema de NPC (dialogo, retrato, botoes)
-    │   ├── dialog-utils/            # Fabrica de dialogos Foundry
-    │   ├── hero-points/             # Sistema de Hero Points (substitui Honor)
-    │   ├── hide-unindentify/        # Esconde UI de identificacao de itens
-    │   ├── flight-movement/         # Calculadora de movimento em voo (Pitagoras)
-    │   ├── playertools/             # Ferramentas de jogador (placeholder)
-    │   └── region-utils/            # Toggle de visibilidade de regioes
+    │   ├── index.ts                 # Barrel: all submodules
+    │   ├── sub-module-base.ts       # Abstract SubModuleBase extends ModuleBase
+    │   ├── npc/                     # NPC system (dialog, portrait, buttons)
+    │   ├── dialog-utils/            # Foundry dialog factory
+    │   ├── hero-points/             # Hero Points system (replaces Honor)
+    │   ├── hide-unindentify/        # Hides item identification UI
+    │   ├── flight-movement/         # Flight movement calculator (Pythagorean)
+    │   ├── playertools/             # Player tools (placeholder)
+    │   └── region-utils/            # Region visibility toggle
     ├── sockets/
     │   ├── index.ts                 # Barrel: Socket, DummySocket, ChatSocket, SocketLib
-    │   ├── common-socket.ts         # Interface Socket
-    │   ├── common-socket-test.ts    # Harness de testes de socket
+    │   ├── common-socket.ts         # Socket interface
+    │   ├── common-socket-test.ts    # Socket test harness
     │   └── implementations/
     │       ├── common-socket-dummy.ts       # DummySocket (no-op)
     │       ├── common-socket-chatmessage.ts # ChatSocket (via ChatMessage flags)
@@ -79,59 +79,59 @@ scripts/
     └── tests/
         ├── sockets/
         │   └── implementations/
-        │       ├── common-socket-chatmessage.test.ts  # Testes ChatSocket (8 testes)
-        │       ├── common-socket-context.test.ts      # Testes estabilidade contexto (5 testes)
-        │       └── common-socket-socketlib.test.ts   # Testes SocketLib (10 testes)
+        │       ├── common-socket-chatmessage.test.ts  # ChatSocket tests (8 tests)
+        │       ├── common-socket-context.test.ts      # Context stability tests (5 tests)
+        │       └── common-socket-socketlib.test.ts   # SocketLib tests (10 tests)
         └── submodules/
             └── flight-movement/
-                └── flight-movement-calc.test.ts       # Testes calculadora voo (20 testes)
+                └── flight-movement-calc.test.ts       # Flight calculator tests (20 tests)
 ```
 
 ---
 
-## Build e Execucao
+## Build and Execution
 
-### Scripts npm
+### npm Scripts
 
-| Comando | Descricao |
+| Command | Description |
 |---------|-----------|
-| `npm run build` | Executa `build.mjs` (incrementa versao) + `tsc` (compila TS) + `vite build` (bundle IIFE) |
-| `npm run prepublishOnly` | Alias para `npm run build` |
-| `npm test` | Executa testes unitarios via Jest (`npx jest`) |
-| `npm run test:watch` | Executa testes em modo watch |
-| `npm run test:coverage` | Executa testes com cobertura |
+| `npm run build` | Runs `build.mjs` (version increment) + `tsc` (TS compile) + `vite build` (IIFE bundle) |
+| `npm run prepublishOnly` | Alias for `npm run build` |
+| `npm test` | Runs unit tests via Jest (`npx jest`) |
+| `npm run test:watch` | Runs tests in watch mode |
+| `npm run test:coverage` | Runs tests with coverage |
 
-### Processo de build
+### Build process
 
-1. **`build.mjs`** (JavaScript pre-build) - Incrementa automaticamente a versao patch no `package.json`
-2. **`tsc`** - Compila TypeScript para JavaScript
-3. **`vite build`** - Empacota como IIFE com nome global `CommonScripts`, gera `.d.ts` via `vite-plugin-dts`, minifica com `terser`
+1. **`build.mjs`** (JavaScript pre-build) — Automatically increments the patch version in `package.json`
+2. **`tsc`** — Compiles TypeScript to JavaScript
+3. **`vite build`** — Packages as IIFE with global name `CommonScripts`, generates `.d.ts` via `vite-plugin-dts`, minifies with `terser`
 
 ### Output
 
-- `dist/taulukko-common-scripts-dnd5ed.iife.js` - Bundle principal carregado pelo Foundry
-- `dist/index.d.ts` - Tipagens para consumo como dependencia
+- `dist/taulukko-common-scripts-dnd5ed.iife.js` — Main bundle loaded by Foundry
+- `dist/index.d.ts` — Typings for consumption as npm dependency
 
 ---
 
-## Dependencias
+## Dependencies
 
-| Pacote | Versao | Descricao |
+| Package | Version | Description |
 |--------|--------|-----------|
-| `taulukko-commons` | ^1.3.0 | Biblioteca interna: `Log`, `LogGenericImpl`, `injectController`, `Level` |
-| `typescript` | ^5.9.2 | Compilador TypeScript (dev) |
+| `taulukko-commons` | ^1.3.0 | Internal library: `Log`, `LogGenericImpl`, `injectController`, `Level` |
+| `typescript` | ^5.9.2 | TypeScript compiler (dev) |
 | `vite` | ^7.3.0 | Bundler (dev) |
-| `vite-plugin-dts` | ^4.5.4 | Geracao de `.d.ts` (dev) |
-| `terser` | ^5.46.1 | Minificador JS (dev) |
-| `jest` | ^30.3.0 | Framework de testes unitarios (dev) |
+| `vite-plugin-dts` | ^4.5.4 | `.d.ts` generation (dev) |
+| `terser` | ^5.46.1 | JS minifier (dev) |
+| `jest` | ^30.3.0 | Unit testing framework (dev) |
 
 ---
 
-## Configuracao
+## Configuration
 
 ### `config.json`
 
-Configuracao de logging carregada em runtime pelo `CommonModule`:
+Logging configuration loaded at runtime by `CommonModule`:
 
 ```json
 {
@@ -145,53 +145,53 @@ Configuracao de logging carregada em runtime pelo `CommonModule`:
 }
 ```
 
-| Campo | Descricao | Valores |
-|-------|-----------|---------|
-| `log.format` | Formato customizado das mensagens | String |
-| `log.prefix` | Prefixo das mensagens de log | String (ex: `"CS"`) |
-| `log.hasDate` | Exibir data/hora no log | `true` / `false` |
-| `log.hasLevel` | Exibir nivel no log | `true` / `false` |
-| `log.level` | Nivel minimo de log | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"` |
+| Field | Description | Values |
+|-------|-----------|--------|
+| `log.format` | Custom message format | String |
+| `log.prefix` | Log message prefix | String (e.g., `"CS"`) |
+| `log.hasDate` | Display date/time in logs | `true` / `false` |
+| `log.hasLevel` | Display level in logs | `true` / `false` |
+| `log.level` | Minimum log level | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"` |
 
 ---
 
-## Arquitetura
+## Architecture
 
-### Padroes principais
+### Main patterns
 
-1. **Injecao de Dependencia** - Usa `injectController` do `taulukko-commons` para resolucao de singletons por nome ou classe
-2. **Lifecycle por Hooks** - Todos os modulos seguem `initHooks()` -> `waitReady()` -> ready, encadeados via `Hooks` do Foundry
-3. **Polling Async** - `whaitFor()` para espera de dependencias entre modulos (timeout de 5 min)
-4. **Strategy Pattern (Sockets)** - Interface `Socket` com 3 implementacoes intercambiaveis
-5. **Bundle IIFE** - Script unico carregado pelo Foundry, expoe `window.TaulukkoCommon` e `window.CommonScripts`
+1. **Dependency Injection** — Uses `injectController` from `taulukko-commons` for singleton resolution by name or class
+2. **Lifecycle via Hooks** — All modules follow `initHooks()` → `waitReady()` → ready, chained via Foundry's `Hooks`
+3. **Async Polling** — `whaitFor()` for waiting on module dependencies (5 min timeout)
+4. **Strategy Pattern (Sockets)** — `Socket` interface with 3 interchangeable implementations
+5. **IIFE Bundle** — Single script loaded by Foundry, exposes `window.TaulukkoCommon` and `window.CommonScripts`
 
-### Padrão: Auto-Referência em Singletons
+### Pattern: Auto-Reference in Singletons
 
-Quando uma classe Singleton precisa referenciar a si mesma, **não deve** usar `injectController.resolve("NomeDaClasse")`, pois isso causa dependência circular.
+When a Singleton class needs to reference itself, it should **not** use `injectController.resolve("ClassName")`, as this causes circular dependency.
 
-#### Solução:
+#### Solution:
 
-1. **Variável global de instância** no topo do arquivo:
-   ```typescript
-   let minhaClasse: MinhaClasse | undefined = undefined;
-   ```
+1. **Instance global variable** at the top of the file:
+    ```typescript
+    let myClass: MyClass | undefined = undefined;
+    ```
 
-2. **Atribuição no construtor**:
-   ```typescript
-   constructor() {
-     super();
-     minhaClasse = this; // Auto-atribuição
-   }
-   ```
+2. **Assignment in constructor**:
+    ```typescript
+    constructor() {
+      super();
+      myClass = this; // Self-assignment
+    }
+    ```
 
-3. **Uso da variável global** ao invés de resolve:
-   ```typescript
-   const instance: MinhaClasse = minhaClasse as MinhaClasse;
-   ```
+3. **Use the global variable** instead of resolve:
+    ```typescript
+    const instance: MyClass = myClass as MyClass;
+    ```
 
-#### Classes que seguem este padrão:
+#### Classes that follow this pattern:
 
-| Classe | Arquivo |
+| Class | File |
 |--------|---------|
 | `PlayersTools` | `src/submodules/playertools/players-tool.ts` |
 | `HeroPoints` | `src/submodules/hero-points/hero-points.ts` |
@@ -200,294 +200,294 @@ Quando uma classe Singleton precisa referenciar a si mesma, **não deve** usar `
 | `HideUnidentify` | `src/submodules/hide-unindentify/hide-unidentify.ts` |
 | `FlightMovement` | `src/submodules/flight-movement/flight-movement.ts` |
 
-Para mais detalhes, consulte `docs/spec/inject-controller-audit-spec.md` e `docs/spec/auto-injection-fix-spec.md`.
+For more details, see `docs/spec/inject-controller-audit-spec.md` and `docs/spec/auto-injection-fix-spec.md`.
 
 ### Entry Points
 
-#### `src/module.ts` - Bootstrap IIFE
+#### `src/module.ts` — IIFE Bootstrap
 
-Ponto de entrada principal do runtime:
-- Cria instancia de `CommonModule`
-- Registra globais em `window.TaulukkoCommon`: NPC, NPCDialog, DialogUtils, FlightMovement, ModuleBase, SubModuleBase, LogGenericImpl, injectController, Level
-- Busca `config.json` para configuracao de log
-- Registra singletons DI: `"FoundryDocument"`, `"CommonModule"`, `"CommonLogguer"`
-- Chama `commonModule.init()`
+Main runtime entry point:
+- Creates instance of `CommonModule`
+- Registers globals on `window.TaulukkoCommon`: NPC, NPCDialog, DialogUtils, FlightMovement, ModuleBase, SubModuleBase, LogGenericImpl, injectController, Level
+- Loads `config.json` for logging configuration
+- Registers DI singletons: `"FoundryDocument"`, `"CommonModule"`, `"CommonLogguer"`
+- Calls `commonModule.init()`
 
-#### `src/index.ts` - Barrel de exports
+#### `src/index.ts` — Barrel exports
 
-Exporta toda a API publica da biblioteca para consumo como dependencia npm.
+Exports the entire public API of the library for consumption as npm dependency.
 
-#### `src/common-module.ts` - Orquestrador principal
+#### `src/common-module.ts` — Main orchestrator
 
-- Nome do modulo: `"common-scripts-dnd5ed"`, versao: `"1.0.6"`
-- `initHooks()`: Carrega todos os submodules, cria DummySocket, registra hooks `"init"` e `"ready"` do Foundry
-- `waitReady()`: Aguarda hooks carregarem, dispara hook `"onReadyCommonModule"`
-- Hook `"init"`: Registra settings
-- Hook `"ready"`: Verifica GM, adiciona classe CSS `isGM`, trata migracao de versao, cria botao de ajuda "?" linkado ao journal "Como Rolar Dados"
+- Module name: `"common-scripts-dnd5ed"`, version: `"1.0.6"`
+- `initHooks()`: Loads all submodules, creates DummySocket, registers Foundry hooks `"init"` and `"ready"`
+- `waitReady()`: Waits for hooks to load, triggers `"onReadyCommonModule"` hook
+- Hook `"init"`: Registers settings
+- Hook `"ready"`: Checks GM, adds CSS class `isGM`, handles version migration, creates help "?" button linked to "How to Roll Dice" journal
 
 ---
 
 ## Common Layer (`src/common/`)
 
-### `module-base.ts` - ModuleBase (abstrata)
+### `module-base.ts` — ModuleBase (abstract)
 
-Classe base para todos os modulos:
-- `init()`: chama `initHooks()` e depois `waitReady()`, marca `#ready = true`
-- `whaitFor(test, timeout, sleep)`: utilitario de espera async baseado em polling
-- Metodos abstratos: `initHooks()`, `waitReady()`
+Base class for all modules:
+- `init()`: calls `initHooks()` then `waitReady()`, sets `#ready = true`
+- `whaitFor(test, timeout, sleep)`: async waiting utility based on polling
+- Abstract methods: `initHooks()`, `waitReady()`
 
-### `igame-context.ts` - IGameContext (interface)
+### `igame-context.ts` — IGameContext (interface)
 
-Interface para tipagem do objeto `game` do Foundry VTT:
+Interface for typing the Foundry VTT `game` object:
 - `name`, `user`, `users`, `scenes`, `actors`, `modules`, `socket`, `settings`, `journal`, `keybindings`
 - Sub-interfaces: `IGameSettings`, `IGameJournalSheet`, `IGameJournalEntry`, `IGameJournal`
 
-Usada para tipar o registro `"GameContext"` no container DI (via `game as unknown as IGameContext`).
+Used to type the `"GameContext"` registration in the DI container (via `game as unknown as IGameContext`).
 
-**Arquivo:** `src/common/igame-context.ts`
-
----
-
-### `cache-returns-control.ts` - CacheReturnControl<K, V>
-
-Cache generico com capacidade configuravel (default 1000):
-- Dual maps: `_cache` (index -> valor) e `_indexKey` (chave -> index)
-- Evicao FIFO quando capacidade excedida
-- Limpeza lazy quando index map excede 2x capacidade
-
-### `script-helpers/url-fix.ts` - Utilitario de correcao de URLs
-
-Script standalone (nao importado por padrao):
-- Quando `FIX_NPCs = true`, atualiza em massa URLs de imagens de atores NPC para novo caminho base
-- Preserva nomes de arquivo originais
+**File:** `src/common/igame-context.ts`
 
 ---
 
-### `ifoundry-api.ts` - IFoundryAPI (interface)
+### `cache-returns-control.ts` — CacheReturnControl<K, V>
 
-Interface para abstração da API do Foundry VTT:
-- `hooks`: objeto com métodos `on`, `once`, `callAll` para manipulação de hooks
-- `createChatMessage(payload)`: método para criar mensagens de chat
+Generic cache with configurable capacity (default 1000):
+- Dual maps: `_cache` (index → value) and `_indexKey` (key → index)
+- FIFO eviction when capacity exceeded
+- Lazy cleanup when index map exceeds 2x capacity
 
-Permite injeção de dependência e mocking em testes.
+### `script-helpers/url-fix.ts` — URL fix utility
 
-**Arquivo:** `src/common/ifoundry-api.ts`
+Standalone script (not imported by default):
+- When `FIX_NPCs = true`, bulk updates NPC actor image URLs to new base path
+- Preserves original filenames
 
 ---
 
-### `foundry-api.ts` - FoundryAPI (implementação)
+### `ifoundry-api.ts` — IFoundryAPI (interface)
 
-Implementação concreta de IFoundryAPI:
-- Abstração sobre a API global do Foundry VTT (`Hooks`, `game`, etc.)
-- **Registro DI:** `"FoundryAPI"` via `injectController.registerByName()` em `module.ts:69`
-- **Dependência:** Requer `game` estar disponível (runtime do Foundry VTT)
+Interface for abstracting the Foundry VTT API:
+- `hooks`: object with `on`, `once`, `callAll` methods for hook manipulation
+- `createChatMessage(payload)`: method to create chat messages
+
+Allows dependency injection and mocking in tests.
+
+**File:** `src/common/ifoundry-api.ts`
+
+---
+
+### `foundry-api.ts` — FoundryAPI (implementation)
+
+Concrete implementation of IFoundryAPI:
+- Abstraction over Foundry VTT global API (`Hooks`, `game`, etc.)
+- **DI Registration:** `"FoundryAPI"` via `injectController.registerByName()` in `module.ts:69`
+- **Dependency:** Requires `game` to be available (Foundry VTT runtime)
 
 ```typescript
 const foundryApi = injectController.resolve<IFoundryAPI>("FoundryAPI");
 foundryApi.hooks.on("init", () => console.log("Init!"));
 ```
 
-**Arquivo:** `src/common/foundry-api.ts`
+**File:** `src/common/foundry-api.ts`
 
 ---
 
 ## Submodules (`src/submodules/`)
 
-### `sub-module-base.ts` - SubModuleBase (abstrata)
+### `sub-module-base.ts` — SubModuleBase (abstract)
 
-Estende `ModuleBase`, serve como marcador de tipo para submodules.
+Extends `ModuleBase`, serves as type marker for submodules.
 
 ---
 
 ### NPC System (`npc/`)
 
-Sistema completo de dialogo com NPCs.
+Complete NPC dialog system.
 
-#### `npc/button.ts` - Button
+#### `npc/button.ts` — Button
 
-Classe para botoes de dialogo:
-- Propriedades: `action`, `label`, `defaultValue`, `type` ("screen"/"action"/"screen-context"), `callback`
+Dialog button class:
+- Properties: `action`, `label`, `defaultValue`, `type` ("screen"/"action"/"screen-context"), `callback`
 
-#### `npc/npc.ts` - NPC (abstrata)
+#### `npc/npc.ts` — NPC (abstract)
 
-Classe base para NPCs:
-- Propriedades: `name`, `imageUrl`, `formatSound`, `groups` (Set), `screens` (Array)
-- Metodos abstratos: `groupToLines`, `lines`
-- `init()`: aguarda NPCDialog e DialogUtils via DI, empilha tela inicial
-- `createDialog()`: cria dropdown com opcoes + botoes Send/Back/Cancel
-- `speak(lineIndex)`: envia evento de retrato NPC via ChatMessage flags (`npc-talk`), toca audio de `modules/forgotten-realms/sounds/npcs/{name}/{index}/`
-- `send()`: resolve combinacoes de grupos para selecionar linha aleatoria, chama `speak()`, navega telas
-- `getCombinations()`: gera combinacoes de chaves de grupo (separadas por `;`)
+Base class for NPCs:
+- Properties: `name`, `imageUrl`, `formatSound`, `groups` (Set), `screens` (Array)
+- Abstract methods: `groupToLines`, `lines`
+- `init()`: waits for NPCDialog and DialogUtils via DI, pushes initial screen
+- `createDialog()`: creates dropdown with options + Send/Back/Cancel buttons
+- `speak(lineIndex)`: sends NPC portrait event via ChatMessage flags (`npc-talk`), plays audio from `modules/forgotten-realms/sounds/npcs/{name}/{index}/`
+- `send()`: resolves group combinations to select random line, calls `speak()`, navigates screens
+- `getCombinations()`: generates group key combinations (separated by `;`)
 
-#### `npc/npc-dialog.ts` - NPCDialog (SubModuleBase)
+#### `npc/npc-dialog.ts` — NPCDialog (SubModuleBase)
 
-Gerencia UI de selecao de NPC e botoes de controle de cena:
-- `initHooks()`: escuta `createChatMessage` (renderiza retrato NPC no flag `npc-talk`) e `getSceneControlButtons` (adiciona botao NPC para GM)
-- `showNPCChooseDialog()`: cria dialogo com um botao por NPC registrado
-- `callNPC(npc)`: define NPC selecionado e inicia sua tela
+Manages NPC selection UI and scene control buttons:
+- `initHooks()`: listens to `createChatMessage` (renders NPC portrait on flag `npc-talk`) and `getSceneControlButtons` (adds NPC button for GM)
+- `showNPCChooseDialog()`: creates dialog with one button per registered NPC
+- `callNPC(npc)`: sets selected NPC and starts its screen
 
-#### `npc/npc-portrait-dialog.ts` - NPCPortraitDialog (Application)
+#### `npc/npc-portrait-dialog.ts` — NPCPortraitDialog (Application)
 
-Aplicacao Foundry para overlay de retrato NPC em tela cheia:
+Foundry application for full-screen NPC portrait overlay:
 - Template: `modules/common-scripts-dnd5ed/scripts/templates/npc-talk.hbs`
-- `renderTalk(data)`: factory estatica para instanciar e renderizar
-- `showToAllPlayers()`: renderiza localmente + emite socket para jogadores remotos
+- `renderTalk(data)`: static factory to instantiate and render
+- `showToAllPlayers()`: renders locally + emits socket to remote players
 
 ---
 
-### Dialog Utils (`dialog-utils/dialog-utils.ts`) - DialogUtils (SubModuleBase)
+### Dialog Utils (`dialog-utils/dialog-utils.ts`) — DialogUtils (SubModuleBase)
 
-Fabrica de dialogos Foundry:
-- `createButton()`: factory para objetos `Button`
-- `createDialog(title, style, content, buttons, submit, left, top, width, height)`: wrapper para `foundry.applications.api.DialogV2` com injecao de conteudo/estilo customizado
-
----
-
-### Hero Points (`hero-points/hero-points.ts`) - HeroPoints (SubModuleBase)
-
-Substitui o ability score "Honor" do D&D 5e por um sistema customizado de "Hero Points":
-- `initializeHabilityHero()`: hook em `renderDocumentSheetV2`
-- Para fichas de NPC: remove o div `hon` completamente
-- Para fichas de personagem: substitui HTML com label "hero" customizado + operadores incremento/decremento
-- `addEditButtonsToHeroPoints()`: botoes +/- somente para GM (+ adiciona 1, - divide por 2 e arredonda)
-- `createDialog()`: clique no label "hero" exibe dialogo explicativo das regras de Hero Points
+Foundry dialog factory:
+- `createButton()`: factory for `Button` objects
+- `createDialog(title, style, content, buttons, submit, left, top, width, height)`: wrapper for `foundry.applications.api.DialogV2` with custom content/style injection
 
 ---
 
-### Hide Unidentify (`hide-unindentify/hide-unidentify.ts`) - HideUnidentify (SubModuleBase)
+### Hero Points (`hero-points/hero-points.ts`) — HeroPoints (SubModuleBase)
 
-Esconde UI de identificacao de itens para jogadores (nao-GM):
-- `initHooks()`: hooks em `renderItemSheet5e` e `dnd5e.getItemContextOptions`
-- `removeButtonsFromItemContext()`: remove opcoes "Identify" e "Attune" do menu de contexto para itens nao identificados
-- `removeItemSheetIdentifyInformations()`: remove labels editaveis de subtitulo e elementos toggle-identified das fichas de item
-
----
-
-### Players Tools (`playertools/players-tool.ts`) - PlayersTools (SubModuleBase)
-
-Placeholder para ferramentas de jogador:
-- `initializeFlyMeasure()`: registrado mas sem implementacao (apenas log)
-- Aguarda CommonModule estar pronto antes de inicializar
+Replaces D&D 5e's "Honor" ability score with a custom "Hero Points" system:
+- `initializeHabilityHero()`: hook on `renderDocumentSheetV2`
+- For NPC sheets: removes the `hon` div completely
+- For character sheets: replaces HTML with custom "hero" label + increment/decrement operators
+- `addEditButtonsToHeroPoints()`: +/- buttons only for GM (+ adds 1, - divides by 2 and rounds)
+- `createDialog()`: clicking the "hero" label displays an explanatory dialog about Hero Points rules
 
 ---
 
-### Region Utils (`region-utils/region-utils.ts`) - RegionUtils (SubModuleBase)
+### Hide Unidentify (`hide-unindentify/hide-unidentify.ts`) — HideUnidentify (SubModuleBase)
 
-Toggle de visibilidade de regioes:
-- `registerKeybindings()`: registra atalho `Shift+G` (somente GM) para alternar visibilidade
-- `toggleVisibilityRegions()`: itera todas as regioes da cena atual e alterna `visibility`
-- `stop(event)`: utilitario para encaixar token no centro de uma forma de regiao
+Hides item identification UI for non-GM players:
+- `initHooks()`: hooks on `renderItemSheet5e` and `dnd5e.getItemContextOptions`
+- `removeButtonsFromItemContext()`: removes "Identify" and "Attune" options from context menu for unidentified items
+- `removeItemSheetIdentifyInformations()`: removes editable subtitle labels and toggle-identified elements from item sheets
 
 ---
 
-### Flight Movement (`flight-movement/`) - FlightMovement (SubModuleBase)
+### Players Tools (`playertools/players-tool.ts`) — PlayersTools (SubModuleBase)
 
-Calculadora de movimento em voo baseada no Teorema de Pitagoras (D&D 5e).
+Placeholder for player tools:
+- `initializeFlyMeasure()`: registered but not implemented (log only)
+- Waits for CommonModule to be ready before initializing
 
-Adiciona um botao em **Token Controls** visivel para **todos os jogadores** (nao requer GM). Ao clicar, abre um dialogo com 3 campos numericos:
+---
 
-- **Eixo X** - Movimento horizontal (feet)
-- **Eixo Y** - Movimento vertical (feet)
-- **Hipotenusa** - Movimento total em voo (feet)
+### Region Utils (`region-utils/region-utils.ts`) — RegionUtils (SubModuleBase)
 
-O usuario preenche 2 dos 3 campos e clica "Calcular". O terceiro campo e calculado automaticamente via `a² + b² = c²`. Todos os valores devem ser >= 0.
+Region visibility toggle:
+- `registerKeybindings()`: registers `Shift+G` shortcut (GM only) to toggle visibility
+- `toggleVisibilityRegions()`: iterates all regions of the current scene and toggles `visibility`
+- `stop(event)`: utility to snap token to center of a region shape
 
-#### Arquivos
+---
 
-| Arquivo | Descricao |
+### Flight Movement (`flight-movement/`) — FlightMovement (SubModuleBase)
+
+Flight movement calculator based on Pythagorean Theorem (D&D 5e).
+
+Adds a button in **Token Controls** visible to **all players** (does not require GM). When clicked, opens a dialog with 3 numeric fields:
+
+- **X Axis** — Horizontal movement (feet)
+- **Y Axis** — Vertical movement (feet)
+- **Hypotenuse** — Total flight movement (feet)
+
+The user fills in 2 of the 3 fields and clicks "Calculate". The third field is calculated automatically via `a² + b² = c²`. All values must be >= 0.
+
+#### Files
+
+| File | Description |
 |---------|-----------|
-| `flight-movement/flight-movement.ts` | Classe `FlightMovement` - hook `getSceneControlButtons`, botao e dialogo |
-| `flight-movement/flight-movement-calc.ts` | Funcoes puras: `calcHypotenuse(x, y)` e `calcCathetus(hypotenuse, otherCathetus)` |
+| `flight-movement/flight-movement.ts` | `FlightMovement` class — `getSceneControlButtons` hook, button and dialog |
+| `flight-movement/flight-movement-calc.ts` | Pure functions: `calcHypotenuse(x, y)` and `calcCathetus(hypotenuse, otherCathetus)` |
 | `flight-movement/index.ts` | Barrel export |
 
-#### Funcoes de calculo (`flight-movement-calc.ts`)
+#### Calculation functions (`flight-movement-calc.ts`)
 
-| Funcao | Parametros | Retorno |
-|--------|-----------|---------|
-| `calcHypotenuse(x, y)` | Catetos X e Y (>= 0) | Hipotenusa arredondada a 2 casas decimais |
-| `calcCathetus(hypotenuse, otherCathetus)` | Hipotenusa e cateto conhecido (>= 0) | Cateto calculado arredondado a 2 casas decimais |
+| Function | Parameters | Return |
+|--------|-----------|--------|
+| `calcHypotenuse(x, y)` | Catheti X and Y (>= 0) | Hypotenuse rounded to 2 decimal places |
+| `calcCathetus(hypotenuse, otherCathetus)` | Hypotenuse and known cathetus (>= 0) | Calculated cathetus rounded to 2 decimal places |
 
-Valores negativos retornam 0. Hipotenusa menor que cateto retorna 0 (triangulo impossivel).
+Negative values return 0. Hypotenuse less than cathetus returns 0 (impossible triangle).
 
-#### Testes
+#### Tests
 
-20 testes unitarios via Jest em `src/tests/submodules/flight-movement/flight-movement-calc.test.ts`:
-- Triangulos pitagoricos classicos (3-4-5, 5-12-13)
-- Valores zero
-- Valores negativos
-- Decimais e arredondamento
-- Triangulo impossivel (hipotenusa < cateto)
-- Valores tipicos de D&D 5e (30ft, 60ft)
+20 unit tests via Jest in `src/tests/submodules/flight-movement/flight-movement-calc.test.ts`:
+- Classic Pythagorean triangles (3-4-5, 5-12-13)
+- Zero values
+- Negative values
+- Decimals and rounding
+- Impossible triangle (hypotenuse < cathetus)
+- Typical D&D 5e values (30ft, 60ft)
 
-### Testes de Socket
+### Socket Tests
 
-Testes unitarios via Jest em `src/tests/sockets/implementations/`:
+Unit tests via Jest in `src/tests/sockets/implementations/`:
 
 **common-socket-socketlib.test.ts:**
-- `getNonGMUserIds`: retorna apenas IDs de usuários não-GM, trata casos sem usuários ou apenas GMs (3 testes)
-- `executeAsGM`: validação de GM, envio apenas para não-GMs com flag `onlyPlayers: true`, múltiplos argumentos, propagação de retorno (8 testes)
-- Total: 11 testes
+- `getNonGMUserIds`: returns only non-GM user IDs, handles cases with no users or only GMs (3 tests)
+- `executeAsGM`: GM validation, send only to non-GMs with flag `onlyPlayers: true`, multiple arguments, return propagation (8 tests)
+- Total: 11 tests
 
-**common-socket-chatmessage.test.ts (novo):**
-- `executeAsGM` com flag `onlyPlayers`: validação de GM, verificação de `sendMessage` com parâmetros corretos
-- Consistência entre SocketLib e ChatSocket quanto ao mecanismo `onlyPlayers`
-- `isReadyToSendToGM`: validação baseada em `game.user.isGM`
-- Registro de callbacks
-- Total: 8 testes
+**common-socket-chatmessage.test.ts (new):**
+- `executeAsGM` with flag `onlyPlayers`: GM validation, verify `sendMessage` with correct parameters
+- Consistency between SocketLib and ChatSocket regarding `onlyPlayers` mechanism
+- `isReadyToSendToGM`: validation based on `game.user.isGM`
+- Callback registration
+- Total: 8 tests
 
 **common-socket-context.test.ts:**
-- Estabilidade de contexto (`this`) para métodos desacoplados: `executeForAll`, `executeAsGM`, `executeToGM`, `executeIn`, `register`
-- Total: 5 testes
+- Context stability (`this`) for detached methods: `executeForAll`, `executeAsGM`, `executeToGM`, `executeIn`, `register`
+- Total: 5 tests
 
-**Total de testes de socket: 24 testes**
+**Total socket tests: 24 tests**
 
-**Total geral: 51 testes** - Executar com `npm test`
+**Grand total: 51 tests** — Run with `npm test`
 
 ---
 
-### Testes de Auditoria DI
+### Dependency Injection Audit Tests
 
-Testes de auditoria de injeção de dependência via Jest em `src/tests/dependency-injection/`:
+Dependency injection audit tests via Jest in `src/tests/dependency-injection/`:
 
 **audit.test.ts:**
-- Verifica que todos os nomes resolvidos via `injectController.resolve()` estão registrados no container
-- Valida registros: `GameContext`, `FoundryAPI`, `CommonLogguer`, `CommonModule`, `Socket`, `ReturnsControl`
-- Total: 7 testes
+- Verifies that all names resolved via `injectController.resolve()` are registered in the container
+- Validates registrations: `GameContext`, `FoundryAPI`, `CommonLogguer`, `CommonModule`, `Socket`, `ReturnsControl`
+- Total: 7 tests
 
-**Setup:** `src/tests/setup-jest.ts` - Popula o container DI com mocks que representam os registros em runtime:
+**Setup:** `src/tests/setup-jest.ts` — Populates DI container with mocks representing runtime registrations:
 - `CommonModule`, `CommonLogguer`, `GameContext`, `FoundryAPI`, `Socket`, `ReturnsControl`
-- Permite testes unitários sem depender do Foundry VTT
+- Allows unit testing without depending on Foundry VTT
 
 ---
 
 ## Sockets (`src/sockets/`)
 
-### `common-socket.ts` - Interface Socket
+### `common-socket.ts` — Socket Interface
 
-Metodos: `isReady()`, `executeToGM()`, `executeAsGM()`, `executeForAll()`, `executeIn()`, `register()`, `isReadyToSendToGM()`
+Methods: `isReady()`, `executeToGM()`, `executeAsGM()`, `executeForAll()`, `executeIn()`, `register()`, `isReadyToSendToGM()`
 
-Constante: `CALLBACK_FUNCTION_EVENT_NAME = "onReadyCommonSocket"`
+Constant: `CALLBACK_FUNCTION_EVENT_NAME = "onReadyCommonSocket"`
 
-### Implementacoes
+### Implementations
 
-| Implementacao | Arquivo | Descricao |
+| Implementation | File | Description |
 |---------------|---------|-----------|
-| **DummySocket** | `common-socket-dummy.ts` | No-op, usado em producao atualmente. Dispara hook `"onReadyCommonSocket"` |
-| **ChatSocket** | `common-socket-chatmessage.ts` | Comunicacao via ChatMessage flags do Foundry. Suporta broadcast, GM-only, player-only, targeted. Request/response via `CacheReturnControl` |
-| **SocketLib** | `common-socket-socketlib.ts` | Wrapper para modulo `foundryvtt-socketlib`. Espera hooks `"onReadyCommonModule"` e `"socketlib.ready"` |
+| **DummySocket** | `common-socket-dummy.ts` | No-op, currently used in production. Triggers `"onReadyCommonSocket"` hook |
+| **ChatSocket** | `common-socket-chatmessage.ts` | Communication via Foundry ChatMessage flags. Supports broadcast, GM-only, player-only, targeted. Request/response via `CacheReturnControl` |
+| **SocketLib** | `common-socket-socketlib.ts` | Wrapper for `foundryvtt-socketlib` module. Expects `"onReadyCommonModule"` and `"socketlib.ready"` hooks |
 
-### `common-socket-test.ts` - Test harness
+### `common-socket-test.ts` — Test harness
 
-Registra funcoes de teste (`showMessage`, `add`) e exercita `executeForAll`, `executeAsGM`, `executeToGM`, `executeIn`.
+Registers test functions (`showMessage`, `add`) and exercises `executeForAll`, `executeAsGM`, `executeToGM`, `executeIn`.
 
 ---
 
-## Estilos (`styles/module.css`)
+## Styles (`styles/module.css`)
 
-- Botao de ajuda de dados: `writing-mode: vertical-lr`
-- `.socket-chat-event { display: none }` - esconde mensagens de socket no chat
-- Estilizacao de Hero Points: `drop-shadow`, `text-transform: uppercase`, cursor pointer, botoes +/-
-- Posicionamento de dialogos
+- Dice help button: `writing-mode: vertical-lr`
+- `.socket-chat-event { display: none }` — hides socket messages in chat
+- Hero Points styling: `drop-shadow`, `text-transform: uppercase`, cursor pointer, +/- buttons
+- Dialog positioning
 
 ---
 
@@ -495,78 +495,78 @@ Registra funcoes de teste (`showMessage`, `add`) e exercita `executeForAll`, `ex
 
 ### `npc-talk.hbs`
 
-Template Handlebars para retrato de NPC: imagem + nome + texto de dialogo.
+Handlebars template for NPC portrait: image + name + dialog text.
 
 ---
 
-## Globais expostos
+## Exposed Globals
 
-O bundle IIFE expoe dois globais no `window`:
+The IIFE bundle exposes two globals on `window`:
 
 ### `window.TaulukkoCommon`
 
-| Propriedade | Tipo |
+| Property | Type |
 |-------------|------|
-| `NPC` | Classe abstrata NPC |
-| `NPCDialog` | Instancia NPCDialog |
-| `DialogUtils` | Instancia DialogUtils |
-| `FlightMovement` | Instancia FlightMovement |
-| `ModuleBase` | Classe abstrata ModuleBase |
-| `SubModuleBase` | Classe abstrata SubModuleBase |
-| `LogGenericImpl` | Implementacao de log (taulukko-commons) |
-| `injectController` | Controller de injecao de dependencia |
-| `Level` | Enum de niveis de log |
+| `NPC` | Abstract NPC class |
+| `NPCDialog` | NPCDialog instance |
+| `DialogUtils` | DialogUtils instance |
+| `FlightMovement` | FlightMovement instance |
+| `ModuleBase` | Abstract ModuleBase class |
+| `SubModuleBase` | Abstract SubModuleBase class |
+| `LogGenericImpl` | Log implementation (taulukko-commons) |
+| `injectController` | Dependency injection controller |
+| `Level` | Log level enum |
 
 ### `window.CommonScripts`
 
-Todas as exports do barrel `src/index.ts`.
+All exports from the barrel `src/index.ts`.
 
 ---
 
-## Como Usar
+## How to Use
 
-### NPC System - Tutorial Completo
+### NPC System — Complete Tutorial
 
-O sistema de NPCs permite criar personagens não-jogadores com dialogos contextuais. Cada NPC possui linhas de dialogo organizadas em grupos, e o sistema seleciona aleatoriamente uma linha baseada nos grupos ativos.
+The NPC system allows creating non-player characters with contextual dialogs. Each NPC has dialog lines organized in groups, and the system randomly selects a line based on active groups.
 
-#### 1. Estrutura de Arquivos
+#### 1. File Structure
 
-Cada NPC deve ter pelo menos 2 arquivos:
-- `{nome}.ts` - Classe do NPC extends NPC
-- `{nome}-lines.ts` - Linhas de dialogo e mapeamento de grupos
+Each NPC must have at least 2 files:
+- `{name}.ts` — NPC class extends NPC
+- `{name}-lines.ts` — Dialog lines and group mapping
 
-#### 2. Definindo Linhas de Dialogo
+#### 2. Defining Dialog Lines
 
-No arquivo `{nome}-lines.ts`:
+In the `{name}-lines.ts` file:
 
 ```typescript
-// Linhas de dialogo indexadas por ID
+// Dialog lines indexed by ID
 export const npcLines: any = {
-  1: "Primeira linha de dialogo",
-  2: "Segunda linha de dialogo",
-  3: "Terceira linha de dialogo",
-  // ... mais linhas
+  1: "First dialog line",
+  2: "Second dialog line",
+  3: "Third dialog line",
+  // ... more lines
 };
 
-// Mapeamento de grupos para linhas (separadas por ponto-e-virgula)
+// Group to lines mapping (separated by semicolon)
 export const npcGroupToLines: Map<string, string> = new Map([
-  ["1", "1"],                    // Grupo 1 usa linha 1
-  ["2", "2;3;4"],                // Grupo 2 usa linhas 2, 3 ou 4
-  ["1;2", "5;6"],                // Grupos 1 E 2 juntos usam linhas 5 ou 6
-  ["999", "100;101;102"],        // Grupo especial para aleatorio
+  ["1", "1"],                    // Group 1 uses line 1
+  ["2", "2;3;4"],                // Group 2 uses lines 2, 3 or 4
+  ["1;2", "5;6"],                // Groups 1 AND 2 together use lines 5 or 6
+  ["999", "100;101;102"],        // Special group for random
 ]);
 
-// Constantes dos grupos
+// Group constants
 export const npcGroups = {
-  GRUPO_1: "1",
-  GRUPO_2: "2",
-  GRUPO_COMBATE: "3",
-  GRUPO_EXPLORACAO: "4",
-  RANDOM: "999"                  // Obrigatorio para respostas aleatorias
+  GROUP_1: "1",
+  GROUP_2: "2",
+  COMBAT_GROUP: "3",
+  EXPLORATION_GROUP: "4",
+  RANDOM: "999"                  // Required for random responses
 } as const;
 ```
 
-#### 3. Criando a Classe NPC
+#### 3. Creating the NPC Class
 
 ```typescript
 import { joaoLines, joaoGroupToLines, joaoGroups } from "./joao-lines";
@@ -574,7 +574,7 @@ import { DialogUtils, NPC, NPCDialog } from "taulukko-common-scripts-dnd5ed";
 import { injectController, Log } from "taulukko-commons";
 
 export class JoaoNinguem extends NPC {
-  // Opcional: CSS customizado para os dialogos
+  // Optional: custom CSS for dialogs
   readonly DEFAULT_STYLE: string = `
     <style>
       .select-action { padding: 20px; background: #222; color: #eee; }
@@ -582,17 +582,17 @@ export class JoaoNinguem extends NPC {
     </style>
   `;
 
-  // Mapeamentos obrigatorios
+  // Required mappings
   groupToLines: Map<string, string> = joaoGroupToLines;
   lines: any = joaoLines;
 
   constructor() {
-    // super(nome, imagemURL, formatoAudio)
-    // Formato padrao: "ogg". Para usar MP3, passe "mp3" como terceiro parametro
-    super("JoaoNinguem", "modules/meu-modulo/images/npcs/joao.webp", "mp3");
+    // super(name, imageURL, soundFormat)
+    // Default format: "ogg". To use MP3, pass "mp3" as third parameter
+    super("JoaoNinguem", "modules/my-module/images/npcs/joao.webp", "mp3");
   }
 
-  // Inicializacao - registra o NPC no sistema
+  // Initialization — registers the NPC in the system
   public async init() {
     const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
     npcDialog.npcSelected = this;
@@ -601,70 +601,70 @@ export class JoaoNinguem extends NPC {
       npcDialog.npcs = new Map();
     }
 
-    // Registrar com chave unica
+    // Register with unique key
     npcDialog.npcs.set("joao", this);
   }
 
-  // Tela inicial - menu principal de acoes
+  // Initial screen — main action menu
   public async startScreen() {
     const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
     const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
 
-    // Adicionar tela inicial para navegacao
+    // Add initial screen for navigation
     npcDialog.npcSelected.screens.push({ 
       name: "start-screen", 
       callback: npcDialog.npcSelected.startScreen, 
       type: "screen" 
     });
 
-    const title = "Joao Ninguem: Escolha o que fazer";
-    const content = `<div class="select-action"><H1>Escolha uma ação:</H1>`;
+    const title = "Joao Ninguem: Choose what to do";
+    const content = `<div class="select-action"><H1>Choose an action:</H1>`;
 
-    // Criar botoes de acao
+    // Create action buttons
     const buttons = [
-      // O TIPO DO BOTAO Define o comportamento, NAO a funcao callback:
-      // - "screen": abre nova tela, NAO adiciona grupo ao enviar
-      // - "action": executa e sai, adiciona grupo ao enviar
-      // - "screen-context": abre nova tela E adiciona grupo ao enviar
+      // THE BUTTON TYPE defines the behavior, NOT the callback function:
+      // - "screen": opens new screen, DOES NOT add group when sending
+      // - "action": executes and exits, adds group when sending
+      // - "screen-context": opens new screen AND adds group when sending
       
-      // Este botao e do tipo "screen-context" - leva pra nova tela E combina grupos
+      // This button is type "screen-context" — leads to new screen AND combines groups
       dialogUtils.createButton(
-        "joao-encontrando-alguem", 
-        "Encontrando Alguém", 
+        "joao-finding-someone", 
+        "Finding Someone", 
         true, 
-        "screen-context",    // <-- O TIPO DEFINE O COMPORTAMENTO
-        async () => npcDialog.npcSelected.findSomeone()  // Callback apenas executado apos enviar
+        "screen-context",    // <-- TYPE DEFINES BEHAVIOR
+        async () => npcDialog.npcSelected.findSomeone()  // Callback executed after sending
       ),
 
-      // Este botao e do tipo "action" - executa e sai imediatamente
+      // This button is type "action" — executes and exits immediately
       dialogUtils.createButton(
-        "joao-sobrecarga-peso", 
-        "Sobrecarga de peso", 
+        "joao-overweight", 
+        "Overweight", 
         true, 
-        "action",            // <-- O TIPO DEFINE O COMPORTAMENTO
-        async () => npcDialog.npcSelected.overWeight()  // Callback executado apos enviar
+        "action",            // <-- TYPE DEFINES BEHAVIOR
+        async () => npcDialog.npcSelected.overWeight()  // Callback executed after sending
       ),
     ];
 
-    // Criar dialogo com dropdown de navegacao + botoes
+    // Create dialog with navigation dropdown + buttons
     npcDialog.npcSelected.createDialog(title, content, buttons);
   }
 
-  // Funcao chamada quando o botao "Encontrando Alguem" (screen-context) e selecionado
-  // Note: a logica de grupo ja foi adicionada pelo tipo do botao ANTES de chamar esta funcao
+  // Function called when "Finding Someone" (screen-context) button is selected
+  // Note: group logic was already added by the button type BEFORE calling this function
   public async findSomeone() {
     const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
     const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
 
-    const title = "Joao Ninguem: Encontrando alguém";
-    const content = `<div class="select-action"><H1>Escolha uma ação:</H1>`;
+    const title = "Joao Ninguem: Finding someone";
+    const content = `<div class="select-action"><H1>Choose an action:</H1>`;
 
     const buttons = [
       dialogUtils.createButton(
-        "joao-vendo-alguem-conhecido",
-        "Vendo alguém conhecido",
+        "joao-seeing-familiar",
+        "Seeing a familiar face",
         true,
-        "action",    // Agora usa action - executa e sai
+        "action",    // Now uses action — executes and exits
         async () => npcDialog.npcSelected.seeingSomeoneFamiliar()
       ),
     ];
@@ -672,110 +672,111 @@ export class JoaoNinguem extends NPC {
     npcDialog.npcSelected.createDialog(title, content, buttons);
   }
 
-  // Funcao chamada quando o botao "Sobrecarga de peso" (action) e selecionado
-  // O grupo ja foi adicionado pelo tipo do botao
+  // Function called when action button is pressed on findSomeone screen
+  // The group was already added by the button type
   public async overWeight() {
     const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
-    // O grupo joaoGroups.OVERWEIGHT ja foi adicionado pelo botao do tipo "action"
-    // Apenas chama send() para selecionar e reproduzir a linha
+    // The joaoGroups.OVERWEIGHT group was already added by the action-type button
+    // Just call send() to select and reproduce the line
     await npcDialog.npcSelected.send();
   }
 
-  // Funcao chamada quando botao de action e pressionado na tela de findSomeone
+  // Function called when action button is pressed on findSomeone screen
+  // The group was already added by the button type
   public async seeingSomeoneFamiliar() {
     const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
-    // O grupo ja foi adicionado pelo tipo do botao
+    // The group was already added by the button type
     await npcDialog.npcSelected.send();
   }
 }
 ```
 
-#### 4. Tipos de Botoes (IMPORTANTE: o comportamento e definido no tipo, nao na funcao)
+#### 4. Button Types (IMPORTANT: behavior is defined by type, not function)
 
-| Tipo | Quando usar | O que acontece |
+| Type | When to use | What happens |
 |------|-------------|----------------|
-| `"screen"` | Para navegar entre telas sem mudar o contexto de dialogo | Abre nova tela, **nao adiciona** grupo ao enviar |
-| `"action"` | Para executar uma acao e sair do dialogo | Executa callback, **adiciona** grupo, chama send() automaticamente |
-| `"screen-context"` | Para criar submenus que combinam com o contexto atual | Abre nova tela, **adiciona** grupo ao enviar |
+| `"screen"` | To navigate between screens without changing dialog context | Opens new screen, **does not add** group when sending |
+| `"action"` | To execute an action and exit the dialog | Executes callback, **adds** group, calls send() automatically |
+| `"screen-context"` | To create submenus that combine with current context | Opens new screen, **adds** group when sending |
 
-**A diferenca principais:**
-- `action` = executa E sai do dialogo (adiciona grupo)
-- `screen` ou `screen-context` = abre nova tela dentro do dialogo (apenas screen-context adiciona grupo)
+**Main differences:**
+- `action` = executes AND exits dialog (adds group)
+- `screen` or `screen-context` = opens new screen within dialog (only screen-context adds group)
 
-#### Menu de Escolha (Dropdown)
+#### Choice Menu (Dropdown)
 
-O `createDialog()` automaticamente cria um **dropdown SELECT** com:
-- Uma opção "Aleatório dado o contexto até aqui" (selecionada por padrão)
-- Uma opção para cada botão criado
+The `createDialog()` automatically creates a **dropdown SELECT** with:
+- One "Random given context so far" option (selected by default)
+- One option for each button created
 
-Quando o usuário clica em **"Enviar"**, o sistema executa a opção selecionada no dropdown, não o botão diretamente. Isso permite:
-1. Usar os botões apenas como menu visual
-2. Escolher a ação específica no dropdown antes de enviar
-3. Escolher "Aleatório" para selecionar uma linha aleatória baseada nos grupos ativos
+When the user clicks **"Send"**, the system executes the selected dropdown option, not the button directly. This allows:
+1. Using buttons only as visual menu
+2. Choosing specific action in dropdown before sending
+3. Choosing "Random" to select a random line based on active groups
 
-#### 5. Sistema de Grupos e Combinacoes
+#### 5. Groups and Combinations System
 
-O sistema permite combinar multiplos grupos para gerar dialogos contextuais:
+The system allows combining multiple groups to generate contextual dialogs:
 
 ```typescript
-// Adicionar multiplos grupos
+// Add multiple groups
 npcDialog.npcSelected.groups.add(joaoGroups.ENTER_IN_BATTLE);  // "2"
 npcDialog.npcSelected.groups.add(joaoGroups.GETTING_HURT);     // "3"
 
-// O sistema procurar chaves:
-// "2;3" (combinação exata)
-// "2" e "3" (individuais)
+// The system will look for keys:
+// "2;3" (exact combination)
+// "2" and "3" (individual)
 ```
 
-#### 6. Áudio
+#### 6. Audio
 
-**Formato Padrão:** OGF (ogg)
+**Default Format:** OGG (ogg)
 
-**Construtor do NPC:**
+**NPC Constructor:**
 ```typescript
-// Formato padrao (ogg) - nao precisa passar o terceiro parametro
-super("NomeNPC", "caminho/imagem.webp");
+// Default format (ogg) — no need to pass third parameter
+super("NPCName", "path/image.webp");
 
-// Formato diferente (mp3) - passe o formato como terceiro parametro
-super("NomeNPC", "caminho/imagem.webp", "mp3");
+// Different format (mp3) — pass the format as third parameter
+super("NPCName", "path/image.webp", "mp3");
 ```
 
-**Estrutura de arquivos de áudio:**
+**Audio file structure:**
 ```
-modules/{modulo}/sounds/npcs/{nomeNPC}/{indice}/{nomeNPC}{indice}.{formato}
+modules/{module}/sounds/npcs/{npcName}/{index}/{npcName}{index}.{format}
 ```
 
-Exemplo (formato padrão ogg):
+Example (default ogg format):
 ```
 modules/forgotten-realms/sounds/npcs/joao/001/joao001.ogg
 ```
 
-Exemplo (formato mp3):
+Example (mp3 format):
 ```
-modules/meu-modulo/sounds/npcs/joao/001/joao001.mp3
+modules/my-module/sounds/npcs/joao/001/joao001.mp3
 ```
 
-**Observação:** O índice deve ser padding com 3 dígitos (001, 002, etc.)
+**Note:** Index must be zero-padded to 3 digits (001, 002, etc.)
 
-#### 7. Registration no Module
+#### 7. Registration in Module
 
-No arquivo `module.ts` do seu modulo:
+In your module's `module.ts` file:
 
 ```typescript
-// Importar seu NPC
+// Import your NPC
 import { JoaoNinguem } from "./src/joao";
 
-// Criar instancia e inicializar
+// Create instance and initialize
 const joao = new JoaoNinguem();
 await joao.init();
 ```
 
-#### Exemplo Completo: Callback Dinamico
+#### Complete Example: Dynamic Callback
 
-Quando voce precisa passar um grupo dinamico para o callback (em vez de usar o tipo do botao):
+When you need to pass a dynamic group to the callback (instead of using button type):
 
 ```typescript
-// Funcao que cria um callback que adiciona grupo e envia
+// Function that creates a callback that adds group and sends
 public createcallbackSend(group: number) {
   return async () => {
     const npcDialog = injectController.resolve<NPCDialog>("NPCDialog");
@@ -784,12 +785,12 @@ public createcallbackSend(group: number) {
   };
 }
 
-// Uso com botao action
+// Usage with action button
 const callback: any = npcDialog.npcSelected.createcallbackSend;
 
 const buttons = [
-  dialogUtils.createButton("joao-exhausted", "Exaustão / Sono", true, "action", callback(joaoGroups.EXHAUSTED_AND_SLEEPY)),
-  dialogUtils.createButton("joao-weight", "Sobrecarga de Peso", true, "action", callback(joaoGroups.EXCESS_WEIGHT)),
+  dialogUtils.createButton("joao-exhausted", "Exhausted / Sleepy", true, "action", callback(joaoGroups.EXHAUSTED_AND_SLEEPY)),
+  dialogUtils.createButton("joao-weight", "Overweight", true, "action", callback(joaoGroups.EXCESS_WEIGHT)),
 ];
 ```
 
@@ -797,47 +798,47 @@ const buttons = [
 
 ### Dialog Utils
 
-#### Criando Botoes
+#### Creating Buttons
 
 ```typescript
 const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
 
 const button = dialogUtils.createButton(
-  "action-id",      // Identificador unico
-  "Label do Botao",  // Texto exibido
-  true,              // É default?
-  "action",         // Tipo: "screen", "action", "screen-context"
-  async () => {     // Callback
-    console.log("Botao clicado!");
+  "action-id",        // Unique identifier
+  "Button Label",     // Displayed text
+  true,               // Is default?
+  "action",           // Type: "screen", "action", "screen-context"
+  async () => {       // Callback
+    console.log("Button clicked!");
   }
 );
 ```
 
-#### Criando Dialogos
+#### Creating Dialogs
 
 ```typescript
 dialogUtils.createDialog(
-  "Titulo do Dialogo",
-  "DEFAULT_STYLE ou CSS customizado",
-  "Conteudo HTML",
-  [botao1, botao2],
-  submit,           // Funcao de submit (opcional)
-  200,              // Posicao X (opcional)
-  undefined,        // Posicao Y (opcional)
-  400               // Largura (opcional)
+  "Dialog Title",
+  "DEFAULT_STYLE or custom CSS",
+  "HTML Content",
+  [button1, button2],
+  submit,             // Submit function (optional)
+  200,                // X position (optional)
+  undefined,          // Y position (optional)
+  400                 // Width (optional)
 );
 ```
 
 ---
 
-## Skills do OpenCode
+## OpenCode Skills
 
-Skills sao instrucoes reutilizaveis que o OpenCode carrega sob demanda para executar tarefas especificas do projeto. Ficam em `.opencode/skills/<nome>/SKILL.md`.
+Skills are reusable instructions that OpenCode loads on demand to execute specific project tasks. They reside in `.opencode/skills/<name>/SKILL.md`.
 
-**Como usar:** O OpenCode detecta as skills automaticamente. Ele pode carrega-las quando necessario ou voce pode pedir explicitamente (ex: "use a skill readme-sync-enforcer").
+**How to use:** OpenCode detects skills automatically. It can load them when needed or you can request explicitly (e.g., "use the readme-sync-enforcer skill").
 
 ### readme-sync-enforcer
 
-Verifica se todos os scripts `.ts` e `.mjs` e configuracoes do projeto estao documentados neste README e se a documentacao reflete o comportamento atual do codigo.
+Checks if all `.ts` and `.mjs` scripts and project configurations are documented in this README and if the documentation reflects the current code behavior.
 
-**Quando usar:** Apos criar ou modificar scripts, na etapa CODE_REVIEWER ou DOCUMENTATION_WRITER do fluxo de agentes.
+**When to use:** After creating or modifying scripts, at CODE_REVIEWER or DOCUMENTATION_WRITER stage of the agent flow.

@@ -1,0 +1,12 @@
+2026-06-16 09:01:01 - ORACULO | read | filePath=/media/gandb/extensao001/Programs/Instalados/Foundry/Data/modules/common-scripts-dnd5ed/scripts/.opencode/USER.md
+2026-06-16 09:01:01 - ORACULO | read | filePath=/media/gandb/extensao001/Programs/Instalados/Foundry/Data/modules/common-scripts-dnd5ed/scripts/.opencode/USER.md
+2026-06-16 09:01:02 - ORACULO | glob | pattern=**/PROJECT.md
+2026-06-16 09:01:02 - ORACULO | glob | pattern=**/PROJECT.md
+2026-06-16 09:01:02 - ORACULO | read | filePath=/home/gandb/.config/opencode/skills/bootstrap/SKILL.md
+2026-06-16 09:01:02 - ORACULO | read | filePath=/home/gandb/.config/opencode/skills/bootstrap/SKILL.md
+2026-06-16 09:42:17 - ORACULO | skill | name=do-next-task
+2026-06-16 09:42:17 - ORACULO | skill | name=do-next-task
+2026-06-16 09:42:18 - ORACULO | skill | name=backlog
+2026-06-16 09:42:18 - ORACULO | skill | name=backlog
+2026-06-16 09:42:19 - ORACULO | read | filePath=/media/gandb/extensao001/Programs/Instalados/Foundry/Data/modules/common-scripts-dnd5ed/scripts/docs/TASKS.md
+2026-06-16 09:42:19 - ORACULO | read | filePath=/media/gandb/extensao001/Programs/Instalados/Foundry/Data/modules/common-scripts-dnd5ed/scripts/docs/TASKS.md

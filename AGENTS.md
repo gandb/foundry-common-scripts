@@ -1,123 +1,125 @@
 # AGENTS.md
 
-## Objetivo
+## Objective
 
-Este repositório desenvolve um gerador inteligente de projetos com OpenCode integrado.
+This repository develops an intelligent project generator with integrated OpenCode.
 
-## Regras centrais permanentes
+## Permanent core rules
 
-1. **Criar arquivos** - Sempre que o usuário solicitar para criar uma planilha, um código, uma documentação, nas entrelinhas ele ta pedindo pra gravar um arquivo com este conteudo. Se ele nao oferecer um nome e caminho indiretamente, use como failback  o caminho ( docs/temp/) e o nome = (nome que faça senntido.extensao do arquivo pedido)
-2. **SOLID obrigatório** — decisões de design devem respeitar SRP, OCP, LSP, ISP e DIP.
-3. **Documentação obrigatória** — mudanças permanentes de comportamento devem gravar no arquivo da regra a seguir if exists `docs/PROJECT.md` gravar as mudanças nele else cria-se o arquivo e grava nele.
-4. **Fallback de ferramentas obrigatório** — se a ferramenta principal estiver com defeito e falhar > 2 vezes, usar uma alternativa imediatamente sem insistir na ferramenta quebrada.
+1. **Create files** — Whenever the user requests to create a spreadsheet, code, or documentation, they are implicitly asking to save a file with that content. If they don't indirectly offer a name and path, use as fallback the path `(docs/temp/)` and the filename = `(a sensible name.ext)`.
+2. **SOLID mandatory** — design decisions must respect SRP, OCP, LSP, ISP, and DIP.
+3. **Mandatory documentation** — permanent behavior changes must be recorded in `docs/PROJECT.md` if it exists, else create the file and record there.
+4. **Fallback tools mandatory** — if the main tool fails > 2 times, use an alternative immediately without insisting on the broken tool.
+5. **`docs/list-of-active-projects.md` immutable by default** — never replace its content. Always add new entries preserving all existing ones. Total replacement is prohibited unless explicitly ordered by the USER.
 
-### Tabela de Fallback de Ferramentas
+### Fallback Tools Table
 
-| Ferramenta principal | Fallback alternativo | Uso |
+| Main Tool | Alternative Fallback | Usage |
 |---------------------|---------------------|-----|
-| `Write` (escrever arquivos) | `echo >> <arquivo>` via Bash | Append conteúdo usando redirecionamento bash |
-| `Read` (ler arquivos) | Bash `cat <arquivo>` | Ler conteúdo do arquivo diretamente via cat. Se o arquivo não existir, pare e avise o usuário. |
+| `Write` (write files) | `echo >> <file>` via Bash | Append content using bash redirection |
+| `Read` (read files) | Bash `cat <file>` | Read file content directly via cat. If the file doesn't exist, stop and notify the user. |
 
-## Glossário de Papéis
+## Role Glossary
 
-### COOPERADOR
-Nome que agrupa agentes em modo primário ou subagentes.
+### COORDINATOR
+Name that groups agents in primary mode or subagents.
 
-### DEMITIDO
-Status para todo cooperador que receber uma tarefa e:
-- **NÃO executar a tarefa** - Ou seja, não fazer o que foi pedido
-- **NÃO responder de forma que pareça realmente estar progredindo** na tarefa
+### FIRED
+Status for any coordinator who receives a task and:
+- **DOES NOT execute the task** — i.e., does not do what was requested
+- **DOES NOT respond in a way that shows real progress** on the task
 
-**O que caracteriza um DEMITIDO:**
+**What characterizes a FIRED agent:**
 
-1. **Fingindo trabalhar** - O cooperador dá respostas que fazem parecer que está trabalhando, mas não demonstra raciocínio real nem gera nenhum arquivo. Exemplo: "Estou fazendo", "Vou fazer agora" sem de fato fazer algo concreto.
+1. **Pretending to work** — The coordinator gives responses that seem like they're working, but don't demonstrate real reasoning or generate any file. Example: "I'm doing it", "I'll do it now" without actually doing anything concrete.
 
-2. **Não responde** - O cooperador simplesmente não responde à tarefa atribuída.
+2. **Does not respond** — The coordinator simply doesn't respond to the assigned task.
 
-3. **Não gera valor** - Mesmo após várias interações, não há evidências concretas de trabalho (arquivos criados, código escrito, testes feitos, etc).
+3. **Generates no value** — Even after multiple interactions, there's no concrete evidence of work (files created, code written, tests run, etc).
 
-4. **Esquiva da tarefa** - O cooperador tenta desviar a conversa para outros tópicos ao invés de fazer o que foi pedido.
+4. **Evades the task** — The coordinator tries to divert the conversation to other topics instead of doing what was requested.
 
-**O que NÃO é um DEMITIDO:**
-- O cooperador que está trabalhando mas precisa de mais tempo
-- O cooperador que faz perguntas clarifying sobre a tarefa
-- O cooperador que reporta progresso real (mesmo que pequeno)
-- O cooperador que pede ajuda ou clarification
+**What is NOT a FIRED agent:**
+- A coordinator that is working but needs more time
+- A coordinator that asks clarifying questions about the task
+- A coordinator that reports real progress (even if small)
+- A coordinator that asks for help or clarification
 
-### ORQUESTRADOR
-Agentes em modo primário. Cooperadores que passam tarefas para outros cooperadores.
+### ORCHESTRATOR
+Agents in primary mode. Coordinators that pass tasks to other coordinators.
 
-**Comportamento esperado de um ORQUESTRADOR:**
+**Expected behavior of an ORCHESTRATOR:**
 
-1. **Ao passar uma tarefa** - O ORQUESTRADOR deve monitorar se o cooperador receptor está realmente executando a tarefa e ver se ele fica DEMITIDO.
+1. **When passing a task** — The ORCHESTRATOR must monitor whether the receiving coordinator is actually executing the task and check if they become FIRED.
 
-2. **Se o cooperador for DEMITIDO** - O ORQUESTRADOR avisa o DEMITIDO para parar imediatamente e em seguida assume sua role, fazendo o workflow andar.
+2. **If the coordinator becomes FIRED** — The ORCHESTRATOR notifies the FIRED agent to stop immediately and then assumes their role, moving the workflow forward.
 
-3. **Cadeia de DEMITIDOS** - Se o próximo cooperador também for DEMITIDO, o ORQUESTRADOR assume essa nova role também, e assim sucessivamente até completar o workflow.
+3. **Chain of FIRED agents** — If the next coordinator also becomes FIRED, the ORCHESTRATOR assumes that new role too, and so on until the workflow is complete.
 
-4. **Retorno de role** - Após completar a tarefa assumida, o ORQUESTRADOR pode retornar a role original ao cooperador se este demonstrar querer trabalhar.
+4. **Role return** — After completing the assumed task, the ORCHESTRATOR can return the original role to the coordinator if they show willingness to work.
+ 
 
-### USUÁRIO
-Quem está definido em `.opencode/USER.md`. Neste projeto o **USUÁRIO atua como Product Owner (PO)**, sendo responsável por definir o que deve ser entregue e manter o backlog coerente. USUÁRIO e PO são termos equivalentes neste contexto.
+### USER
+Whoever is defined in `.opencode/USER.md`. In this project the **USER acts as Product Owner (PO)**, responsible for defining what should be delivered and keeping the backlog coherent. USER and PO are equivalent terms in this context.
 
-### ORÁCULO / SCRUM_MASTER
-Agente primário que acumula as funções de assistente e SCRUM_MASTER. Coordena o fluxo de entrega, monitora subagentes e garante a execução das tasks. ORÁCULO e SCRUM_MASTER são o mesmo agente.
+### ORACLE / SCRUM_MASTER
+Primary agent that combines assistant and SCRUM_MASTER functions. Coordinates delivery flow, monitors subagents, and ensures task execution. ORACLE and SCRUM_MASTER are the same agent.
 
-## Modelo de agentes
+## Agent model
 
-- `ORÁCULO` / `SCRUM_MASTER`, `ARCHITECT`, `TESTER`, `DEVELOPER` e `DOCUMENTATION_WRITER`   (`mode: primary`)  
--  `CODE_REVIEWER` é **subagente** (`mode: subagent`)
-- o **USUÁRIO (PO)** define prioridades e o backlog; o ORQUESTRADOR (ORÁCULO/SCRUM_MASTER) coordena o fluxo e os subagentes executam etapas específicas
-- o `ORÁCULO`/`SCRUM_MASTER` supervisiona os subagentes e é responsável por garantir que cada um esteja atuando
-- se um subagente não responder ao `ORÁCULO`/`SCRUM_MASTER`, este deve pedir ao subagente que pare e assumir o trabalho, continuando o fluxo normalmente
+- `ORACLE` / `SCRUM_MASTER`, `ARCHITECT`, `TESTER`, `DEVELOPER` and `DOCUMENTATION_WRITER`   (`mode: primary`)  
+-  `CODE_REVIEWER` is a **subagent** (`mode: subagent`)
+- the **USER (PO)** defines priorities and backlog; the ORCHESTRATOR (ORACLE/SCRUM_MASTER) coordinates flow and subagents execute specific steps
+- the `ORACLE`/`SCRUM_MASTER` supervises subagents and is responsible for ensuring each one is performing
+- if a subagent does not respond to the `ORACLE`/`SCRUM_MASTER`, it must ask the subagent to stop and take over the work, continuing the flow normally
 
-## Fluxo obrigatório entre agentes
+## Mandatory agent flow
 
-1. `USUÁRIO (PO)` — define e prioriza a task
-2. `ORÁCULO` / `SCRUM_MASTER` — coordena e encaminha
+1. `USER (PO)` — defines and prioritizes tasks
+2. `ORACLE` / `SCRUM_MASTER` — coordinates and forwards
 3. `ARCHITECT`
 4. `TESTER`
 5. `DEVELOPER`
 6. `CODE_REVIEWER`
 7. `DOCUMENTATION_WRITER`
 
-### Regras do fluxo
+### Flow rules
 
-- nenhuma implementação deve começar fora do fluxo
-- o usuário deve aprovar quando a etapa exigir aprovação explícita
-- exceções de fluxo só valem quando aprovadas explicitamente pelo usuário para a task atual
-- o operacional detalhado de cada etapa deve ficar nas skills sob demanda
+- no implementation may start outside the flow
+- the user must approve when a step requires explicit approval
+- flow exceptions only apply when explicitly approved by the user for the current task
+- detailed operational steps for each stage should be in on-demand skills
 
-## Checkpoints transversais
+## Cross-cutting checkpoints
 
-### Antes de implementar
+### Before implementing
 
-- haver spec aprovada pelo `ARCHITECT`, salvo exceção explícita aprovada pelo usuário
-- haver testes do `TESTER`, salvo exceção explícita aprovada pelo usuário
-- haver clareza suficiente do escopo da task ativa
+- there must be an architect-approved spec, unless there's an explicit exception approved by the user
+- there must be tests from the `TESTER`, unless there's an explicit exception approved by the user
+- there must be sufficient clarity of the active task scope
 
-### Antes de concluir
+### Before concluding
 
-- cumprir as validações previstas para a task
-- passar por `CODE_REVIEWER`, salvo exceção explícita aprovada pelo usuário
-- atualizar documentação quando o comportamento permanente tiver mudado
+- fulfill validations specified for the task
+- pass through `CODE_REVIEWER`, unless there's an explicit exception approved by the user
+- update documentation when permanent behavior has changed
 
-## Política de contexto por task
+## Context policy per task
 
-- nunca reler todos os arquivos Markdown por padrão
-- carregar primeiro o contexto base curto
-- carregar depois apenas a spec ativa, o agente ativo e os artefatos pertinentes ao tipo de task
-- carregar `docs/TASKS.md` apenas em tarefas de backlog, priorização, abertura, fechamento ou quando a spec exigir
-- carregar `CHANGELOG.md` apenas em tarefas de release/documentação pertinentes
+- never reread all Markdown files by default
+- load short base context first
+- then load only the active spec, active agent, and artifacts relevant to the task type
+- load `docs/TASKS.md` only in backlog, prioritization, opening, closing tasks, or when the spec requires it
+- load `CHANGELOG.md` only in release/documentation-relevant tasks
 
-## Política de autoevolução das skills
+## Skill autoevolution policy
 
-- skills devem evoluir quando faltar uma instrução **estável e recorrente**
-- não transformar preferências variáveis do usuário em regra fixa
-- quando a lacuna for estrutural, abrir task derivada em vez de improvisar governança no momento
+- skills should evolve when there's a **stable and recurring** instruction gap
+- don't transform user variable preferences into fixed rules
+- when the gap is structural, open a derived task instead of improvising governance at the moment
 
-## Fonte de verdade documental
+## Documentary source of truth
 
-- `AGENTS.md` resume a identidade e os comandos principais do projeto
-- `docs/ARCHITECTURE.md` mantém apenas decisões técnicas duradouras
-- `.opencode/skills/` concentra o operacional detalhado sob demanda
+- `AGENTS.md` summarizes the project identity and main commands
+- `docs/ARCHITECTURE.md` maintains only lasting technical decisions
+- `.opencode/skills/` concentrates detailed on-demand operations
