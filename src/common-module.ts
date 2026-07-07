@@ -192,7 +192,13 @@ export class CommonModule extends ModuleBase {
     const logguer: Log = injectController.resolve("CommonLogguer");
 
     logguer.info("Criando botão de ajuda de rolagem");
-    const el = doc.getElementById("roll-privacy");
+    let el = doc.getElementById("roll-privacy");
+
+    const newVersionDnd:boolean =  !el;
+    if (newVersionDnd) {
+      el = doc.getElementById("message-modes");
+      return;
+    }
 
     if (!el) {
       logguer.error("Menu privacy não encontrado");

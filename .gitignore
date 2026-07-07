@@ -141,3 +141,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 common-module.js.map
+/.idea
+/docs/spec
+/docs/relatorios
+/docs/reports

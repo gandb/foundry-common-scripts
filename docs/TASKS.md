@@ -15,8 +15,7 @@ The task pattern is:
 - ✅ Convert all md files to English
     - ✅ **Description:** Translate all 9 .md files from Portuguese to English, rename directories (relatorios → reports) and files (diario-de-bordo.md → journal-log.md), adjust internal links.
     - ✅ **Result:** All 9 files translated in-place. Directories renamed at both levels. Old paths updated in diary logs. ORACULO → ORACLE, USUÁRIO → USER, COOPERADOR → COORDINATOR terminology updated throughout AGENTS.md.
-- Fix typing to facilitate auto-complete:
- - **Description:** fix existing cases and document in PROJECT.md that when declaring ALL variables, use the pattern (<let|const|var> variableName:<expected type>=value; ). If you need to put any because the variable uses null, undefined or any other type, declare both types to allow autocomplete, e.g.: const age:number|any = (isNaN(getAge())?null|getAge();
+- Convert the file ./temp/input.js to ./temp/output.js, turn more legeable, broke in multi linees, ident etc.
 - Test if messages only for players in socketlib works, manual test done by user
 - Test if a player calculating something in everyone in socketlib works, manual test done by user
 - Test if a player calculating something in gm in socketlib works, manual test done by user

@@ -1,24 +1,27 @@
-import dts from 'vite-plugin-dts';
+import dts from "vite-plugin-dts";
 
 export default {
   build: {
     lib: {
       entry: "src/module.ts",
       formats: ["iife"],
-      name: "CommonScripts"
+      name: "CommonScripts",
     },
 
     rollupOptions: {
       output: {
-        extend: true
-      }
+        extend: true,
+      },
     },
     minify: "terser",
     terserOptions: {
-      mangle: false
+      mangle: false,
+      format: {
+        semicolons: true,
+      },
     },
     target: "esnext",
-    outDir: "dist/"
+    outDir: "dist/",
   },
-  plugins: [dts()]
+  plugins: [dts()],
 };
