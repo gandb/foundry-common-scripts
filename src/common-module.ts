@@ -39,15 +39,29 @@ export class CommonModule extends ModuleBase {
   }
 
   public async addInitCommonAssetsChanges() {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    commonModule =(injectController.has("CommonModule")) ? injectController.resolve("CommonModule") : commonModule as CommonModule;
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    commonModule = injectController.has("CommonModule")
+      ? injectController.resolve("CommonModule")
+      : (commonModule as CommonModule);
 
     logguer.debug(
       "addInitCommonAssetsChanges:20,register  commnModule:",
       commonModule,
     );
 
-    (commonModule as CommonModule).registerSetting(COMMON_REGISTERED_NAMES.MODULE_VERSION);
+    (commonModule as CommonModule).registerSetting(
+      COMMON_REGISTERED_NAMES.MODULE_VERSION,
+    );
   }
 
   public async init() {
@@ -76,13 +90,28 @@ export class CommonModule extends ModuleBase {
     });
 
     //choose implementation dependes what I want
-    const commonSocket: Socket  =  new SocketLib(); // new DummySocket();
+    const commonSocket: Socket = new SocketLib(); // new DummySocket();
     injectController.registerByName("Socket", commonSocket);
   }
 
   protected async waitReady() {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    const commonModule: CommonModule = injectController.resolve("CommonModule");
+    let logguerRef: Log | undefined = undefined;
+    let commonModuleRef: CommonModule | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    const commonModule: CommonModule = (
+      injectController.has("CommonModule")
+        ? injectController.resolve("CommonModule")
+        : commonModuleRef
+    ) as CommonModule;
     const foundry: IFoundryAPI | undefined = injectController.has("FoundryAPI")
       ? injectController.resolve("FoundryAPI")
       : undefined;
@@ -106,43 +135,121 @@ export class CommonModule extends ModuleBase {
   }
 
   protected async initHooks() {
-    const commonModule: CommonModule = injectController.resolve("CommonModule");
+    let commonModuleRef: CommonModule | undefined = undefined;
+    const commonModule: CommonModule = (
+      injectController.has("CommonModule")
+        ? injectController.resolve("CommonModule")
+        : commonModuleRef
+    ) as CommonModule;
+    if (!commonModule) {
+      throw new Error(
+        "Required dependency 'CommonModule' not registered and no fallback available",
+      );
+    }
     const foundry: IFoundryAPI | undefined = injectController.has("FoundryAPI")
       ? injectController.resolve("FoundryAPI")
       : undefined;
 
     commonModule.loadSubModules().then(() => {
-      const logguer: Log = injectController.resolve("CommonLogguer");
+      let logguerRef: Log | undefined = undefined;
+      const logguer: Log = (
+        injectController.has("CommonLogguer")
+          ? injectController.resolve("CommonLogguer")
+          : logguerRef
+      ) as Log;
+      if (!logguer) {
+        throw new Error(
+          "Required dependency 'CommonLogguer' not registered and no fallback available",
+        );
+      }
       logguer.info("All submodules from common modules loaded with success");
     });
 
     if (!foundry) {
       Hooks.once("init", async () => {
-        const logguer: Log = injectController.resolve("CommonLogguer");
+        let logguerRef: Log | undefined = undefined;
+        const logguer: Log = (
+          injectController.has("CommonLogguer")
+            ? injectController.resolve("CommonLogguer")
+            : logguerRef
+        ) as Log;
+        if (!logguer) {
+          throw new Error(
+            "Required dependency 'CommonLogguer' not registered and no fallback available",
+          );
+        }
         logguer.info("Módulo Common Assets inicalizando 2...");
         await commonModule.addInitCommonAssetsChanges();
       });
 
       Hooks.once("ready", async () => {
-        const logguer: Log = injectController.resolve("CommonLogguer");
+        let logguerRef: Log | undefined = undefined;
+        const logguer: Log = (
+          injectController.has("CommonLogguer")
+            ? injectController.resolve("CommonLogguer")
+            : logguerRef
+        ) as Log;
+        if (!logguer) {
+          throw new Error(
+            "Required dependency 'CommonLogguer' not registered and no fallback available",
+          );
+        }
         logguer.info("Common Module ready! Version: " + commonModule.version);
       });
       return;
     }
 
     foundry.hooks.once("init", async () => {
-      const commonModule: CommonModule =
-        injectController.resolve("CommonModule");
-      const logguer: Log = injectController.resolve("CommonLogguer");
+      let commonModuleRef: CommonModule | undefined = undefined;
+      const commonModule: CommonModule = (
+        injectController.has("CommonModule")
+          ? injectController.resolve("CommonModule")
+          : commonModuleRef
+      ) as CommonModule;
+      if (!commonModule) {
+        throw new Error(
+          "Required dependency 'CommonModule' not registered and no fallback available",
+        );
+      }
+      let logguerRef: Log | undefined = undefined;
+      const logguer: Log = (
+        injectController.has("CommonLogguer")
+          ? injectController.resolve("CommonLogguer")
+          : logguerRef
+      ) as Log;
+      if (!logguer) {
+        throw new Error(
+          "Required dependency 'CommonLogguer' not registered and no fallback available",
+        );
+      }
 
       logguer.info("Módulo Common Assets inicalizando 2...", commonModule);
       await commonModule.addInitCommonAssetsChanges();
     });
 
     foundry.hooks.once("ready", async () => {
-      const commonModule: CommonModule =
-        injectController.resolve("CommonModule");
-      const logguer: Log = injectController.resolve("CommonLogguer");
+      let commonModuleRef: CommonModule | undefined = undefined;
+      const commonModule: CommonModule = (
+        injectController.has("CommonModule")
+          ? injectController.resolve("CommonModule")
+          : commonModuleRef
+      ) as CommonModule;
+      if (!commonModule) {
+        throw new Error(
+          "Required dependency 'CommonModule' not registered and no fallback available",
+        );
+      }
+      let logguerRef: Log | undefined = undefined;
+      const logguer: Log = (
+        injectController.has("CommonLogguer")
+          ? injectController.resolve("CommonLogguer")
+          : logguerRef
+      ) as Log;
+      if (!logguer) {
+        throw new Error(
+          "Required dependency 'CommonLogguer' not registered and no fallback available",
+        );
+      }
 
       const gameContext: IGameContext | undefined = injectController.has(
         "GameContext",
@@ -189,12 +296,22 @@ export class CommonModule extends ModuleBase {
   }
 
   public async addReadyCommonAssetsChanges() {
-    const logguer: Log = injectController.resolve("CommonLogguer");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
 
     logguer.info("Criando botão de ajuda de rolagem");
     let el = doc.getElementById("roll-privacy");
 
-    const newVersionDnd:boolean =  !el;
+    const newVersionDnd: boolean = !el;
     if (newVersionDnd) {
       el = doc.getElementById("message-modes");
       return;
@@ -210,9 +327,17 @@ export class CommonModule extends ModuleBase {
     botao.className = "ui-control icon fa-solid fa-help common-assets-help";
     botao.addEventListener("click", (event) => {
       event.preventDefault();
-      const gameContext: IGameContext = injectController.resolve(
-        "GameContext",
+      let gameContextRef: IGameContext | undefined = undefined;
+      const gameContext: IGameContext = (
+        injectController.has("GameContext")
+          ? (injectController.resolve("GameContext") as IGameContext)
+          : gameContextRef
       ) as IGameContext;
+      if (!gameContext) {
+        throw new Error(
+          "Required dependency 'GameContext' not registered and no fallback available",
+        );
+      }
       const journal = (
         gameContext.journal as { getName(name: string): unknown }
       ).getName("Como Rolar Dados");
@@ -231,24 +356,62 @@ export class CommonModule extends ModuleBase {
   }
 
   private get gameSettings(): IGameSettings {
-    const gameContext: IGameContext = injectController.resolve(
-      "GameContext",
+    let gameContextRef: IGameContext | undefined = undefined;
+    const gameContext: IGameContext = (
+      injectController.has("GameContext")
+        ? (injectController.resolve("GameContext") as IGameContext)
+        : gameContextRef
     ) as IGameContext;
+    if (!gameContext) {
+      throw new Error(
+        "Required dependency 'GameContext' not registered and no fallback available",
+      );
+    }
     return gameContext.settings;
   }
 
   public async registerSetting(key: string, type: any = String) {
-    const commonModule: CommonModule = injectController.resolve("CommonModule");
+    let commonModuleRef: CommonModule | undefined = undefined;
+    const commonModule: CommonModule = (
+      injectController.has("CommonModule")
+        ? injectController.resolve("CommonModule")
+        : commonModuleRef
+    ) as CommonModule;
+    if (!commonModule) {
+      throw new Error(
+        "Required dependency 'CommonModule' not registered and no fallback available",
+      );
+    }
     await commonModule.gameSettings.register(commonModule.name, key, { type });
   }
 
   public async setSettings(key: string, value: any) {
-    const commonModule: CommonModule = injectController.resolve("CommonModule");
+    let commonModuleRef: CommonModule | undefined = undefined;
+    const commonModule: CommonModule = (
+      injectController.has("CommonModule")
+        ? injectController.resolve("CommonModule")
+        : commonModuleRef
+    ) as CommonModule;
+    if (!commonModule) {
+      throw new Error(
+        "Required dependency 'CommonModule' not registered and no fallback available",
+      );
+    }
     await commonModule.gameSettings.set(commonModule.name, key, value);
   }
 
   public async getSettings(key: string) {
-    const commonModule: CommonModule = injectController.resolve("CommonModule");
+    let commonModuleRef: CommonModule | undefined = undefined;
+    const commonModule: CommonModule = (
+      injectController.has("CommonModule")
+        ? injectController.resolve("CommonModule")
+        : commonModuleRef
+    ) as CommonModule;
+    if (!commonModule) {
+      throw new Error(
+        "Required dependency 'CommonModule' not registered and no fallback available",
+      );
+    }
     return await commonModule.gameSettings.get(commonModule.name, key);
   }
 
@@ -256,7 +419,17 @@ export class CommonModule extends ModuleBase {
     instalatedVersion: string,
     nextVersionUpdated: string,
   ) {
-    const commonModule: CommonModule = injectController.resolve("CommonModule");
+    let commonModuleRef: CommonModule | undefined = undefined;
+    const commonModule: CommonModule = (
+      injectController.has("CommonModule")
+        ? injectController.resolve("CommonModule")
+        : commonModuleRef
+    ) as CommonModule;
+    if (!commonModule) {
+      throw new Error(
+        "Required dependency 'CommonModule' not registered and no fallback available",
+      );
+    }
     if (instalatedVersion !== nextVersionUpdated) {
       commonModule.warnAboutUpdate(instalatedVersion, nextVersionUpdated);
 
@@ -271,7 +444,17 @@ export class CommonModule extends ModuleBase {
   }
 
   public async warnAboutUpdate(previousVersion: string, lastVersion: string) {
-    const logguer: Log = injectController.resolve("CommonLogguer");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
 
     logguer.info(
       `Atualizando da versão : ${previousVersion} para a versão ${lastVersion}`,

@@ -14,7 +14,7 @@ The task pattern is:
 
 - Sprint 2 - Turn project more resilitent:
   - Audit all usages of `injectController.resolve` to use `injectController.has` before when unsure if the object is registered
-  - **Description:** injectController throws an error on resolve() if the object doesn't exist. Should audit all 161 usages of injectController.resolve in the project and add verification with injectController.has() before when there's no certainty the object is in the container. Follow the pattern already used in npc-dialog.ts and flight-movement.ts.
+  - **Description:** injectController throws an error on resolve() if the object doesn't exist. Should audit all usages of injectController.resolve in the project and add verification with injectController.has() before when there's no certainty the object is in the container. Follow the pattern already used in npc-dialog.ts and flight-movement.ts.
 
 
 -  Sprint 3 - Fix Socket Lib:

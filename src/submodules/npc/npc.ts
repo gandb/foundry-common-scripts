@@ -25,7 +25,17 @@ export abstract class NPC {
   ) {}
 
   async whaitFor(test: () => boolean, timeout = 60000, sleep = 100) {
-    const logguer: Log = injectController.resolve("CommonLogguer");
+    let logguer: Log | undefined = undefined;
+    logguer = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguer
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
     let totalTime = 0;
     const ret = new Promise((resolve, reject) => {
       const handle = setInterval(() => {
@@ -46,37 +56,71 @@ export abstract class NPC {
   }
 
   public async init() {
+    let npcDialogRef: NPCDialog | undefined = undefined;
+    let dialogUtilsRef: DialogUtils | undefined = undefined;
     const fiveMinutes = 5 * 60 * 1000;
-    await this.whaitFor(
-      () => injectController.resolve("NPCDialog"),
-      fiveMinutes,
-    );
-    if (!injectController.resolve("NPCDialog")) {
-      throw new Error("Timeout waiting for hooks");
+    await this.whaitFor(() => injectController.has("NPCDialog"), fiveMinutes);
+    npcDialogRef = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
+    if (!npcDialogRef) {
+      throw new Error(
+        "Required dependency 'NPCDialog' not registered and no fallback available",
+      );
     }
-    await this.whaitFor(
-      () => injectController.resolve("DialogUtils"),
-      fiveMinutes,
-    );
-    if (!injectController.resolve("DialogUtils")) {
-      throw new Error("Timeout waiting for hooks");
+    await this.whaitFor(() => injectController.has("DialogUtils"), fiveMinutes);
+    dialogUtilsRef = (
+      injectController.has("DialogUtils")
+        ? injectController.resolve("DialogUtils")
+        : dialogUtilsRef
+    ) as DialogUtils;
+    if (!dialogUtilsRef) {
+      throw new Error(
+        "Required dependency 'DialogUtils' not registered and no fallback available",
+      );
     }
 
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+    const npcDialog: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
     this.screens.push({
       name: "npc-dialog",
       callback: npcDialog.showNPCChooseDialog,
     });
   }
   public decrementGroup() {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+    let npcDialogRef: NPCDialog | undefined = undefined;
+    const npcDialog: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
+    if (!npcDialog) {
+      throw new Error(
+        "Required dependency 'NPCDialog' not registered and no fallback available",
+      );
+    }
     const array = [...npcDialog.npcSelected.groups];
     const newArray = array.slice(0, -1);
     npcDialog.npcSelected.groups = new Set(newArray);
   }
 
   public getAlias() {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
+    let npcDialogRef: NPCDialog | undefined = undefined;
+    const npcDialog: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
+    if (!npcDialog) {
+      throw new Error(
+        "Required dependency 'NPCDialog' not registered and no fallback available",
+      );
+    }
     return npcDialog.npcSelected.name.toLocaleLowerCase();
   }
 
@@ -86,9 +130,39 @@ export abstract class NPC {
     options: Array<any>,
     buttons: Array<any> | null,
   ) {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-    const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
-    const loguer: Log = injectController.resolve("CommonLogguer");
+    let npcDialogRef: NPCDialog | undefined = undefined;
+    let dialogUtilsRef: DialogUtils | undefined = undefined;
+    let loguerRef: Log | undefined = undefined;
+    const npcDialog: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
+    if (!npcDialog) {
+      throw new Error(
+        "Required dependency 'NPCDialog' not registered and no fallback available",
+      );
+    }
+    const dialogUtils: DialogUtils = (
+      injectController.has("DialogUtils")
+        ? injectController.resolve("DialogUtils")
+        : dialogUtilsRef
+    ) as DialogUtils;
+    if (!dialogUtils) {
+      throw new Error(
+        "Required dependency 'DialogUtils' not registered and no fallback available",
+      );
+    }
+    const loguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : loguerRef
+    ) as Log;
+    if (!loguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
     const alias = npcDialog.npcSelected.getAlias();
 
     let innerContent = `
@@ -255,8 +329,28 @@ export abstract class NPC {
   public abstract startScreen(): Promise<void>;
 
   public async getListLinesFromGroup(groupsUnordered: any) {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-    const loguer: Log = injectController.resolve("CommonLogguer");
+    let npcDialogRef: NPCDialog | undefined = undefined;
+    let loguerRef: Log | undefined = undefined;
+    const npcDialog: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
+    if (!npcDialog) {
+      throw new Error(
+        "Required dependency 'NPCDialog' not registered and no fallback available",
+      );
+    }
+    const loguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : loguerRef
+    ) as Log;
+    if (!loguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
 
     const groups = Array.from(groupsUnordered)
       .map(Number)
@@ -285,8 +379,28 @@ export abstract class NPC {
     numbers: Array<number>,
     separator: string = ";",
   ) {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-    const loguer: Log = injectController.resolve("CommonLogguer");
+    let npcDialogRef: NPCDialog | undefined = undefined;
+    let loguerRef: Log | undefined = undefined;
+    const npcDialog: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
+    if (!npcDialog) {
+      throw new Error(
+        "Required dependency 'NPCDialog' not registered and no fallback available",
+      );
+    }
+    const loguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : loguerRef
+    ) as Log;
+    if (!loguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
 
     const ret = new Array();
 
@@ -329,8 +443,29 @@ export abstract class NPC {
   }
 
   public async speak(lineIndex: number) {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-    const loguer: Log = injectController.resolve("CommonLogguer");
+    let npcDialogRef: NPCDialog | undefined = undefined;
+    let loguerRef: Log | undefined = undefined;
+    let gameContextRef: IGameContext | undefined = undefined;
+    const npcDialog: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
+    if (!npcDialog) {
+      throw new Error(
+        "Required dependency 'NPCDialog' not registered and no fallback available",
+      );
+    }
+    const loguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : loguerRef
+    ) as Log;
+    if (!loguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
 
     const line = npcDialog.npcSelected.lines[lineIndex];
 
@@ -338,9 +473,16 @@ export abstract class NPC {
 
     loguer.debug("disparando o evento pra todo mundo:");
 
-    const gameContext: IGameContext = injectController.resolve(
-      "GameContext",
+    const gameContext: IGameContext = (
+      injectController.has("GameContext")
+        ? (injectController.resolve("GameContext") as IGameContext)
+        : gameContextRef
     ) as IGameContext;
+    if (!gameContext) {
+      throw new Error(
+        "Required dependency 'GameContext' not registered and no fallback available",
+      );
+    }
 
     // Cria uma mensagem invisível que todos recebem
     await ChatMessage.create({
@@ -387,8 +529,28 @@ export abstract class NPC {
   }
 
   private async playSoundWithNoEffect(src: string): Promise<boolean> {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-    const loguer: Log = injectController.resolve("CommonLogguer");
+    let npcDialogRef: NPCDialog | undefined = undefined;
+    let loguerRef: Log | undefined = undefined;
+    const npcDialog: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
+    if (!npcDialog) {
+      throw new Error(
+        "Required dependency 'NPCDialog' not registered and no fallback available",
+      );
+    }
+    const loguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : loguerRef
+    ) as Log;
+    if (!loguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
     try {
       const response = await fetch(src, { method: "HEAD" });
       if (!response.ok) {
@@ -405,8 +567,28 @@ export abstract class NPC {
   }
 
   public async send(removeLastGroup = true) {
-    const npcDialog: NPCDialog = injectController.resolve("NPCDialog");
-    const loguer: Log = injectController.resolve("CommonLogguer");
+    let npcDialogRef: NPCDialog | undefined = undefined;
+    let loguerRef: Log | undefined = undefined;
+    const npcDialog: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialogRef
+    ) as NPCDialog;
+    if (!npcDialog) {
+      throw new Error(
+        "Required dependency 'NPCDialog' not registered and no fallback available",
+      );
+    }
+    const loguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : loguerRef
+    ) as Log;
+    if (!loguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
     if (npcDialog.npcSelected.groups.size === 0) {
       npcDialog.npcSelected.groups.add(RANDOM_GROUP);
     }

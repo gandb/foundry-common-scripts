@@ -15,7 +15,18 @@ export class SocketLib extends SubModuleBase implements Socket {
   private _requirementModules: number = 2;
 
   private get gameContext(): IGameContext {
-    return injectController.resolve("GameContext") as IGameContext;
+    let gameContextRef: IGameContext | undefined = undefined;
+    const gameContext: IGameContext = (
+      injectController.has("GameContext")
+        ? (injectController.resolve("GameContext") as IGameContext)
+        : gameContextRef
+    ) as IGameContext;
+    if (!gameContext) {
+      throw new Error(
+        "Required dependency 'GameContext' not registered and no fallback available",
+      );
+    }
+    return gameContext;
   }
 
   private get socketOriginal(): any {
@@ -32,7 +43,17 @@ export class SocketLib extends SubModuleBase implements Socket {
   }
 
   protected async initHooks() {
-    const logguer: Log = injectController.resolve("CommonLogguer");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
 
     logguer.debug("CA: Socketlib waiting for requirements modules...");
 
@@ -45,10 +66,33 @@ export class SocketLib extends SubModuleBase implements Socket {
     });
   }
   protected async waitReady() {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    const commonModule: CommonModule = injectController.resolve("CommonModule");
-    const socketLib: SocketLib = injectController.resolve(
-      "Socket",
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    let commonModuleRef: CommonModule | undefined = undefined;
+    const commonModule: CommonModule = (
+      injectController.has("CommonModule")
+        ? injectController.resolve("CommonModule")
+        : commonModuleRef
+    ) as CommonModule;
+    if (!commonModule) {
+      throw new Error(
+        "Required dependency 'CommonModule' not registered and no fallback available",
+      );
+    }
+    let socketLibRef: SocketLib | undefined = undefined;
+    const socketLib: SocketLib = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as SocketLib)
+        : socketLibRef
     ) as SocketLib;
 
     const module = this.gameContext.modules.get(commonModule.name);
@@ -96,8 +140,23 @@ export class SocketLib extends SubModuleBase implements Socket {
   }
 
   public async executeForAll(eventName: string, ...data: any): Promise<any> {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    const socketLib: SocketLib = injectController.resolve("Socket");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    let socketLibRef: SocketLib | undefined = undefined;
+    const socketLib: SocketLib = (
+      injectController.has("Socket")
+        ? injectController.resolve("Socket")
+        : socketLibRef
+    ) as SocketLib;
     logguer.debug(
       "Socketlib executeForAll for event:",
       eventName,
@@ -110,8 +169,23 @@ export class SocketLib extends SubModuleBase implements Socket {
   }
 
   public async executeAsGM(eventName: string, ...data: any): Promise<any> {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    const socketLib: SocketLib = injectController.resolve("Socket");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    let socketLibRef: SocketLib | undefined = undefined;
+    const socketLib: SocketLib = (
+      injectController.has("Socket")
+        ? injectController.resolve("Socket")
+        : socketLibRef
+    ) as SocketLib;
     logguer.debug("Socketlib executeAsGM start");
 
     if (
@@ -149,7 +223,12 @@ export class SocketLib extends SubModuleBase implements Socket {
   }
 
   public async executeToGM(eventName: string, ...data: any): Promise<any> {
-    const socketLib: SocketLib = injectController.resolve("Socket");
+    let socketLibRef: SocketLib | undefined = undefined;
+    const socketLib: SocketLib = (
+      injectController.has("Socket")
+        ? injectController.resolve("Socket")
+        : socketLibRef
+    ) as SocketLib;
     const newData = { data, toGM: true };
     return socketLib.socketOriginal.executeForEveryone(eventName, newData);
   }
@@ -159,8 +238,23 @@ export class SocketLib extends SubModuleBase implements Socket {
     users: Array<string>,
     ...data: any
   ): Promise<any> {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    const socketLib: SocketLib = injectController.resolve("Socket");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    let socketLibRef: SocketLib | undefined = undefined;
+    const socketLib: SocketLib = (
+      injectController.has("Socket")
+        ? injectController.resolve("Socket")
+        : socketLibRef
+    ) as SocketLib;
     logguer.debug(
       "Socketlib executeIn for event:",
       eventName,
@@ -173,15 +267,40 @@ export class SocketLib extends SubModuleBase implements Socket {
   }
 
   public isReadyToSendToGM(): boolean {
-    return this.gameContext?.user?.isGM == true ;
+    return this.gameContext?.user?.isGM == true;
   }
 
   public async register(eventName: string, callback: any): Promise<void> {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    const socketLib: SocketLib = injectController.resolve("Socket");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    let socketLibRef: SocketLib | undefined = undefined;
+    const socketLib: SocketLib = (
+      injectController.has("Socket")
+        ? injectController.resolve("Socket")
+        : socketLibRef
+    ) as SocketLib;
     logguer.debug("start register,eventName:", eventName);
     socketLib._socketOriginal.register(eventName, async (...data: any) => {
-      const logguer: Log = injectController.resolve("CommonLogguer");
+      let logguerRef2: Log | undefined = undefined;
+      const logguer: Log = (
+        injectController.has("CommonLogguer")
+          ? injectController.resolve("CommonLogguer")
+          : logguerRef2
+      ) as Log;
+      if (!logguer) {
+        throw new Error(
+          "Required dependency 'CommonLogguer' not registered and no fallback available",
+        );
+      }
       logguer.debug(
         "Socketlib new event:",
         eventName,

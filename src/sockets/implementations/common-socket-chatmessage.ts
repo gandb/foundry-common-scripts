@@ -13,7 +13,18 @@ export class ChatSocket extends SubModuleBase implements Socket {
   readonly #callbacks: Map<string, any> = new Map();
 
   private get gameContext(): IGameContext {
-    return injectController.resolve("GameContext") as IGameContext;
+    let gameContextRef: IGameContext | undefined = undefined;
+    const gameContext: IGameContext = (
+      injectController.has("GameContext")
+        ? (injectController.resolve("GameContext") as IGameContext)
+        : gameContextRef
+    ) as IGameContext;
+    if (!gameContext) {
+      throw new Error(
+        "Required dependency 'GameContext' not registered and no fallback available",
+      );
+    }
+    return gameContext;
   }
 
   public getCallback(type: string) {
@@ -25,22 +36,76 @@ export class ChatSocket extends SubModuleBase implements Socket {
   }
 
   protected async initHooks() {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    const socket = injectController.resolve("Socket") as ChatSocket;
-    const foundry: IFoundryAPI = injectController.resolve("FoundryAPI");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    let socketRef: ChatSocket | undefined = undefined;
+    const socket = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as ChatSocket)
+        : socketRef
+    ) as ChatSocket;
+    if (!socket) {
+      throw new Error(
+        "Required dependency 'Socket' not registered and no fallback available",
+      );
+    }
+    let foundryRef: IFoundryAPI | undefined = undefined;
+    const foundry: IFoundryAPI = (
+      injectController.has("FoundryAPI")
+        ? injectController.resolve("FoundryAPI")
+        : foundryRef
+    ) as IFoundryAPI;
     logguer.debug("CA: ChatSocket waiting for requirements modules...");
 
     foundry.hooks.once("onReadyCommonModule", async () => {
-      const logguer: Log = injectController.resolve("CommonLogguer");
+      let logguerRef2: Log | undefined = undefined;
+      const logguer: Log = (
+        injectController.has("CommonLogguer")
+          ? injectController.resolve("CommonLogguer")
+          : logguerRef2
+      ) as Log;
       logguer.debug("Common Module ready in Chat Socket");
       socket.init();
     });
 
     foundry.hooks.on("createChatMessage", (message: any) => {
-      const logguer: Log = injectController.resolve("CommonLogguer");
-      const commonModule: CommonModule =
-        injectController.resolve("CommonModule");
-      const socket = injectController.resolve("Socket") as ChatSocket;
+      let logguerRef2: Log | undefined = undefined;
+      const logguer: Log = (
+        injectController.has("CommonLogguer")
+          ? injectController.resolve("CommonLogguer")
+          : logguerRef2
+      ) as Log;
+      if (!logguer) {
+        throw new Error(
+          "Required dependency 'CommonLogguer' not registered and no fallback available",
+        );
+      }
+      let commonModuleRef: CommonModule | undefined = undefined;
+      const commonModule: CommonModule = (
+        injectController.has("CommonModule")
+          ? injectController.resolve("CommonModule")
+          : commonModuleRef
+      ) as CommonModule;
+      if (!commonModule) {
+        throw new Error(
+          "Required dependency 'CommonModule' not registered and no fallback available",
+        );
+      }
+      let socketRef: ChatSocket | undefined = undefined;
+      const socket = (
+        injectController.has("Socket")
+          ? (injectController.resolve("Socket") as ChatSocket)
+          : socketRef
+      ) as ChatSocket;
 
       try {
         logguer.debug("createChatMessage recebido...");
@@ -135,10 +200,45 @@ export class ChatSocket extends SubModuleBase implements Socket {
   }
 
   protected async waitReady() {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    const commonModule: CommonModule = injectController.resolve("CommonModule");
-    const socket = injectController.resolve("Socket") as ChatSocket;
-    const foundry: IFoundryAPI = injectController.resolve("FoundryAPI");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    let commonModuleRef: CommonModule | undefined = undefined;
+    const commonModule: CommonModule = (
+      injectController.has("CommonModule")
+        ? injectController.resolve("CommonModule")
+        : commonModuleRef
+    ) as CommonModule;
+    if (!commonModule) {
+      throw new Error(
+        "Required dependency 'CommonModule' not registered and no fallback available",
+      );
+    }
+    let socketRef: ChatSocket | undefined = undefined;
+    const socket = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as ChatSocket)
+        : socketRef
+    ) as ChatSocket;
+    if (!socket) {
+      throw new Error(
+        "Required dependency 'Socket' not registered and no fallback available",
+      );
+    }
+    let foundryRef: IFoundryAPI | undefined = undefined;
+    const foundry: IFoundryAPI = (
+      injectController.has("FoundryAPI")
+        ? injectController.resolve("FoundryAPI")
+        : foundryRef
+    ) as IFoundryAPI;
     const module = socket.gameContext.modules.get(commonModule.name);
     logguer.debug(`Common Socket initializing for ${commonModule.name}...`);
 
@@ -150,13 +250,28 @@ export class ChatSocket extends SubModuleBase implements Socket {
     }
 
     socket.register(CALLBACK_SYSTEM_CALLBACK, (data: any) => {
-      const logguer: Log = injectController.resolve("CommonLogguer");
+      let logguerRef2: Log | undefined = undefined;
+      const logguer: Log = (
+        injectController.has("CommonLogguer")
+          ? injectController.resolve("CommonLogguer")
+          : logguerRef2
+      ) as Log;
+      if (!logguer) {
+        throw new Error(
+          "Required dependency 'CommonLogguer' not registered and no fallback available",
+        );
+      }
       logguer.debug(
         "ChatSocket adicionando o retorno na pilha de retorno : ",
         data,
       );
-      const returns = injectController.resolve(
-        RETURN_CONTROL_NAME,
+      let returnsRef: CacheReturnControl<string, any> | undefined = undefined;
+      const returns = (
+        injectController.has(RETURN_CONTROL_NAME)
+          ? (injectController.resolve(
+              RETURN_CONTROL_NAME,
+            ) as CacheReturnControl<string, any>)
+          : returnsRef
       ) as CacheReturnControl<string, any>;
       if (returns.has(data.requestId)) {
         logguer.debug("CA: Já foi respondido antes : ", data);
@@ -168,7 +283,17 @@ export class ChatSocket extends SubModuleBase implements Socket {
   }
 
   private cleanupRealChatMessage() {
-    const logguer: Log = injectController.resolve("CommonLogguer");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
     logguer.debug("[Common Socket Chat Message] cleanupRealChatMessage ");
     let elements = document.querySelectorAll(
       ".chat-message.message:not(.socket-chat-event)",
@@ -189,8 +314,23 @@ export class ChatSocket extends SubModuleBase implements Socket {
     toGM: boolean,
     userids: Array<string> | undefined = undefined,
   ) {
-    const logguer: Log = injectController.resolve("CommonLogguer");
-    const socket = injectController.resolve("Socket") as ChatSocket;
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
+    let socketRef: ChatSocket | undefined = undefined;
+    const socket = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as ChatSocket)
+        : socketRef
+    ) as ChatSocket;
     const whisper = Array.from(socket.gameContext.users?.values() || []);
     const requestId: string = Math.round(Math.random() * 1000000).toString();
     const users = userids ?? [];
@@ -210,7 +350,12 @@ export class ChatSocket extends SubModuleBase implements Socket {
       payload,
     );
 
-    const foundry: IFoundryAPI = injectController.resolve("FoundryAPI");
+    let foundryRef: IFoundryAPI | undefined = undefined;
+    const foundry: IFoundryAPI = (
+      injectController.has("FoundryAPI")
+        ? injectController.resolve("FoundryAPI")
+        : foundryRef
+    ) as IFoundryAPI;
     await foundry.createChatMessage({
       content: "Common Socket Event - Ignore this message",
       whisper,
@@ -228,8 +373,14 @@ export class ChatSocket extends SubModuleBase implements Socket {
 
     await socket.whaitFor(
       () => {
-        const returns = injectController.resolve(
-          RETURN_CONTROL_NAME,
+        let returnsRef2: CacheReturnControl<string, any> | undefined =
+          undefined;
+        const returns = (
+          injectController.has(RETURN_CONTROL_NAME)
+            ? (injectController.resolve(
+                RETURN_CONTROL_NAME,
+              ) as CacheReturnControl<string, any>)
+            : returnsRef2
         ) as CacheReturnControl<string, any>;
         if (returns.has(requestId)) return true;
         return false;
@@ -238,19 +389,35 @@ export class ChatSocket extends SubModuleBase implements Socket {
       1000,
     );
 
-    const returns = injectController.resolve(
-      RETURN_CONTROL_NAME,
+    let returnsRef: CacheReturnControl<string, any> | undefined = undefined;
+    const returns = (
+      injectController.has(RETURN_CONTROL_NAME)
+        ? (injectController.resolve(RETURN_CONTROL_NAME) as CacheReturnControl<
+            string,
+            any
+          >)
+        : returnsRef
     ) as CacheReturnControl<string, any>;
     return returns.get(requestId);
   }
 
   public async executeToGM(eventName: string, ...data: any): Promise<any> {
-    const socket = injectController.resolve("Socket") as ChatSocket;
+    let socketRef: ChatSocket | undefined = undefined;
+    const socket = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as ChatSocket)
+        : socketRef
+    ) as ChatSocket;
     return socket.sendMessage(eventName, data, false, true);
   }
 
   public async executeForAll(eventName: string, ...data: any): Promise<any> {
-    const socket = injectController.resolve("Socket") as ChatSocket;
+    let socketRef: ChatSocket | undefined = undefined;
+    const socket = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as ChatSocket)
+        : socketRef
+    ) as ChatSocket;
     return socket.sendMessage(eventName, data, false, false);
   }
 
@@ -259,12 +426,22 @@ export class ChatSocket extends SubModuleBase implements Socket {
     users: Array<string>,
     ...data: any
   ): Promise<any> {
-    const socket = injectController.resolve("Socket") as ChatSocket;
+    let socketRef: ChatSocket | undefined = undefined;
+    const socket = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as ChatSocket)
+        : socketRef
+    ) as ChatSocket;
     return socket.sendMessage(eventName, data, false, false, users);
   }
 
   public async executeAsGM(eventName: string, ...data: any): Promise<any> {
-    const socket = injectController.resolve("Socket") as ChatSocket;
+    let socketRef: ChatSocket | undefined = undefined;
+    const socket = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as ChatSocket)
+        : socketRef
+    ) as ChatSocket;
     if (
       !socket.isReady ||
       !socket.isReadyToSendToGM ||
@@ -276,12 +453,22 @@ export class ChatSocket extends SubModuleBase implements Socket {
   }
 
   public isReadyToSendToGM(): boolean {
-    const socket = injectController.resolve("Socket") as ChatSocket;
+    let socketRef: ChatSocket | undefined = undefined;
+    const socket = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as ChatSocket)
+        : socketRef
+    ) as ChatSocket;
     return socket.gameContext.user?.isGM === true;
   }
 
   public async register(eventName: string, callback: any): Promise<void> {
-    const socket = injectController.resolve("Socket") as ChatSocket;
+    let socketRef: ChatSocket | undefined = undefined;
+    const socket = (
+      injectController.has("Socket")
+        ? (injectController.resolve("Socket") as ChatSocket)
+        : socketRef
+    ) as ChatSocket;
     socket.setCallback(eventName, callback);
   }
 

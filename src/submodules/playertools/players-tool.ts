@@ -12,7 +12,17 @@ export class PlayersTools extends SubModuleBase {
   #requiredHooksLoaded: boolean = false;
 
   protected async initHooks() {
-    const commonModule: CommonModule = injectController.resolve("CommonModule");
+    let commonModuleRef: CommonModule | undefined = undefined;
+    const commonModule: CommonModule = (
+      injectController.has("CommonModule")
+        ? injectController.resolve("CommonModule")
+        : commonModuleRef
+    ) as CommonModule;
+    if (!commonModule) {
+      throw new Error(
+        "Required dependency 'CommonModule' not registered and no fallback available",
+      );
+    }
 
     const fiveMinute: number = 5 * 60 * 1000;
     playersTools = (
@@ -21,7 +31,17 @@ export class PlayersTools extends SubModuleBase {
         : playersTools
     ) as PlayersTools;
 
-    const logguer: Log = injectController.resolve("CommonLogguer");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
     logguer.debug("Starting PlayersTools init hooks");
     playersTools.initializeFlyMeasure();
     playersTools.#requiredHooksLoaded = true;
@@ -37,7 +57,17 @@ export class PlayersTools extends SubModuleBase {
   }
 
   public initializeFlyMeasure() {
-    const logguer: Log = injectController.resolve("CommonLogguer");
+    let logguerRef: Log | undefined = undefined;
+    const logguer: Log = (
+      injectController.has("CommonLogguer")
+        ? injectController.resolve("CommonLogguer")
+        : logguerRef
+    ) as Log;
+    if (!logguer) {
+      throw new Error(
+        "Required dependency 'CommonLogguer' not registered and no fallback available",
+      );
+    }
     logguer.debug("initlizeFlyMeasure init");
   }
 }

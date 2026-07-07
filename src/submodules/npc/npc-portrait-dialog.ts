@@ -79,9 +79,17 @@ export class NPCPortraitDialog extends Application {
    * Exibe o diálogo para todos os jogadores
    */
   async showToAllPlayers(): Promise<void> {
-    const gameContext: IGameContext = injectController.resolve(
-      "GameContext",
+    let gameContextRef: IGameContext | undefined = undefined;
+    const gameContext: IGameContext = (
+      injectController.has("GameContext")
+        ? (injectController.resolve("GameContext") as IGameContext)
+        : gameContextRef
     ) as IGameContext;
+    if (!gameContext) {
+      throw new Error(
+        "Required dependency 'GameContext' not registered and no fallback available",
+      );
+    }
 
     // Renderiza localmente
     this.render(true);
