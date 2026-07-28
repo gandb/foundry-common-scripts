@@ -2,14 +2,20 @@ import { Log, injectController } from "taulukko-commons";
 import { ModuleBase } from "./common";
 import type { IGameContext, IGameSettings } from "./common/igame-context";
 import type { IFoundryAPI } from "./common/ifoundry-api"; // Caminho corrigido
-import {  SubModuleBase,RegionUtils, PlayersTools ,HideUnidentify,DialogUtils } from "./submodules";
+import {
+  SubModuleBase,
+  RegionUtils,
+  PlayersTools,
+  HideUnidentify,
+  DialogUtils,
+} from "./submodules";
 //import { DummySocket } from "./sockets/implementations/common-socket-dummy";
 import { SocketLib } from "./sockets/implementations/common-socket-socketlib";
 import { NPCDialog } from "./submodules";
 import { FlightMovement } from "./submodules/flight-movement/flight-movement";
 import { socketTest } from "./sockets/common-socket-test";
 import { Socket } from "./sockets";
-import {FoundryAPI} from "./common/foundry-api";
+import { FoundryAPI } from "./common/foundry-api";
 
 const COMMON_REGISTERED_NAMES = {
   MODULE_VERSION: "common-assets-version",
@@ -55,7 +61,7 @@ export class CommonModule extends ModuleBase {
       commonModule,
     );
 
-   await (commonModule as CommonModule).registerSetting(
+    await (commonModule as CommonModule).registerSetting(
       COMMON_REGISTERED_NAMES.MODULE_VERSION,
     );
   }
@@ -106,13 +112,12 @@ export class CommonModule extends ModuleBase {
         ? injectController.resolve("CommonModule")
         : commonModuleRef
     ) as CommonModule;
-    const foundry: IFoundryAPI  = injectController.has("FoundryAPI")
+    const foundry: IFoundryAPI = injectController.has("FoundryAPI")
       ? injectController.resolve("FoundryAPI")
       : new FoundryAPI();
 
-    if(!injectController.has("FoundryAPI"))
-    {
-      injectController.registerByName("FoundryAPI",foundry);
+    if (!injectController.has("FoundryAPI")) {
+      injectController.registerByName("FoundryAPI", foundry);
     }
 
     const fiveMinutes = 5 * 60 * 1000;
@@ -303,51 +308,52 @@ export class CommonModule extends ModuleBase {
       );
     }
 
-    logguer.info("Criando botão de ajuda de rolagem");
-    let el = doc.getElementById("roll-privacy");
+    const injectButton = () => {
+      let el = doc.getElementById("roll-privacy");
+      if (!el) {
+        el = doc.getElementById("message-modes");
+      }
+      if (!el) return;
+      if (el.querySelector(".common-assets-help")) return;
 
-    const newVersionDnd: boolean = !el;
-    if (newVersionDnd) {
-      el = doc.getElementById("message-modes");
-      return;
-    }
-
-    if (!el) {
-      logguer.error("Menu privacy não encontrado");
-      return;
-    }
-
-    const botao = doc.createElement("button");
-    botao.textContent = "?";
-    botao.className = "ui-control icon fa-solid fa-help common-assets-help";
-    botao.addEventListener("click", (event) => {
-      event.preventDefault();
-      let gameContextRef: IGameContext | undefined = undefined;
-      const gameContext: IGameContext = (
-        injectController.has("GameContext")
-          ? (injectController.resolve("GameContext") as IGameContext)
-          : gameContextRef
-      ) as IGameContext;
-      if (!gameContext) {
-        throw new Error(
-          "Required dependency 'GameContext' not registered and no fallback available",
+      const botao = doc.createElement("button");
+      botao.textContent = "?";
+      botao.className = "ui-control icon fa-solid fa-help common-assets-help";
+      botao.addEventListener("click", (event) => {
+        event.preventDefault();
+        let gameContextRef: IGameContext | undefined = undefined;
+        const gameContext: IGameContext = (
+          injectController.has("GameContext")
+            ? (injectController.resolve("GameContext") as IGameContext)
+            : gameContextRef
+        ) as IGameContext;
+        if (!gameContext) {
+          throw new Error(
+            "Required dependency 'GameContext' not registered and no fallback available",
+          );
+        }
+        const journal = (
+          gameContext.journal as { getName(name: string): unknown }
+        ).getName("Como Rolar Dados");
+        logguer.info("Mensagem exibida ao clicar no botão ?");
+        if (!journal) {
+          logguer.error("Journal não instalado!");
+          return;
+        }
+        (journal as { sheet: { render(show: boolean): void } }).sheet.render(
+          true,
         );
-      }
-      const journal = (
-        gameContext.journal as { getName(name: string): unknown }
-      ).getName("Como Rolar Dados");
-      logguer.info("Mensagem exibida ao clicar no botão ?");
-      if (!journal) {
-        logguer.error("Journal não instalado!");
-        return;
-      }
-      (journal as { sheet: { render(show: boolean): void } }).sheet.render(
-        true,
-      );
-    });
+      });
 
-    el.appendChild(botao);
-    logguer.info("Botão de ajuda de rolagem criado");
+      el.appendChild(botao);
+      logguer.info("Botão de ajuda de rolagem criado");
+    };
+
+    injectButton();
+
+    const target = doc.getElementById("chat") ?? doc.body;
+    const observer = new MutationObserver(() => injectButton());
+    observer.observe(target, { childList: true, subtree: true });
   }
 
   private get gameSettings(): IGameSettings {

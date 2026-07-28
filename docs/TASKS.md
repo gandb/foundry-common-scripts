@@ -22,7 +22,7 @@ The task pattern is:
 
 # Sprint 3 - bugs
 - ✅ Fix lazy and force cpu, why? cooler turn on, why?
-- an error in /media/gandb/extensao001/Programs/Instalados/Foundry/Data/modules/common-scripts-dnd5ed/scripts/src/common-module.ts "Fix CS [ERROR] 20260721213052 Menu privacy não encontrado"    
+- ✅ an error in /media/gandb/extensao001/Programs/Instalados/Foundry/Data/modules/common-scripts-dnd5ed/scripts/src/common-module.ts "Fix CS [ERROR] 20260721213052 Menu privacy não encontrado"    
 
 # Sprint 4 - Fix Socket Lib . PS: common-module.ts register the socket :
   - Test if messages only for players in socketlib works, manual test done by user
