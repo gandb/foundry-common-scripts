@@ -350,8 +350,10 @@ export class CommonModule extends ModuleBase {
     };
 
     injectButton();
-
-    const target = doc.getElementById("chat") ?? doc.body;
+    const target =
+      doc.getElementById("chat") ??
+      doc.getElementById("sidebar-content") ??
+      doc.body;
     const observer = new MutationObserver(() => injectButton());
     observer.observe(target, { childList: true, subtree: true });
   }
