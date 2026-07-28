@@ -60,6 +60,7 @@ async function initModule() {
   injectController.registerByName("FoundryDocument", document);
   injectController.registerByName("CommonModule", commonModule);
   injectController.registerByName("CommonLogguer", logguer);
+  injectController.registerByName("FoundryAPI", new FoundryAPI());
 
   Hooks.once("init", () => {
     if (typeof game !== "undefined") {
@@ -67,7 +68,6 @@ async function initModule() {
         "GameContext",
         game as unknown as IGameContext,
       );
-      injectController.registerByName("FoundryAPI", new FoundryAPI());
     }
   });
 

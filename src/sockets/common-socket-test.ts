@@ -23,6 +23,7 @@ export function socketTest() {
     
   Hooks.once("onReadyCommonSocket", async () => {
     const logguer: Log = injectController.resolve("CommonLogguer");
+    logguer.debug("onReadyCommonSocket 20");
     const commonSocket: Socket = injectController.resolve("Socket");
     logguer.debug("onReadyCommonSocket 20");
 
@@ -42,8 +43,8 @@ export function socketTest() {
           logguer.debug(`Before executeAsGM add 5+6`);
           let result = await commonSocket.executeAsGM("add", 5, 6);
           logguer.debug(`The result of executeAsGM add 5+6 is: ${result}`);
-          //esta mensagem jamais deveria aparecer no GM, só nos usuarios
-          await commonSocket.executeAsGM("showMessage", "test2");
+          await commonSocket.executeAsGM("showMessage",
+              "::this message was send by the GM, only players see::");
           logguer.debug("depois de executeAsGM test2");
         } else {
           commonSocket.executeForAll("showMessage", "test3");

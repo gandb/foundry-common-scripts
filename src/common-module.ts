@@ -1,19 +1,15 @@
 import { Log, injectController } from "taulukko-commons";
-import { ModuleBase } from "./common/module-base";
+import { ModuleBase } from "./common";
 import type { IGameContext, IGameSettings } from "./common/igame-context";
 import type { IFoundryAPI } from "./common/ifoundry-api"; // Caminho corrigido
-import { SubModuleBase } from "./submodules/sub-module-base";
-import { RegionUtils } from "./submodules/region-utils/region-utils";
-import { PlayersTools } from "./submodules/playertools/players-tool";
-import { DialogUtils } from "./submodules/dialog-utils/dialog-utils";
-import { HeroPoints } from "./submodules/hero-points/hero-points";
-import { HideUnidentify } from "./submodules/hide-unindentify/hide-unidentify";
+import {  SubModuleBase,RegionUtils, PlayersTools ,HideUnidentify,DialogUtils } from "./submodules";
 //import { DummySocket } from "./sockets/implementations/common-socket-dummy";
 import { SocketLib } from "./sockets/implementations/common-socket-socketlib";
 import { NPCDialog } from "./submodules";
 import { FlightMovement } from "./submodules/flight-movement/flight-movement";
 import { socketTest } from "./sockets/common-socket-test";
 import { Socket } from "./sockets";
+import {FoundryAPI} from "./common/foundry-api";
 
 const COMMON_REGISTERED_NAMES = {
   MODULE_VERSION: "common-assets-version",
@@ -21,7 +17,7 @@ const COMMON_REGISTERED_NAMES = {
 
 const doc: FoundryDocument = document as FoundryDocument;
 
-var commonModule: CommonModule | undefined = undefined;
+let commonModule: CommonModule | undefined = undefined;
 
 export class CommonModule extends ModuleBase {
   public readonly name: string = "common-scripts-dnd5ed";
@@ -59,7 +55,7 @@ export class CommonModule extends ModuleBase {
       commonModule,
     );
 
-    (commonModule as CommonModule).registerSetting(
+   await (commonModule as CommonModule).registerSetting(
       COMMON_REGISTERED_NAMES.MODULE_VERSION,
     );
   }
@@ -76,18 +72,16 @@ export class CommonModule extends ModuleBase {
       new NPCDialog(),
       new PlayersTools(),
       new DialogUtils(),
-      new HeroPoints(),
       new HideUnidentify(),
       new FlightMovement(),
     );
 
-    subModules.forEach(async (subModule) => {
+    for (const subModule of subModules) {
       injectController.registerByClass(subModule);
-      subModule.init().then(() => {
-        const logguer: Log = injectController.resolve("CommonLogguer");
-        logguer.debug("Submodule loaded : ", subModule);
-      });
-    });
+      await subModule.init();
+      const logguer: Log = injectController.resolve("CommonLogguer");
+      logguer.debug("Submodule loaded : ", subModule);
+    }
 
     //choose implementation dependes what I want
     const commonSocket: Socket = new SocketLib(); // new DummySocket();
@@ -112,9 +106,14 @@ export class CommonModule extends ModuleBase {
         ? injectController.resolve("CommonModule")
         : commonModuleRef
     ) as CommonModule;
-    const foundry: IFoundryAPI | undefined = injectController.has("FoundryAPI")
+    const foundry: IFoundryAPI  = injectController.has("FoundryAPI")
       ? injectController.resolve("FoundryAPI")
-      : undefined;
+      : new FoundryAPI();
+
+    if(!injectController.has("FoundryAPI"))
+    {
+      injectController.registerByName("FoundryAPI",foundry);
+    }
 
     const fiveMinutes = 5 * 60 * 1000;
     await commonModule.whaitFor(
@@ -127,11 +126,7 @@ export class CommonModule extends ModuleBase {
 
     logguer.debug("Módulo Common Assets waitReady finish with success.");
 
-    if (foundry) {
-      foundry.hooks.callAll("onReadyCommonModule", {});
-    } else {
-      Hooks.callAll("onReadyCommonModule", {});
-    }
+    foundry.hooks.callAll("onReadyCommonModule", {});
   }
 
   protected async initHooks() {

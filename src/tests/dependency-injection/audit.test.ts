@@ -50,7 +50,6 @@ const resolvePatterns: { pattern: RegExp; file: string }[] = [
     file: "common-socket-chatmessage.ts",
   },
   { pattern: /injectController\.resolve\("([^"]+)"/g, file: "npc-dialog.ts" },
-  { pattern: /injectController\.resolve\("([^"]+)"/g, file: "hero-points.ts" },
   { pattern: /injectController\.resolve\("([^"]+)"/g, file: "region-utils.ts" },
   {
     pattern: /injectController\.resolve\("([^"]+)"/g,

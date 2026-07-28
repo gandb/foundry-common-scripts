@@ -12,57 +12,21 @@
 /*END - CHAT MESSAGE SOCKET */
 
 
-/*START - ATRIBUTE HERO POINTS FEATURE*/
-LABEL.common-assets.attribute{
-	position: relative;
-	width: 64px;
-	height: 64px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	align-items: center;
-	font-family: var(--dnd5e-font-roboto);
-	padding-top: 0px;
-	filter: drop-shadow(0 0 6px var(--dnd5e-shadow-45));
-	pointer-events: all;
-	text-transform: uppercase;
-	color: rgb(159, 146, 117);
-	color-scheme: dark;
-	font-weight: bold; 
-	cursor:pointer;
-}
 
-div.ability-score .operator{
-	margin-right: 5px;
-}
-
-div.ability-score .operator::after{
-	content:"*";
-}
-
-form.editable div.ability-score .operator.reduce::after{
-	content:"-";
-}
-form.editable div.ability-score .operator.increment::after{
-	content:"+";
-}
-
-
-.isGM form.editable div.ability-score .operator{
-	cursor: pointer;
-}
-
-
-
-DIALOG.application.dialog
+/*START - FIX CALENDAR HUD */
+.calendar-core
 {
-	margin-left: 0vw; 
-	width: 50vw;
+	height: 5vh;
 }
 
-img.heroic-action-img{
-	margin: 0.1vh;
-	height: auto;
-	width: auto;
-} 
-/*END - ATRIBUTE HERO POINTS FEATURE*/
+/*END - FIX CALENDAR HUD */
+
+
+/*START - COMPATIBILITY SMALL TIME AND CALENDAR HUD */
+
+#smalltime-app
+{
+	display: none;
+}
+
+/*END - COMPATIBILITY SMALL TIME AND CALENDAR HUD */

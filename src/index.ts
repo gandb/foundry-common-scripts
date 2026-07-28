@@ -1,6 +1,5 @@
 export {
   DialogUtils,
-  HeroPoints,
   HideUnidentify,
   PlayersTools,
   RegionUtils,
