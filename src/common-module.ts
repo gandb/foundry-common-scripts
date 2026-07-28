@@ -350,10 +350,15 @@ export class CommonModule extends ModuleBase {
     };
 
     injectButton();
-    const target =
-      doc.getElementById("chat") ??
-      doc.getElementById("sidebar-content") ??
-      doc.body;
+
+    let target = doc.getElementById("chat");
+    if (!target) {
+      target = doc.getElementById("sidebar-content");
+      logguer.error(
+        "Elemento #chat não encontrado, observando #sidebar-content como fallback",
+      );
+    }
+    target ??= doc.body;
     const observer = new MutationObserver(() => injectButton());
     observer.observe(target, { childList: true, subtree: true });
   }
