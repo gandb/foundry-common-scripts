@@ -24,7 +24,23 @@ The task pattern is:
 - ✅ Fix lazy and force cpu, why? cooler turn on, why?
 - ✅ an error in /media/gandb/extensao001/Programs/Instalados/Foundry/Data/modules/common-scripts-dnd5ed/scripts/src/common-module.ts "Fix CS [ERROR] 20260721213052 Menu privacy não encontrado"    
 
-# Sprint 4 - Fix Socket Lib . PS: common-module.ts register the socket :
+# Sprint 4 - Screen to give XP by place
+- Right a  spec about a new button. This button need be like flight-movement, open a Window  like a profissional screen game design, dnd rpg thematic. Below the main fields:
+- Selector if is a Main Quest, Side Quest or Personal Quest
+- Create a list of all PCs where the owner isnt the GM , each PC with a checkbox to allow select one by one - default is selected
+- With a very cool style, put the maximum levels betwween selected characters in the right corner of screen. Eg if four  characrters level 3.4.6 and 6 level, so need show 6. This is the reference level or maximum level
+- The calculated XP Gain is showed bellow in character selectors, big and cetered
+- a button to cancel or aprove in the button of screen.
+- The selected characters need gain the xp using the follow formule: Get the next maximum level (reference level +1) and search in table ./src/data/xp-progression.json the XP for the next level. 
+  - Each selected char will gain :
+    - 15% of this XP if is Main Quest selected
+    - 10% of this XP if is Main Side Quest selected
+    - 5% of this XP if is Personal Quest selected
+  - Complete example scenary : Three characters, Raistlin, Conam and Rusty, levels 4,4 and 5 respectively. The maximum Level is 5 and next is 6, Cross from 5 to level 6 need 7500 xp. So the master open the screen, select Side Quest (10%) , only characters Raistin and Rusty, the maximul level is showed is 5 and XP 750 (10% ofm 7500) , after press button Rusty and Raistlung get 750 XP each and screen close and a blue info message show saying the xp was give with success.  
+  
+
+
+# Sprint 5 - Fix Socket Lib . PS: common-module.ts register the socket :
   - Test if messages only for players in socketlib works, manual test done by user
   - Test if a player calculating something in everyone in socketlib works, manual test done by user
   - Test if a player calculating something in gm in socketlib works, manual test done by user
@@ -36,7 +52,7 @@ The task pattern is:
     - Replace in npcTalkDialog.ts to use the new socket implementation using the initial chat interface
     - Replace in npcTalkDialog.ts to use the new socketlib interface implementation
 
-#  Sprint 5 - NPCDialog Improovements:
+#  Sprint 6 - NPCDialog Improovements:
   - Switch configuration of which implementation to use depending on a setting. Change in messaging factory.
   - Fix createDialog to use options instead of depending on parameter order, create an interface for options and document the fields.
   - The last "back" should reopen the NPC choice screen, if this can be handled in base classes rather than by consumers of npcdialog.
@@ -44,7 +60,7 @@ The task pattern is:
   - Verify that in project ../../../../forgotten-realms/scripts/ for NPCs where it says "action", "screen", "screen-context", create an enum in this project and document this, so projects using it make use of the enum instead of a string, to avoid typos
 
 
-#  Sprint 6 - Injectcontroller
+#  Sprint 7 - Injectcontroller
   - If use annotation, can be reduce the verborragy of use of injector? 
 
 
