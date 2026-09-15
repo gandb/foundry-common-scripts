@@ -9,7 +9,7 @@ import {
   HideUnidentify,
   DialogUtils,
 } from "./submodules";
-//import { DummySocket } from "./sockets/implementations/common-socket-dummy";
+import { DummySocket } from "./sockets/implementations/common-socket-dummy";
 import { SocketLib } from "./sockets/implementations/common-socket-socketlib";
 import { NPCDialog } from "./submodules";
 import { FlightMovement } from "./submodules/flight-movement/flight-movement";
@@ -90,7 +90,7 @@ export class CommonModule extends ModuleBase {
     }
 
     //choose implementation dependes what I want
-    const commonSocket: Socket = new SocketLib(); // new DummySocket();
+    const commonSocket: Socket =  new DummySocket(); //new SocketLib();
     injectController.registerByName("Socket", commonSocket);
   }
 

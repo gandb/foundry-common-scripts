@@ -36,11 +36,12 @@ The task pattern is:
     - 15% of this XP if is Main Quest selected
     - 10% of this XP if is Main Side Quest selected
     - 5% of this XP if is Personal Quest selected
-  - Complete example scenary : Three characters, Raistlin, Conam and Rusty, levels 4,4 and 5 respectively. The maximum Level is 5 and next is 6, Cross from 5 to level 6 need 7500 xp. So the master open the screen, select Side Quest (10%) , only characters Raistin and Rusty, the maximul level is showed is 5 and XP 750 (10% ofm 7500) , after press button Rusty and Raistlung get 750 XP each and screen close and a blue info message show saying the xp was give with success.  
+  - Complete example scenary : Three characters, Raistlin, Conam and Rusty, levels 4,4 and 5 respectively. The maximum Level is 5 and next is 6, Cross from 5 to level 6 need 7500 xp. So the master open the screen, select Side Quest (10%) , only characters Raistin and Rusty, the maximul level is showed is 5 and XP 750 (10% ofm 7500) , after press button Rusty and Raistlung get 750 XP each and screen close and a blue info message show saying the xp was give with success.
+  - After delivery XP all players online, inclusive the GM receive a screen shot with effects, "You gain ${experience-gain} XP"  The screen need be nice, beautiful, without buttons and using a lot of effects, this effects must be ok for a rpg dungeon and dragons style  
   
 
 
-# Sprint 5 - Fix Socket Lib . PS: common-module.ts register the socket :
+# Sprint 5 - Fix Socket Lib . IMPORTANT!!!!: common-module.ts register the socket, change to test :
   - Test if messages only for players in socketlib works, manual test done by user
   - Test if a player calculating something in everyone in socketlib works, manual test done by user
   - Test if a player calculating something in gm in socketlib works, manual test done by user
