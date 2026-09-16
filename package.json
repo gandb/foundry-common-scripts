@@ -1,8 +1,8 @@
 {
   "name": "taulukko-common-scripts-dnd5ed",
-  "version": "2.0.186",
-  "description": "Taulukko Common Scripts for Foundry dnd5ed",
-  "main": "dist/taulukko-common-scripts-dnd5ed.iife.js",
+  "version": "2.0.188",
+  "description": "Common Scripts for Foundry dnd5ed",
+  "main": "dist/common-scripts-dnd5ed.iife.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
