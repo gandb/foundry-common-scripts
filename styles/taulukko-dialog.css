@@ -1,0 +1,70 @@
+/* Dialogos do Taulukko (DialogV2) — visual unico para a selecao de NPC e as telas de opcoes.
+   Aplicada pela classe "taulukko-dialog" (dialog-utils.ts). Combina com o retrato (npc-talk.css). */
+
+.taulukko-dialog {
+  background: linear-gradient(160deg, #2e2e33 0%, #232327 100%);
+  border: 1px solid #4a4a52;
+  border-radius: 10px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.65);
+}
+
+.taulukko-dialog .window-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(201, 162, 75, 0.25);
+}
+
+.taulukko-dialog .window-title {
+  color: #e8cf8a;
+  letter-spacing: 0.03em;
+}
+
+.taulukko-dialog .window-content {
+  background: transparent;
+  color: #eee;
+}
+
+.taulukko-dialog .window-content h1 {
+  color: #e8cf8a;
+  font-size: 1.2em;
+  border-bottom: 1px solid rgba(232, 207, 138, 0.25);
+  padding-bottom: 0.35rem;
+  margin-top: 0;
+}
+
+.taulukko-dialog .window-content .select-action,
+.taulukko-dialog .window-content .select-npc {
+  background: transparent;
+  color: #eee;
+  padding: 4px 2px;
+}
+
+.taulukko-dialog .window-content select {
+  background: #2a2a2f;
+  color: #f2f0ea;
+  border: 1px solid #4a4a52;
+  border-radius: 6px;
+  padding: 6px 8px;
+  width: 100%;
+}
+
+.taulukko-dialog .form-footer {
+  border-top: 1px solid rgba(201, 162, 75, 0.25);
+  padding: 8px 12px;
+}
+
+.taulukko-dialog .form-footer button,
+.taulukko-dialog .window-content button {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid #c9a24b;
+  border-radius: 6px;
+  color: #f2f0ea;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.taulukko-dialog .form-footer button:hover,
+.taulukko-dialog .window-content button:hover {
+  background: rgba(201, 162, 75, 0.22);
+  box-shadow: 0 0 10px rgba(201, 162, 75, 0.35);
+}

@@ -180,6 +180,43 @@ export class NPCDialog extends SubModuleBase {
       );
     });
     buttons.push(dialogUtils.createButton("cancel", "Cancel", false, "screen"));
+    // [tmp/debug] Atalho do teste de audio (script em forgotten-realms/scripts/tmp) —
+    // temporario: remover quando o teste de audio terminar. Substitui o loader via console.
+    buttons.push(
+      dialogUtils.createButton(
+        "run-tests",
+        "Run Tests",
+        false,
+        "button",
+        (ev: any, btn: any, dlg: any) => {
+          try {
+            if (dlg && dlg.close) {
+              dlg.close();
+            }
+          } catch (e) {}
+          (async () => {
+            try {
+              const resp = await fetch(
+                "/modules/forgotten-realms/scripts/tmp/npc-e2e/audio-test-once.js",
+              );
+              if (!resp.ok) {
+                ui.notifications?.warn(
+                  "Run Tests: script de teste nao encontrado (" +
+                    resp.status +
+                    ")",
+                );
+                return;
+              }
+              const src = await resp.text();
+              (0, eval)(src);
+            } catch (e: any) {
+              logguer.error("Run Tests falhou:", e);
+              ui.notifications?.error("Run Tests falhou: " + (e?.message || e));
+            }
+          })();
+        },
+      ),
+    );
 
     logguer.debug("showNPCChooseDialog:20 after creating buttons");
 

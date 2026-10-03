@@ -93,6 +93,7 @@ export class DialogUtils extends SubModuleBase {
 
     const options = {
       window: { title, resizable: true },
+      classes: ["taulukko-dialog"],
       content: `<style>${style}</style>	
 					<div>${content}</div>`,
       buttons,
