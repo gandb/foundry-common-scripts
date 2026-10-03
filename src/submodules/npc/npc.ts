@@ -16,6 +16,7 @@ export abstract class NPC {
   groups: Set<string> = new Set();
   screens = new Array<Screen | any>();
   lastSpokenIndex: number | null = null;
+  lastSoundAt: number = 0;
   abstract groupToLines: Map<string, string>;
   abstract lines: any;
 
@@ -612,7 +613,23 @@ export abstract class NPC {
         return false;
       }
 
+      // R3 — trava de seguranca: nao disparar 2 sons do MESMO NPC em menos de 5s
+      // (protege contra bugs de repeticao; testes usam window.__npcSoundLockBypass).
+      const now = Date.now();
+      const bypass = (window as any).__npcSoundLockBypass === true;
+      if (
+        !bypass &&
+        npcDialog.npcSelected.lastSoundAt &&
+        now - npcDialog.npcSelected.lastSoundAt < 5000
+      ) {
+        loguer.debug(
+          "NPC.playSoundWithNoEffect: som bloqueado pela trava de 5s do mesmo NPC",
+        );
+        return false;
+      }
+
       foundry.audio.AudioHelper.play({ src, autoplay: true }, true);
+      npcDialog.npcSelected.lastSoundAt = now;
       return true;
     } catch (error: any) {
       loguer.error("Erro ao reproduzir o som:", src, error);

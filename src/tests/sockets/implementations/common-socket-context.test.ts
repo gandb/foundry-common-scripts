@@ -5,6 +5,10 @@ import { injectController } from "taulukko-commons";
 jest.mock("taulukko-commons", () => ({
   injectController: {
     resolve: jest.fn(),
+    registerByName: jest.fn(),
+    has: jest.fn((name: string) =>
+      ["GameContext", "CommonLogguer", "CommonModule", "Socket"].includes(name),
+    ),
   },
 }));
 

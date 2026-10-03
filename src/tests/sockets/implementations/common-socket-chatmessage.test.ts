@@ -41,6 +41,16 @@ jest.mock("taulukko-commons", () => {
         return null;
       }),
       registerByName: jest.fn(),
+      has: jest.fn((name: string) =>
+        [
+          "GameContext",
+          "CommonLogguer",
+          "CommonModule",
+          "FoundryAPI",
+          "ChatSocketReturns",
+          "Socket",
+        ].includes(name),
+      ),
     },
   };
 });
@@ -57,13 +67,13 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockGame.modules = {
       get: jest.fn((name: string) => ({ active: true })),
     };
     mockGame.user = { id: "gm1", isGM: true };
     mockGame.users = new Map();
-    
+
     // Criar nova instância para cada teste
     chatSocketInstance = new ChatSocket();
     currentChatSocketInstance = chatSocketInstance;
@@ -72,9 +82,9 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
   describe("executeAsGM with onlyPlayers flag", () => {
     it("should throw if user is not GM", async () => {
       mockGame.user = { id: "user1", isGM: false };
-      
+
       await expect(
-        chatSocketInstance.executeAsGM("testEvent", { data: "test" })
+        chatSocketInstance.executeAsGM("testEvent", { data: "test" }),
       ).rejects.toThrow("Isnt ready to send to gm or you arent GM");
     });
 
@@ -86,7 +96,8 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
       ]);
 
       // Mock do método sendMessage para capturar os parâmetros
-      const sendMessageSpy = jest.spyOn(chatSocketInstance as any, 'sendMessage')
+      const sendMessageSpy = jest
+        .spyOn(chatSocketInstance as any, "sendMessage")
         .mockResolvedValue("success");
 
       await chatSocketInstance.executeAsGM("testEvent", { data: "test" });
@@ -104,10 +115,13 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
     it("should pass correct data structure to sendMessage", async () => {
       mockGame.user = { id: "gm1", isGM: true };
 
-      const sendMessageSpy = jest.spyOn(chatSocketInstance as any, 'sendMessage')
+      const sendMessageSpy = jest
+        .spyOn(chatSocketInstance as any, "sendMessage")
         .mockResolvedValue("success");
 
-      await chatSocketInstance.executeAsGM("testEvent", "arg1", "arg2", { complex: true });
+      await chatSocketInstance.executeAsGM("testEvent", "arg1", "arg2", {
+        complex: true,
+      });
 
       const callArgs = sendMessageSpy.mock.calls[0];
       expect(callArgs[1]).toEqual(["arg1", "arg2", { complex: true }]);
@@ -120,8 +134,9 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
   describe("Consistency between SocketLib and ChatSocket", () => {
     it("should both implementations set onlyPlayers=true when executeAsGM is called", async () => {
       mockGame.user = { id: "gm1", isGM: true };
-      
-      const sendMessageSpy = jest.spyOn(chatSocketInstance as any, 'sendMessage')
+
+      const sendMessageSpy = jest
+        .spyOn(chatSocketInstance as any, "sendMessage")
         .mockResolvedValue("success");
 
       await chatSocketInstance.executeAsGM("testEvent", { data: "test" });
@@ -130,7 +145,7 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
         "testEvent",
         [{ data: "test" }],
         true, // onlyPlayers = true
-        false // toGM = false
+        false, // toGM = false
       );
 
       sendMessageSpy.mockRestore();
@@ -139,13 +154,13 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
     it("should verify that both implementations handle the onlyPlayers flag consistently", () => {
       // SocketLib: define onlyPlayers: true no payload para executeForUsers
       // ChatSocket: passa onlyPlayers=true como parâmetro para sendMessage
-      
+
       const onlyPlayersFlag = true;
-      
+
       // SocketLib usa o onlyPlayers no payload
       const socketLibPayload = { data: ["test"], onlyPlayers: onlyPlayersFlag };
       expect(socketLibPayload.onlyPlayers).toBe(true);
-      
+
       // ChatSocket usa o parâmetro onlyPlayers
       const chatSocketOnlyPlayersParam = onlyPlayersFlag;
       expect(chatSocketOnlyPlayersParam).toBe(true);
@@ -168,9 +183,11 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
     it("should register callback for event", () => {
       const callback = jest.fn();
       chatSocketInstance.register("testEvent", callback);
-      
+
       // Como o register apenas chama setCallback, vamos verificar se o método não lança erro
-      expect(() => chatSocketInstance.register("testEvent", callback)).not.toThrow();
+      expect(() =>
+        chatSocketInstance.register("testEvent", callback),
+      ).not.toThrow();
     });
   });
 });

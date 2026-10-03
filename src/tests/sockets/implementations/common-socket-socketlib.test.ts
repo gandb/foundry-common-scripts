@@ -23,6 +23,10 @@ jest.mock("taulukko-commons", () => ({
       if (name === "Socket") return socketLibInstance;
       return null;
     }),
+    registerByName: jest.fn(),
+    has: jest.fn((name: string) =>
+      ["GameContext", "CommonLogguer", "CommonModule", "Socket"].includes(name),
+    ),
   },
 }));
 
@@ -37,10 +41,10 @@ describe("SocketLib", () => {
       get: jest.fn((name: string) => ({ active: true })),
     };
     mockGame.user = { id: "gm1", isGM: true };
-    
+
     // Criar nova instância para cada teste
     socketLibInstance = new SocketLib();
-    
+
     // Mock do socketOriginal para verificar chamadas
     mockExecuteForUsers = jest.fn().mockResolvedValue("success");
     (socketLibInstance as any)._socketOriginal = {
@@ -86,35 +90,35 @@ describe("SocketLib", () => {
   describe("executeAsGM", () => {
     it("should throw if user is not GM", async () => {
       mockGame.user = { id: "user1", isGM: false };
-      
+
       await expect(socketLibInstance.executeAsGM("testEvent")).rejects.toThrow(
-        "Isnt ready to send to gm or you isnt GM"
+        "Isnt ready to send to gm or you isnt GM",
       );
     });
 
     it("should throw if gameContext.user is not available", async () => {
       mockGame.user = null;
-      
+
       await expect(socketLibInstance.executeAsGM("testEvent")).rejects.toThrow(
-        "Isnt ready to send to gm or you isnt GM"
+        "Isnt ready to send to gm or you isnt GM",
       );
     });
 
     it("should throw if gameContext.users is not available", async () => {
       mockGame.users = null;
-      
+
       await expect(socketLibInstance.executeAsGM("testEvent")).rejects.toThrow(
-        "Isnt ready to send to gm or you isnt GM"
+        "Isnt ready to send to gm or you isnt GM",
       );
     });
 
     it("should not call executeForUsers if there are no non-GM users", async () => {
-      mockGame.users = new Map([
-        ["gm1", { id: "gm1", isGM: true }],
-      ]);
+      mockGame.users = new Map([["gm1", { id: "gm1", isGM: true }]]);
 
-      const result = await socketLibInstance.executeAsGM("testEvent", { data: "test" });
-      
+      const result = await socketLibInstance.executeAsGM("testEvent", {
+        data: "test",
+      });
+
       expect(mockExecuteForUsers).not.toHaveBeenCalled();
       expect(result).toBeUndefined();
     });
@@ -133,7 +137,7 @@ describe("SocketLib", () => {
       expect(mockExecuteForUsers).toHaveBeenCalledWith(
         "testEvent",
         ["user1", "user2"], // apenas non-GM users
-        { data: [testData], onlyPlayers: true }
+        { data: [testData], onlyPlayers: true },
       );
       expect(result).toBe("success");
     });
@@ -144,7 +148,9 @@ describe("SocketLib", () => {
         ["gm1", { id: "gm1", isGM: true }],
       ]);
 
-      await socketLibInstance.executeAsGM("anotherEvent", { action: "doSomething" });
+      await socketLibInstance.executeAsGM("anotherEvent", {
+        action: "doSomething",
+      });
 
       const callArgs = mockExecuteForUsers.mock.calls[0];
       expect(callArgs[2]).toHaveProperty("onlyPlayers", true);
@@ -153,26 +159,26 @@ describe("SocketLib", () => {
     });
 
     it("should handle multiple data arguments correctly", async () => {
-      mockGame.users = new Map([
-        ["user1", { id: "user1", isGM: false }],
-      ]);
+      mockGame.users = new Map([["user1", { id: "user1", isGM: false }]]);
 
-      await socketLibInstance.executeAsGM("testEvent", "arg1", "arg2", { complex: true });
+      await socketLibInstance.executeAsGM("testEvent", "arg1", "arg2", {
+        complex: true,
+      });
 
       const callArgs = mockExecuteForUsers.mock.calls[0];
       expect(callArgs[2].data).toEqual(["arg1", "arg2", { complex: true }]);
     });
 
     it("should return the promise from executeForUsers", async () => {
-      mockGame.users = new Map([
-        ["user1", { id: "user1", isGM: false }],
-      ]);
-      
+      mockGame.users = new Map([["user1", { id: "user1", isGM: false }]]);
+
       const expectedReturn = { success: true, message: "sent" };
       mockExecuteForUsers.mockResolvedValueOnce(expectedReturn);
 
-      const result = await socketLibInstance.executeAsGM("testEvent", { data: "test" });
-      
+      const result = await socketLibInstance.executeAsGM("testEvent", {
+        data: "test",
+      });
+
       expect(result).toEqual(expectedReturn);
     });
   });
