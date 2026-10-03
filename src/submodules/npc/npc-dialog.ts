@@ -180,12 +180,121 @@ export class NPCDialog extends SubModuleBase {
       );
     });
     buttons.push(dialogUtils.createButton("cancel", "Cancel", false, "screen"));
-    // [tmp/debug] Atalho do teste de audio (script em forgotten-realms/scripts/tmp) —
-    // temporario: remover quando o teste de audio terminar. Substitui o loader via console.
+    // [tmp/debug] Janela de debug: seletor de NPC -> roda o teste de audio correspondente.
+    // Temporario: remover quando o teste de audio terminar. Substitui o loader via console.
+    const runAudioTest = async (filterValue: string) => {
+      try {
+        const filter =
+          filterValue === "Minsc"
+            ? ["Minsc"]
+            : filterValue === "Brizola"
+              ? ["Brizola"]
+              : ["Minsc", "Brizola"];
+        (window as any).__audioTestFilter = filter;
+        const resp = await fetch(
+          "/modules/forgotten-realms/scripts/tmp/npc-e2e/audio-test-once.js",
+        );
+        if (!resp.ok) {
+          ui.notifications?.warn(
+            "Debug: script de teste nao encontrado (" + resp.status + ")",
+          );
+          return;
+        }
+        const src = await resp.text();
+        (0, eval)(src);
+      } catch (e: any) {
+        logguer.error("Debug falhou:", e);
+        ui.notifications?.error("Debug falhou: " + (e?.message || e));
+      }
+    };
+    const openDebugWindow = () => {
+      const debugTitle = "Debug";
+      let progressTxt = "";
+      try {
+        const raw = JSON.parse(
+          localStorage.getItem("npc-audio-test-v1") || "{}",
+        );
+        const doneCount = Object.keys((raw && raw.done) || {}).length;
+        let totalAll = 0;
+        npcDialogInstance.npcs.forEach((npc: any) => {
+          if (npc && npc.lines) {
+            totalAll += Object.keys(npc.lines).length;
+          }
+        });
+        progressTxt =
+          "Progresso do teste: " +
+          doneCount +
+          "/" +
+          totalAll +
+          " falas ja testadas.";
+      } catch (e) {
+        progressTxt = "";
+      }
+      const debugStyle = `
+					.debug-form { display: flex; flex-direction: column; gap: 8px; padding: 6px 2px; color: #eee; }
+					.debug-form label { color: #e8cf8a; font-weight: 600; }
+					.debug-form select { max-width: 260px; }
+					.debug-form .debug-progress { font-size: 12px; color: #9fd; }
+				`;
+      const debugContent = `
+					<div class="debug-form">
+						<label>Testar sons de:</label>
+						<select id="npc-debug-filter">
+							<option value="all">Todos</option>
+							<option value="Brizola">Brizola</option>
+							<option value="Minsc">Minsc</option>
+						</select>
+						<div class="debug-progress">${progressTxt}</div>
+					</div>
+				`;
+      const debugButtons = [
+        dialogUtils.createButton(
+          "debug-start",
+          "Iniciar",
+          true,
+          "button",
+          (ev2: any, btn2: any, dlg2: any) => {
+            const sel = document.getElementById(
+              "npc-debug-filter",
+            ) as HTMLSelectElement;
+            const value = sel ? sel.value : "all";
+            try {
+              if (dlg2 && dlg2.close) {
+                dlg2.close();
+              }
+            } catch (e) {}
+            runAudioTest(value);
+          },
+        ),
+        dialogUtils.createButton(
+          "debug-cancel",
+          "Cancelar",
+          false,
+          "button",
+          (ev2: any, btn2: any, dlg2: any) => {
+            try {
+              if (dlg2 && dlg2.close) {
+                dlg2.close();
+              }
+            } catch (e) {}
+          },
+        ),
+      ];
+      dialogUtils.createDialog(
+        debugTitle,
+        debugStyle,
+        debugContent,
+        debugButtons,
+        undefined,
+        undefined,
+        undefined,
+        360,
+      );
+    };
     buttons.push(
       dialogUtils.createButton(
-        "run-tests",
-        "Run Tests",
+        "debug",
+        "Debug",
         false,
         "button",
         (ev: any, btn: any, dlg: any) => {
@@ -194,26 +303,7 @@ export class NPCDialog extends SubModuleBase {
               dlg.close();
             }
           } catch (e) {}
-          (async () => {
-            try {
-              const resp = await fetch(
-                "/modules/forgotten-realms/scripts/tmp/npc-e2e/audio-test-once.js",
-              );
-              if (!resp.ok) {
-                ui.notifications?.warn(
-                  "Run Tests: script de teste nao encontrado (" +
-                    resp.status +
-                    ")",
-                );
-                return;
-              }
-              const src = await resp.text();
-              (0, eval)(src);
-            } catch (e: any) {
-              logguer.error("Run Tests falhou:", e);
-              ui.notifications?.error("Run Tests falhou: " + (e?.message || e));
-            }
-          })();
+          openDebugWindow();
         },
       ),
     );
