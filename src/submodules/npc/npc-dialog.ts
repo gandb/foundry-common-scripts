@@ -44,7 +44,7 @@ export class NPCDialog extends SubModuleBase {
 
     Hooks.on("getSceneControlButtons", async (controls: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
-      npcDialog  = (
+      npcDialog = (
         injectController.has("NPCDialog")
           ? injectController.resolve("NPCDialog")
           : npcDialog
@@ -108,7 +108,7 @@ export class NPCDialog extends SubModuleBase {
       icon: "fa-solid fa-web-awesome",
       button: true,
       toggle: false,
-      onClick: () => {
+      onChange: () => {
         logguer.debug("Botão de NPCs especiais pressionado");
 
         npcDialogInstance.showNPCChooseDialog();
@@ -215,6 +215,15 @@ export class NPCDialog extends SubModuleBase {
     const logguer: Log = injectController.resolve("CommonLogguer");
     logguer.debug("Selecionado ...", npc);
     npcDialogInstance.npcSelected = npc;
+    // Reset por abertura (fix F7/F2): contexto e pilha limpos a CADA entrada do NPC.
+    npc.groups = new Set<string>();
+    npc.screens = new Array<any>();
+    npc.screens.push({
+      name: "root",
+      callback: () => npc.startScreen(),
+      type: "screen",
+    });
+    npc.lastSpokenIndex = null;
     await npcDialogInstance.npcSelected.startScreen();
   }
 }

@@ -13,39 +13,47 @@ interface NPCPortraitSocketPayload {
 }
 
 /**
- * Classe customizada para exibir um retrato de NPC com diálogo
- * Funciona como overlay modal sobre o jogo
+ * Classe customizada para exibir um retrato de NPC com diálogo.
+ * Funciona como overlay modal sobre o jogo.
+ * Migrado de V1 Application para ApplicationV2 (fix deprecation, task 6).
  */
-export class NPCPortraitDialog extends Application {
+const NPCPortraitBase = (
+  foundry as any
+).applications.api.HandlebarsApplicationMixin(
+  (foundry as any).applications.api.ApplicationV2,
+);
+
+export class NPCPortraitDialog extends (NPCPortraitBase as any) {
   imageUrl: string;
   npcName: string;
   dialogText: string;
 
+  static DEFAULT_OPTIONS = {
+    id: "npc-portrait-dialog",
+    classes: ["npc-portrait-app"],
+    window: {
+      title: "",
+      resizable: false,
+      minimizable: false,
+      frame: true,
+    },
+    position: { width: 600, height: 400 },
+  } as any;
+
+  static PARTS = {
+    main: {
+      template: "modules/common-scripts-dnd5ed/scripts/templates/npc-talk.hbs",
+    },
+  } as any;
+
   constructor(options: Partial<NPCPortraitOptions> & any = {}) {
-    super();
+    super(options);
     this.imageUrl = options.imageUrl || "YOUR_IMAGE_URL_HERE";
     this.npcName = options.npcName || "NPC";
     this.dialogText = options.dialogText || "Olá, aventureiro...";
   }
 
-  static get defaultOptions(): any {
-    return foundry.utils.mergeObject(Application.defaultOptions, {
-      id: "npc-portrait-dialog",
-      classes: ["npc-portrait-app"],
-      title: "",
-      width: 600,
-      height: 400,
-      resizable: false,
-      minimizable: false,
-      popOut: true,
-    } as any);
-  }
-
-  get template(): string {
-    return "modules/common-scripts-dnd5ed/scripts/templates/npc-talk.hbs";
-  }
-
-  async getData(): Promise<NPCPortraitOptions> {
+  async _prepareContext(options?: any): Promise<any> {
     return {
       imageUrl: this.imageUrl,
       npcName: this.npcName,
@@ -53,13 +61,12 @@ export class NPCPortraitDialog extends Application {
     };
   }
 
-  activateListeners(html: any): void {
-    super.activateListeners(html);
-
-    // Botão de fechar (X)
-    html.on("click", ".close-button", () => {
-      this.close();
-    });
+  _onRender(context: any, options: any): void {
+    const el: any = this.element;
+    const close = el?.querySelector?.(".close-button");
+    if (close) {
+      close.addEventListener("click", () => this.close());
+    }
   }
 
   static renderTalk(data: {
@@ -72,7 +79,7 @@ export class NPCPortraitDialog extends Application {
       npcName: data.npcName,
       dialogText: data.dialogText,
     });
-    dialog.render(true);
+    dialog.render({ force: true });
   }
 
   /**
@@ -92,7 +99,7 @@ export class NPCPortraitDialog extends Application {
     }
 
     // Renderiza localmente
-    this.render(true);
+    this.render({ force: true });
 
     // Se for GM, sincroniza com os outros jogadores via socket
     if (gameContext.user?.isGM) {

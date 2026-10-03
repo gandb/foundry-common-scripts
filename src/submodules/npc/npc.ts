@@ -15,6 +15,7 @@ export abstract class NPC {
   actor: any;
   groups: Set<string> = new Set();
   screens = new Array<Screen | any>();
+  lastSpokenIndex: number | null = null;
   abstract groupToLines: Map<string, string>;
   abstract lines: any;
 
@@ -165,6 +166,8 @@ export abstract class NPC {
     }
     const alias = npcDialog.npcSelected.getAlias();
 
+    let appInstance: any = null;
+
     let innerContent = `
 		<DIV class="${alias}-actions-buttons">
 			<SELECT>
@@ -214,8 +217,10 @@ export abstract class NPC {
 
           loguer.debug("NPC.createDialog [10]: Escolhido a opcao enviar");
 
+          const rootEl: any =
+            appInstance && appInstance.element ? appInstance.element : document;
           const queryResult =
-            (document.querySelector(
+            (rootEl.querySelector(
               `.${alias}-actions-buttons SELECT`,
             ) as HTMLSelectElement) || null;
           const result = queryResult?.value;
@@ -255,12 +260,52 @@ export abstract class NPC {
             }
 
             loguer.debug("NPC.Enviado a opcao :" + result);
-            npcDialog.npcSelected.screens.push({
+            const entry: any = {
               name: result,
               callback: button.callback,
               type: button.type,
-            });
-            button.callback();
+              addedGroups: [] as string[],
+            };
+            const beforeGroups: Set<string> = new Set(
+              npcDialog.npcSelected.groups,
+            );
+            npcDialog.npcSelected.screens.push(entry);
+            const recoverActionError = (err: any) => {
+              loguer.error(
+                "NPC.createDialog: erro ao executar a acao - recuperando a UI:",
+                err,
+              );
+              try {
+                ui.notifications?.error(
+                  "Erro ao executar a ação: " + (err?.message || err),
+                );
+              } catch (e) {}
+              if (npcDialog.npcSelected.screens.at(-1) === entry) {
+                npcDialog.npcSelected.screens.pop();
+              }
+              npcDialog.npcSelected.groups = beforeGroups;
+              const top: any = npcDialog.npcSelected.screens.at(-1);
+              try {
+                if (top && top.callback) {
+                  top.callback();
+                }
+              } catch (e) {
+                try {
+                  npcDialog.npcSelected.startScreen();
+                } catch (e2) {}
+              }
+            };
+            try {
+              const maybePromise: any = button.callback();
+              if (maybePromise && typeof maybePromise.then === "function") {
+                maybePromise.catch(recoverActionError);
+              }
+              entry.addedGroups = Array.from(
+                npcDialog.npcSelected.groups as Set<string>,
+              ).filter((g: string) => !beforeGroups.has(g));
+            } catch (err) {
+              recoverActionError(err);
+            }
             loguer.debug(
               "NPC.createDialog, after 3 creating send:",
               npcDialog.npcSelected.groups,
@@ -273,19 +318,29 @@ export abstract class NPC {
             npcDialog.npcSelected.screens,
           );
 
-          const previousLastScreen = npcDialog.npcSelected.screens.at(-2);
-          const lastScreen = npcDialog.npcSelected.screens.pop();
+          const previousLastScreen: any = npcDialog.npcSelected.screens.at(-2);
+          const lastScreen: any = npcDialog.npcSelected.screens.pop();
           loguer.debug("lastScreen:", lastScreen);
           loguer.debug(
             "screens ao voltar - depois: ",
             npcDialog.npcSelected.screens,
           );
 
-          if (lastScreen.type == "screen-context") {
+          if (
+            lastScreen &&
+            lastScreen.addedGroups &&
+            lastScreen.addedGroups.length > 0
+          ) {
+            lastScreen.addedGroups.forEach((g: string) =>
+              npcDialog.npcSelected.groups.delete(g),
+            );
+          } else if (lastScreen && lastScreen.type == "screen-context") {
             npcDialog.npcSelected.decrementGroup();
           }
 
-          previousLastScreen.callback();
+          if (previousLastScreen && previousLastScreen.callback) {
+            previousLastScreen.callback();
+          }
         }),
         dialogUtils.createButton(
           "cancel",
@@ -312,7 +367,7 @@ export abstract class NPC {
 
     loguer.debug("NPC.createDialog:40 - antes de criar dialogo");
 
-    dialogUtils.createDialog(
+    appInstance = dialogUtils.createDialog(
       title,
       npcDialog.npcSelected.DEFAULT_STYLE,
       innerContent,
@@ -322,7 +377,6 @@ export abstract class NPC {
       undefined,
       400,
     );
-
     loguer.debug("NPC.createDialog:50 - depois de criar dialogo");
   }
 
@@ -593,9 +647,26 @@ export abstract class NPC {
       npcDialog.npcSelected.groups.add(RANDOM_GROUP);
     }
 
-    const list = await npcDialog.npcSelected.getListLinesFromGroup(
+    const list0 = await npcDialog.npcSelected.getListLinesFromGroup(
       npcDialog.npcSelected.groups,
     );
+    // Preferencia pelo contexto CLICADO: se a ultima acao adicionou grupo(s),
+    // prioriza combinacoes que os incluem (fala certa do botao clicado).
+    let list = list0;
+    try {
+      const lastEntry: any = npcDialog.npcSelected.screens.at(-1);
+      const clicked: string[] = (lastEntry && lastEntry.addedGroups) || [];
+      if (clicked.length > 0 && Array.isArray(list0)) {
+        const preferred = list0.filter((k: any) =>
+          String(k)
+            .split(";")
+            .some((x: string) => clicked.includes(String(Number(x)))),
+        );
+        if (preferred.length > 0) {
+          list = preferred;
+        }
+      }
+    } catch (e) {}
 
     loguer.debug("NPC.send, before send,list:", list);
 
@@ -638,7 +709,27 @@ export abstract class NPC {
 
     loguer.debug("NPC.send, afterSend,randomIndex:", randomIndex);
 
-    const lineIndex = Number.parseInt(lines[randomIndex], 10);
+    let lineIndex = Number.parseInt(lines[randomIndex], 10);
+
+    // Anti-repeticao: evita entregar a MESMA fala em acoes seguidas
+    // quando existe alternativa (lastSpokenIndex por NPC).
+    if (
+      npcDialog.npcSelected.lastSpokenIndex === lineIndex &&
+      lines.length > 1
+    ) {
+      for (let attempt = 0; attempt < 6; attempt++) {
+        const retryRaw = Math.abs(Math.round(Math.random() * lines.length));
+        const retryIndex = Number.parseInt(
+          lines[retryRaw >= lines.length ? lines.length - 1 : retryRaw],
+          10,
+        );
+        if (retryIndex !== lineIndex) {
+          lineIndex = retryIndex;
+          break;
+        }
+      }
+    }
+    npcDialog.npcSelected.lastSpokenIndex = lineIndex;
 
     loguer.debug("NPC.send, afterSend,lineIndex:", lineIndex);
 
@@ -649,15 +740,23 @@ export abstract class NPC {
       npcDialog.npcSelected.screens,
     );
 
-    const activeScreen = npcDialog.npcSelected.screens.at(-2);
+    const actEntry: any = npcDialog.npcSelected.screens.at(-1);
+    const activeScreen: any = npcDialog.npcSelected.screens.at(-2);
     npcDialog.npcSelected.screens.pop();
 
-    activeScreen.callback();
+    if (activeScreen && activeScreen.callback) {
+      activeScreen.callback();
+    }
 
     npcDialog.npcSelected.groups.delete(RANDOM_GROUP);
 
     if (removeLastGroup) {
-      npcDialog.npcSelected.decrementGroup();
+      const added: string[] = (actEntry && actEntry.addedGroups) || [];
+      if (added.length > 0) {
+        added.forEach((g: string) => npcDialog.npcSelected.groups.delete(g));
+      } else {
+        npcDialog.npcSelected.decrementGroup();
+      }
     }
 
     loguer.debug("NPC.send, afterSend:", npcDialog.npcSelected.groups);
