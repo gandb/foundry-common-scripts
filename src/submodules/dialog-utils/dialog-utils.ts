@@ -5,6 +5,31 @@ import { NPC } from "../npc/npc";
 
 var dialogUtils: DialogUtils | undefined = undefined;
 
+// Estilos compartilhados dos dialogos (taulukko-dialog.css). Injetados em runtime
+// UMA vez por sessao: garante o visual mesmo com o manifesto do modulo em cache
+// no servidor Foundry (o module.json so relista os styles apos restart).
+const DIALOG_STYLE_ID = "taulukko-dialog-style";
+const DIALOG_STYLE_HREF =
+  "modules/common-scripts-dnd5ed/scripts/styles/taulukko-dialog.css";
+function ensureDialogStyle(): void {
+  try {
+    if (document.getElementById(DIALOG_STYLE_ID)) {
+      return;
+    }
+    const style = document.createElement("style");
+    style.id = DIALOG_STYLE_ID;
+    document.head.appendChild(style);
+    fetch(DIALOG_STYLE_HREF)
+      .then((r) => (r.ok ? r.text() : ""))
+      .then((css) => {
+        if (css) {
+          style.textContent = css;
+        }
+      })
+      .catch(() => {});
+  } catch (e) {}
+}
+
 export class DialogUtils extends SubModuleBase {
   public readonly npctype = NPC;
 
@@ -90,6 +115,8 @@ export class DialogUtils extends SubModuleBase {
         "DialogUtils.createDialog: buttons array must have at least one button",
       );
     }
+
+    ensureDialogStyle();
 
     const options = {
       window: { title, resizable: true },
