@@ -7,6 +7,39 @@ import type { IGameContext } from "../../common/igame-context";
 
 let npcDialog: NPCDialog | undefined = undefined;
 
+// R1 — som de UI (hover/clique) sintetizado via WebAudio (sem assets);
+// silencioso se indisponivel. Curto e em volume baixo.
+function playUiSound(kind: "hover" | "click"): void {
+  try {
+    const w = window as any;
+    const Ctx = w.AudioContext || w.webkitAudioContext;
+    if (!Ctx) {
+      return;
+    }
+    if (!w.__taulukkoUiAudio) {
+      w.__taulukkoUiAudio = new Ctx();
+    }
+    const ctx: any = w.__taulukkoUiAudio;
+    if (ctx.state === "suspended" && ctx.resume) {
+      ctx.resume().catch(() => {});
+    }
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = kind === "hover" ? 780 : 520;
+    const peak = kind === "hover" ? 0.035 : 0.06;
+    const dur = kind === "hover" ? 0.06 : 0.09;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(peak, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + dur + 0.02);
+  } catch (e) {}
+}
+
 export class NPCDialog extends SubModuleBase {
   constructor() {
     super();
@@ -146,12 +179,18 @@ export class NPCDialog extends SubModuleBase {
 
     const title = "Escolha um NPC Especial";
     const style = `
-					.select-npc  { padding: 20px; background: #222; color: #eee; }
-					.select-npc button { margin: 5px; padding: 5px 10px; }
+					.select-npc { padding: 4px 2px; }
 					`;
+    const cardsHtml = Array.from(npcDialogInstance.npcs.values())
+      .map((npc: NPC) => {
+        const label: string = npc.name.toLowerCase();
+        return `<div class="npc-card" data-npc="${label}" title="${npc.name}"><img src="${npc.imageUrl}" alt="${npc.name}"><div class="npc-card-name">${npc.name}</div></div>`;
+      })
+      .join("");
     const content = `
 					<div class="select-npc">
-					<H1>Escolha uma opção:</H1> 
+					<H1>Escolha um NPC Especial:</H1>
+					<div class="npc-select-grid">${cardsHtml}</div>
 					</div>`;
 
     logguer.debug(
@@ -166,18 +205,6 @@ export class NPCDialog extends SubModuleBase {
       injectController.registerByName("npc:" + label, npc);
 
       logguer.debug("showNPCChooseDialog:15 add NPC ", npc.name, npc);
-
-      buttons.push(
-        dialogUtils.createButton(label, npc.name, true, "screen", () => {
-          const npcDialogCbInstance: NPCDialog = (
-            injectController.has("NPCDialog")
-              ? injectController.resolve("NPCDialog")
-              : npcDialog
-          ) as NPCDialog;
-          const npc: NPC = injectController.resolve("npc:" + label);
-          npcDialogCbInstance.callNPC(npc);
-        }),
-      );
     });
     buttons.push(dialogUtils.createButton("cancel", "Cancel", false, "screen"));
     // [tmp/debug] Janela de debug: seletor de NPC -> roda o teste de audio correspondente.
@@ -310,7 +337,7 @@ export class NPCDialog extends SubModuleBase {
 
     logguer.debug("showNPCChooseDialog:20 after creating buttons");
 
-    dialogUtils.createDialog(
+    const selectionApp: any = dialogUtils.createDialog(
       title,
       style,
       content,
@@ -320,6 +347,47 @@ export class NPCDialog extends SubModuleBase {
       undefined,
       400,
     );
+
+    // R1: liga hover/clique dos cards (o render do DialogV2 e assincrono)
+    const bindCards = (el: any, tries: number = 25) => {
+      try {
+        if (
+          !el ||
+          !el.querySelectorAll ||
+          el.querySelectorAll(".npc-card").length === 0
+        ) {
+          if (tries > 0) {
+            setTimeout(
+              () => bindCards(selectionApp && selectionApp.element, tries - 1),
+              60,
+            );
+          }
+          return;
+        }
+        el.querySelectorAll(".npc-card").forEach((card: any) => {
+          const label = card.getAttribute("data-npc");
+          card.addEventListener("mouseenter", () => playUiSound("hover"));
+          card.addEventListener("click", () => {
+            playUiSound("click");
+            try {
+              const npcDialogCbInstance: NPCDialog = (
+                injectController.has("NPCDialog")
+                  ? injectController.resolve("NPCDialog")
+                  : npcDialog
+              ) as NPCDialog;
+              const npc: NPC = injectController.resolve("npc:" + label);
+              try {
+                selectionApp.close();
+              } catch (e) {}
+              npcDialogCbInstance.callNPC(npc);
+            } catch (e) {
+              logguer.error("showNPCChooseDialog: clique do card falhou:", e);
+            }
+          });
+        });
+      } catch (e) {}
+    };
+    bindCards(selectionApp && selectionApp.element);
 
     logguer.debug("showNPCChooseDialog:30 after createDialog");
   }

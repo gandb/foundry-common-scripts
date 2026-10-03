@@ -1,6 +1,6 @@
 {
   "name": "common-scripts-dnd5ed",
-  "version": "2.0.196",
+  "version": "2.0.197",
   "description": "Common Scripts for Foundry dnd5ed",
   "main": "dist/common-scripts-dnd5ed.iife.js",
   "scripts": {
