@@ -5,6 +5,7 @@ interface NPCPortraitOptions {
   imageUrl: string;
   npcName: string;
   dialogText: string;
+  soundSrc?: string;
 }
 
 interface NPCPortraitSocketPayload {
@@ -27,6 +28,7 @@ export class NPCPortraitDialog extends (NPCPortraitBase as any) {
   imageUrl: string;
   npcName: string;
   dialogText: string;
+  soundSrc: string;
 
   static DEFAULT_OPTIONS = {
     id: "npc-portrait-dialog",
@@ -51,6 +53,7 @@ export class NPCPortraitDialog extends (NPCPortraitBase as any) {
     this.imageUrl = options.imageUrl || "YOUR_IMAGE_URL_HERE";
     this.npcName = options.npcName || "NPC";
     this.dialogText = options.dialogText || "Olá, aventureiro...";
+    this.soundSrc = options.soundSrc || "";
   }
 
   async _prepareContext(options?: any): Promise<any> {
@@ -58,6 +61,7 @@ export class NPCPortraitDialog extends (NPCPortraitBase as any) {
       imageUrl: this.imageUrl,
       npcName: this.npcName,
       dialogText: this.dialogText,
+      soundSrc: this.soundSrc,
     };
   }
 
@@ -67,17 +71,53 @@ export class NPCPortraitDialog extends (NPCPortraitBase as any) {
     if (close) {
       close.addEventListener("click", () => this.close());
     }
+    // R8: botao "Ouvir" — cada jogador toca o som da fala na hora que quiser
+    const playBtn = el?.querySelector?.(".npc-sound-button");
+    if (playBtn && this.soundSrc) {
+      playBtn.addEventListener("click", () => this.playSound());
+    }
+  }
+
+  /**
+   * R8: reproduz o som da fala localmente (apenas o cliente que clicou ouve).
+   * Mesma checagem de arquivo do NPC (HEAD) para falhar em silencio se ausente.
+   */
+  async playSound(): Promise<boolean> {
+    if (!this.soundSrc) {
+      return false;
+    }
+    try {
+      const response = await fetch(this.soundSrc, { method: "HEAD" });
+      if (!response.ok) {
+        console.warn(
+          `Arquivo não encontrado: ${this.soundSrc} (${response.status})`,
+        );
+        return false;
+      }
+      // R8: segundo parametro = socketOptions; false = NAO empurrar para os
+      // outros clientes — apenas este cliente ouve (som sob demanda).
+      foundry.audio.AudioHelper.play(
+        { src: this.soundSrc, autoplay: true },
+        false,
+      );
+      return true;
+    } catch (error: any) {
+      console.error("Erro ao reproduzir o som:", this.soundSrc, error);
+      return false;
+    }
   }
 
   static renderTalk(data: {
     imageUrl: string;
     npcName: string;
     dialogText: string;
+    soundSrc?: string;
   }): void {
     const dialog = new (NPCPortraitDialog as any)({
       imageUrl: data.imageUrl,
       npcName: data.npcName,
       dialogText: data.dialogText,
+      soundSrc: data.soundSrc,
     });
     dialog.render({ force: true });
   }

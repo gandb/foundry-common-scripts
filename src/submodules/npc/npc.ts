@@ -531,6 +531,11 @@ export abstract class NPC {
       );
     }
 
+    // R8: caminho do som da fala — vai no payload para o botao "Ouvir" da tela de fala
+    const formatedIndex = lineIndex.toString().padStart(3, "0");
+    const name = this.name;
+    const src = `modules/forgotten-realms/sounds/npcs/${name}/${formatedIndex}/${name}${formatedIndex}.${this.formatSound}`;
+
     // Cria uma mensagem invisível que todos recebem
     await ChatMessage.create({
       content: "NPC Portrait Event", // Invisível pra maioria
@@ -548,6 +553,7 @@ export abstract class NPC {
             imageUrl: this.imageUrl,
             npcName: this.name,
             dialogText: line,
+            soundSrc: src,
           },
         },
       },
@@ -568,11 +574,13 @@ export abstract class NPC {
 
     loguer.debug(" evento disparado pra todo mundo:");
 
-    const formatedIndex = lineIndex.toString().padStart(3, "0");
-    const name = this.name;
-    const src = `modules/forgotten-realms/sounds/npcs/${name}/${formatedIndex}/${name}${formatedIndex}.${this.formatSound}`;
-    const ret = await this.playSoundWithNoEffect(src);
-    loguer.debug("Retorno do play:", ret);
+    // R8: em uso normal NENHUM som toca sozinho — a tela de fala mostra o botao
+    // "Ouvir" e cada jogador aperta quando quiser. Testes/depuracao religam o
+    // auto-play com window.__npcSoundAutoPlay = true (bateria de audio rapida).
+    if ((window as any).__npcSoundAutoPlay === true) {
+      const ret = await this.playSoundWithNoEffect(src);
+      loguer.debug("Retorno do play:", ret);
+    }
   }
 
   private async playSoundWithNoEffect(src: string): Promise<boolean> {

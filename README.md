@@ -112,6 +112,19 @@ scripts/
 - `dist/taulukko-common-scripts-dnd5ed.iife.js` — Main bundle loaded by Foundry
 - `dist/index.d.ts` — Typings for consumption as npm dependency
 
+### ⚠️ Dependent modules embed this build
+
+Other modules can **embed a copy of this code at build time** — e.g. `forgotten-realms`
+concatenates this dependency into its own IIFE (`forgotten-realms-common.iife.js`).
+
+**After ANY change here, rebuild the dependent modules too** (`npm run build` in each),
+otherwise they keep running the old embedded copy (the world shows old behavior even with this
+base updated). For `forgotten-realms`: `npm run build` in
+`<foundry>/Data/modules/forgotten-realms/scripts`.
+
+Also note: Foundry module URLs have no cache-busting query (`?v=`) — after a rebuild, hard-refresh
+the client (or clear the browser cache) so the new bundle is actually loaded.
+
 ---
 
 ## Dependencies

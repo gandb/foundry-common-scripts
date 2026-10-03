@@ -6,5 +6,8 @@
   <div class="npc-portrait-content">
     <h2 class="npc-name">{{npcName}}</h2>
     <div class="npc-dialog-text">{{dialogText}}</div>
+    {{#if soundSrc}}
+    <button type="button" class="npc-sound-button" title="Ouvir a voz deste NPC">▶ Ouvir</button>
+    {{/if}}
   </div>
   </div>
