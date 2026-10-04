@@ -716,33 +716,39 @@ export abstract class NPC {
 
     loguer.debug("NPC.send, afterSend,lines:", lines);
 
-    let randomIndex = Math.abs(Math.round(Math.random() * lines.length));
-    randomIndex = randomIndex >= lines.length ? lines.length - 1 : randomIndex;
+    // R9: o sorteio vira uma funcao reutilizavel — o botao "Recalcular" da tela
+    // de confirmacao re-sorteia com o MESMO contexto (mesma lista `lines`).
+    const pickLineIndex = (): number => {
+      let randomIndex = Math.abs(Math.round(Math.random() * lines.length));
+      randomIndex =
+        randomIndex >= lines.length ? lines.length - 1 : randomIndex;
 
-    loguer.debug("NPC.send, afterSend,randomIndex:", randomIndex);
+      loguer.debug("NPC.send, afterSend,randomIndex:", randomIndex);
 
-    let lineIndex = Number.parseInt(lines[randomIndex], 10);
+      let picked = Number.parseInt(lines[randomIndex], 10);
 
-    // Anti-repeticao: evita entregar a MESMA fala em acoes seguidas
-    // quando existe alternativa (lastSpokenIndex por NPC).
-    if (this.lastSpokenIndex === lineIndex && lines.length > 1) {
-      for (let attempt = 0; attempt < 6; attempt++) {
-        const retryRaw = Math.abs(Math.round(Math.random() * lines.length));
-        const retryIndex = Number.parseInt(
-          lines[retryRaw >= lines.length ? lines.length - 1 : retryRaw],
-          10,
-        );
-        if (retryIndex !== lineIndex) {
-          lineIndex = retryIndex;
-          break;
+      // Anti-repeticao: evita entregar a MESMA fala em acoes seguidas
+      // quando existe alternativa (lastSpokenIndex por NPC).
+      if (this.lastSpokenIndex === picked && lines.length > 1) {
+        for (let attempt = 0; attempt < 6; attempt++) {
+          const retryRaw = Math.abs(Math.round(Math.random() * lines.length));
+          const retryIndex = Number.parseInt(
+            lines[retryRaw >= lines.length ? lines.length - 1 : retryRaw],
+            10,
+          );
+          if (retryIndex !== picked) {
+            picked = retryIndex;
+            break;
+          }
         }
       }
-    }
-    this.lastSpokenIndex = lineIndex;
+      this.lastSpokenIndex = picked;
 
-    loguer.debug("NPC.send, afterSend,lineIndex:", lineIndex);
+      loguer.debug("NPC.send, afterSend,lineIndex:", picked);
+      return picked;
+    };
 
-    this.speak(lineIndex);
+    const lineIndex = pickLineIndex();
 
     loguer.debug("NPC.send, afterSend,activeScreen:", this.screens);
 
@@ -766,5 +772,111 @@ export abstract class NPC {
     }
 
     loguer.debug("NPC.send, afterSend:", this.groups);
+
+    // R9 — tela de confirmacao: mostra a fala sorteada ANTES de enviar.
+    // Botoes (Enviar por ultimo): Cancelar · Recalcular · Enviar.
+    this.confirmTalk(pickLineIndex, lineIndex);
+  }
+
+  /**
+   * R9 — tela de confirmacao antes de enviar: mostra o texto sorteado e deixa
+   * Cancelar (nada sai), Recalcular (re-sorteia com o mesmo contexto) ou
+   * Enviar (dispara a fala para todos, com som conforme o R8).
+   */
+  private confirmTalk(pick: () => number, firstIndex: number): void {
+    let current = firstIndex;
+    const esc = (s: string): string =>
+      s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const show = (): void => {
+      let dialogUtilsRef: DialogUtils | undefined = undefined;
+      let loguerRef: Log | undefined = undefined;
+      const dialogUtils: DialogUtils = (
+        injectController.has("DialogUtils")
+          ? injectController.resolve("DialogUtils")
+          : dialogUtilsRef
+      ) as DialogUtils;
+      const loguer: Log = (
+        injectController.has("CommonLogguer")
+          ? injectController.resolve("CommonLogguer")
+          : loguerRef
+      ) as Log;
+      if (!dialogUtils) {
+        // Sem DialogUtils nao ha como confirmar — mantem o comportamento antigo.
+        this.speak(current);
+        return;
+      }
+      const text = esc(String(this.lines[current] ?? ""));
+      const title = `${this.name}: confirmar fala`;
+      const style = `
+        <style>
+          .npc-r9-text { margin: 0; color: #f2f0ea; font-size: 1.05em; line-height: 1.6; font-style: italic; padding: 0.85rem 1rem; background: rgba(255, 255, 255, 0.055); border-left: 3px solid #c9a24b; border-radius: 6px; }
+          .npc-r9-wrap { padding: 4px 2px; }
+        </style>`;
+      const content = `<div class="npc-r9-wrap"><div class="npc-r9-text">${text}</div></div>`;
+      const buttons: Array<any> = [
+        dialogUtils.createButton(
+          "r9-cancel",
+          "Cancelar",
+          false,
+          "button",
+          (e: any, b: any, dlg: any) => {
+            try {
+              if (dlg && dlg.close) {
+                dlg.close();
+              }
+            } catch (err) {}
+            if (loguer) {
+              loguer.debug("NPC.confirmTalk: cancelado — fala nao enviada");
+            }
+          },
+        ),
+        dialogUtils.createButton(
+          "r9-reroll",
+          "Recalcular",
+          false,
+          "button",
+          (e: any, b: any, dlg: any) => {
+            try {
+              if (dlg && dlg.close) {
+                dlg.close();
+              }
+            } catch (err) {}
+            current = pick();
+            if (loguer) {
+              loguer.debug("NPC.confirmTalk: recalcular -> nova fala", current);
+            }
+            show();
+          },
+        ),
+        dialogUtils.createButton(
+          "r9-send",
+          "Enviar",
+          false,
+          "button",
+          (e: any, b: any, dlg: any) => {
+            try {
+              if (dlg && dlg.close) {
+                dlg.close();
+              }
+            } catch (err) {}
+            if (loguer) {
+              loguer.debug("NPC.confirmTalk: enviar fala", current);
+            }
+            this.speak(current);
+          },
+        ),
+      ];
+      dialogUtils.createDialog(
+        title,
+        style,
+        content,
+        buttons,
+        undefined,
+        undefined,
+        undefined,
+        430,
+      );
+    };
+    show();
   }
 }
