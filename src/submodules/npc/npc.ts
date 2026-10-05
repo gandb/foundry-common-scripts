@@ -370,6 +370,11 @@ export abstract class NPC {
     } catch (e) {}
     this.currentDialogApp = appInstance;
 
+    // R10: abas no topo da janela (Home + um botao por NPC; troca sem reset).
+    try {
+      npcDialog.bindTabs(appInstance, this.name);
+    } catch (e) {}
+
     loguer.debug("NPC.createDialog:50 - depois de criar dialogo");
   }
 

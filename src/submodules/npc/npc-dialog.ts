@@ -389,6 +389,11 @@ export class NPCDialog extends SubModuleBase {
     };
     bindCards(selectionApp && selectionApp.element);
 
+    // R10: abas (Home ativa nesta janela de selecao)
+    try {
+      npcDialogInstance.bindTabs(selectionApp, "__home__");
+    } catch (e) {}
+
     logguer.debug("showNPCChooseDialog:30 after createDialog");
   }
 
@@ -420,5 +425,142 @@ export class NPCDialog extends SubModuleBase {
     });
     npc.lastSpokenIndex = null;
     await npcDialogInstance.npcSelected.startScreen();
+  }
+
+  /**
+   * R10 — troca de aba: ativa o NPC SEM resetar o estado dele (groups/screens
+   * preservados — herança do R4). Se a pilha estiver vazia, empilha a raiz.
+   * Retorna false se o nome não corresponder a nenhum NPC registrado.
+   */
+  public async switchToNpc(name: string): Promise<boolean> {
+    const npcDialogInstance: NPCDialog = (
+      injectController.has("NPCDialog")
+        ? injectController.resolve("NPCDialog")
+        : npcDialog
+    ) as NPCDialog;
+    const logguer: Log = injectController.resolve("CommonLogguer");
+    const key = Array.from(npcDialogInstance.npcs.keys()).find(
+      (k) => String(k).toLowerCase() === String(name).toLowerCase(),
+    );
+    const npc = key ? npcDialogInstance.npcs.get(key) : undefined;
+    if (!npc) {
+      logguer.error("NPCDialog.switchToNpc: NPC desconhecido:", name);
+      return false;
+    }
+    npcDialogInstance.npcSelected = npc;
+    if (!npc.screens || npc.screens.length === 0) {
+      npc.screens = new Array<any>();
+      npc.screens.push({
+        name: "root",
+        callback: () => npc.startScreen(),
+        type: "screen",
+      });
+    }
+    logguer.debug("NPCDialog.switchToNpc: ativando (sem reset)", npc.name);
+    const top: any = npc.screens.at(-1);
+    if (top && top.callback) {
+      await top.callback();
+    }
+    return true;
+  }
+
+  /**
+   * R10 — injeta a barra de abas (Home + um botão por NPC) no topo do elemento
+   * do diálogo. Idempotente por elemento (marca `data-npc-tabs="1"`).
+   * O render do DialogV2 é assíncrono: tenta até 25 vezes a cada 60 ms.
+   */
+  public bindTabs(app: any, activeName: string): void {
+    const attempt = (el: any, tries: number): void => {
+      try {
+        if (typeof document === "undefined") {
+          return;
+        }
+        if (!el || !el.querySelector) {
+          if (tries > 0) {
+            setTimeout(() => attempt(app && app.element, tries - 1), 60);
+          }
+          return;
+        }
+        if (el.getAttribute && el.getAttribute("data-npc-tabs") === "1") {
+          return;
+        }
+        const host =
+          el.querySelector(".window-content") ||
+          el.querySelector(".dialog-content") ||
+          el;
+        if (!host) {
+          if (tries > 0) {
+            setTimeout(() => attempt(app && app.element, tries - 1), 60);
+          }
+          return;
+        }
+        const logguer: Log = injectController.has("CommonLogguer")
+          ? (injectController.resolve("CommonLogguer") as Log)
+          : (undefined as any);
+        const npcDialogInstance: NPCDialog = (
+          injectController.has("NPCDialog")
+            ? injectController.resolve("NPCDialog")
+            : npcDialog
+        ) as NPCDialog;
+        const bar = document.createElement("div");
+        bar.className = "npc-tabs";
+        const mkBtn = (label: string, key: string, active: boolean) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "npc-tab" + (active ? " npc-tab-active" : "");
+          b.textContent = label;
+          b.setAttribute("data-npc-tab", key);
+          b.addEventListener("click", () => {
+            playUiSound("click");
+            try {
+              const target = key === "__home__" ? null : key;
+              const current = String(activeName || "").toLowerCase();
+              if (
+                (target === null && current === "__home__") ||
+                (target !== null && target === current)
+              ) {
+                return;
+              }
+              try {
+                if (app && app.close) {
+                  app.close();
+                }
+              } catch (e) {}
+              if (target === null) {
+                npcDialogInstance.showNPCChooseDialog();
+              } else {
+                npcDialogInstance.switchToNpc(target);
+              }
+            } catch (e) {
+              try {
+                logguer?.error("NPCDialog tabs: troca de aba falhou:", e);
+              } catch (e2) {}
+            }
+          });
+          return b;
+        };
+        bar.appendChild(
+          mkBtn(
+            "⌂",
+            "__home__",
+            String(activeName || "").toLowerCase() === "__home__",
+          ),
+        );
+        npcDialogInstance.npcs.forEach((npc: NPC) => {
+          bar.appendChild(
+            mkBtn(
+              npc.name,
+              npc.name.toLowerCase(),
+              npc.name.toLowerCase() === String(activeName || "").toLowerCase(),
+            ),
+          );
+        });
+        host.insertBefore(bar, host.firstChild);
+        try {
+          el.setAttribute("data-npc-tabs", "1");
+        } catch (e) {}
+      } catch (e) {}
+    };
+    attempt(app && app.element, 25);
   }
 }
