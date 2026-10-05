@@ -175,22 +175,36 @@ export class NPCDialog extends SubModuleBase {
     const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
     logguer.debug("On showNPCChooseDialog 05...", dialogUtils);
 
+    // R10 v3: abrir mostra o ÚLTIMO NPC ativo (memória — instância ou localStorage,
+    // sem reset); só abre o hub (rail + dica) quando ninguém foi escolhido ainda.
+    let lastNpcName: string | null = npcDialogInstance.npcSelected
+      ? npcDialogInstance.npcSelected.name
+      : null;
+    if (!lastNpcName) {
+      try {
+        lastNpcName = localStorage.getItem("npc-last-selected");
+      } catch (e) {}
+    }
+    if (lastNpcName) {
+      logguer.debug("Botão NPCs: reabrindo último NPC ativo...", lastNpcName);
+      const ok = await npcDialogInstance.switchToNpc(lastNpcName);
+      if (ok) {
+        return;
+      }
+    }
+
     logguer.debug("Botão NPCsespecial pressionado, mostrando diálogo...");
 
-    const title = "Escolha um NPC Especial";
+    const title = "NPCs Especiais";
     const style = `
 					.select-npc { padding: 4px 2px; }
 					`;
-    const cardsHtml = Array.from(npcDialogInstance.npcs.values())
-      .map((npc: NPC) => {
-        const label: string = npc.name.toLowerCase();
-        return `<div class="npc-card" data-npc="${label}" title="${npc.name}"><img src="${npc.imageUrl}" alt="${npc.name}"><div class="npc-card-name">${npc.name}</div></div>`;
-      })
-      .join("");
+    // R10 v2: sem cards e sem tabs de texto — o rail lateral de fotos (bindRail)
+    // é o único navegador. Direita mostra dica quando nenhum NPC está ativo.
     const content = `
 					<div class="select-npc">
-					<H1>Escolha um NPC Especial:</H1>
-					<div class="npc-select-grid">${cardsHtml}</div>
+					<H1>NPCs Especiais</H1>
+					<div class="npc-hint">← Escolha um NPC ao lado para começar.</div>
 					</div>`;
 
     logguer.debug(
@@ -345,53 +359,12 @@ export class NPCDialog extends SubModuleBase {
       undefined,
       200,
       undefined,
-      400,
+      540,
     );
 
-    // R1: liga hover/clique dos cards (o render do DialogV2 e assincrono)
-    const bindCards = (el: any, tries: number = 25) => {
-      try {
-        if (
-          !el ||
-          !el.querySelectorAll ||
-          el.querySelectorAll(".npc-card").length === 0
-        ) {
-          if (tries > 0) {
-            setTimeout(
-              () => bindCards(selectionApp && selectionApp.element, tries - 1),
-              60,
-            );
-          }
-          return;
-        }
-        el.querySelectorAll(".npc-card").forEach((card: any) => {
-          const label = card.getAttribute("data-npc");
-          card.addEventListener("mouseenter", () => playUiSound("hover"));
-          card.addEventListener("click", () => {
-            playUiSound("click");
-            try {
-              const npcDialogCbInstance: NPCDialog = (
-                injectController.has("NPCDialog")
-                  ? injectController.resolve("NPCDialog")
-                  : npcDialog
-              ) as NPCDialog;
-              const npc: NPC = injectController.resolve("npc:" + label);
-              try {
-                selectionApp.close();
-              } catch (e) {}
-              npcDialogCbInstance.callNPC(npc);
-            } catch (e) {
-              logguer.error("showNPCChooseDialog: clique do card falhou:", e);
-            }
-          });
-        });
-      } catch (e) {}
-    };
-    bindCards(selectionApp && selectionApp.element);
-
-    // R10: abas (Home ativa nesta janela de selecao)
+    // R10 v2: rail lateral de fotos é o único navegador (sem cards, sem tabs).
     try {
-      npcDialogInstance.bindTabs(selectionApp, "__home__");
+      npcDialogInstance.bindRail(selectionApp, "");
     } catch (e) {}
 
     logguer.debug("showNPCChooseDialog:30 after createDialog");
@@ -415,6 +388,9 @@ export class NPCDialog extends SubModuleBase {
     const logguer: Log = injectController.resolve("CommonLogguer");
     logguer.debug("Selecionado ...", npc);
     npcDialogInstance.npcSelected = npc;
+    try {
+      localStorage.setItem("npc-last-selected", npc.name);
+    } catch (e) {}
     // Reset por abertura (fix F7/F2): contexto e pilha limpos a CADA entrada do NPC.
     npc.groups = new Set<string>();
     npc.screens = new Array<any>();
@@ -448,6 +424,9 @@ export class NPCDialog extends SubModuleBase {
       return false;
     }
     npcDialogInstance.npcSelected = npc;
+    try {
+      localStorage.setItem("npc-last-selected", npc.name);
+    } catch (e) {}
     if (!npc.screens || npc.screens.length === 0) {
       npc.screens = new Array<any>();
       npc.screens.push({
@@ -465,101 +444,167 @@ export class NPCDialog extends SubModuleBase {
   }
 
   /**
-   * R10 — injeta a barra de abas (Home + um botão por NPC) no topo do elemento
-   * do diálogo. Idempotente por elemento (marca `data-npc-tabs="1"`).
-   * O render do DialogV2 é assíncrono: tenta até 25 vezes a cada 60 ms.
+   * R10 v3.1 — fecha as janelas de sistema do NPC (classe `taulukko-dialog`)
+   * EXCETO a nova (`keep`), com um respiro para a nova pintar antes (sem gap).
+   * REGRA DURA: só toca em janelas NOSSAS — nunca sheets, sidebar, chat ou
+   * qualquer outra GUI do usuário (bug v3: varria `instances` inteiro e
+   * derrubava a interface toda).
    */
-  public bindTabs(app: any, activeName: string): void {
-    const attempt = (el: any, tries: number): void => {
+  public closeOtherDialogs(keep: any): void {
+    const closeOne = (w: any): void => {
       try {
-        if (typeof document === "undefined") {
+        if (!w || w === keep || !w.close) {
           return;
         }
-        if (!el || !el.querySelector) {
-          if (tries > 0) {
-            setTimeout(() => attempt(app && app.element, tries - 1), 60);
+        if (w.id === "npc-portrait-dialog") {
+          return;
+        }
+        // Só NOSSAS janelas: o elemento precisa ter a classe taulukko-dialog.
+        let el: any = null;
+        try {
+          el = w.element;
+        } catch (e) {}
+        if (!el || !el.classList || !el.classList.contains("taulukko-dialog")) {
+          return;
+        }
+        let title: string = "";
+        try {
+          title = String(w.title || "");
+        } catch (e) {}
+        if (!title) {
+          try {
+            title = String(
+              (w.options && w.options.window && w.options.window.title) || "",
+            );
+          } catch (e) {}
+        }
+        if (!title) {
+          try {
+            const tn =
+              el.querySelector && el.querySelector(".window-title")
+                ? el.querySelector(".window-title")
+                : null;
+            title = tn ? String(tn.textContent || "") : "";
+          } catch (e) {}
+        }
+        const lt = title.toLowerCase();
+        if (lt.includes("confirmar fala")) {
+          return;
+        }
+        if (title.trim() === "Debug") {
+          return;
+        }
+        w.close();
+      } catch (e) {}
+    };
+    try {
+      setTimeout(() => {
+        try {
+          if (typeof foundry === "undefined" || !foundry.applications) {
+            return;
           }
-          return;
-        }
-        if (el.getAttribute && el.getAttribute("data-npc-tabs") === "1") {
-          return;
+          (foundry.applications as any).instances.forEach(closeOne);
+          Object.values(ui.windows || {}).forEach(closeOne);
+        } catch (e) {}
+      }, 60);
+    } catch (e) {}
+  }
+
+  /**
+   * R10 v3 — rail lateral de fotos (foto à esquerda + nome à direita), único
+   * navegador do sistema. Layout em grid (o corpo NUNCA cai embaixo). Um
+   * MutationObserver mantém o rail vivo se o DialogV2 re-renderizar o conteúdo.
+   */
+  public bindRail(app: any, activeName: string): void {
+    const insert = (el: any): boolean => {
+      try {
+        if (typeof document === "undefined" || !el || !el.querySelector) {
+          return false;
         }
         const host =
           el.querySelector(".window-content") ||
           el.querySelector(".dialog-content") ||
           el;
         if (!host) {
-          if (tries > 0) {
-            setTimeout(() => attempt(app && app.element, tries - 1), 60);
-          }
-          return;
+          return false;
         }
-        const logguer: Log = injectController.has("CommonLogguer")
-          ? (injectController.resolve("CommonLogguer") as Log)
-          : (undefined as any);
+        if (host.querySelector(":scope > .npc-rail")) {
+          return true;
+        }
         const npcDialogInstance: NPCDialog = (
           injectController.has("NPCDialog")
             ? injectController.resolve("NPCDialog")
             : npcDialog
         ) as NPCDialog;
-        const bar = document.createElement("div");
-        bar.className = "npc-tabs";
-        const mkBtn = (label: string, key: string, active: boolean) => {
+        const rail = document.createElement("div");
+        rail.className = "npc-rail";
+        npcDialogInstance.npcs.forEach((npc: NPC) => {
+          const key = npc.name.toLowerCase();
           const b = document.createElement("button");
           b.type = "button";
-          b.className = "npc-tab" + (active ? " npc-tab-active" : "");
-          b.textContent = label;
-          b.setAttribute("data-npc-tab", key);
+          b.className =
+            "npc-rail-item" +
+            (key === String(activeName || "").toLowerCase()
+              ? " npc-rail-item-active"
+              : "");
+          b.setAttribute("data-npc-rail-item", key);
+          b.title = npc.name;
+          const img = document.createElement("img");
+          img.src = npc.imageUrl;
+          img.alt = npc.name;
+          const nm = document.createElement("span");
+          nm.textContent = npc.name;
+          b.appendChild(img);
+          b.appendChild(nm);
+          b.addEventListener("mouseenter", () => playUiSound("hover"));
           b.addEventListener("click", () => {
             playUiSound("click");
             try {
-              const target = key === "__home__" ? null : key;
-              const current = String(activeName || "").toLowerCase();
-              if (
-                (target === null && current === "__home__") ||
-                (target !== null && target === current)
-              ) {
+              if (key === String(activeName || "").toLowerCase()) {
                 return;
               }
-              try {
-                if (app && app.close) {
-                  app.close();
-                }
-              } catch (e) {}
-              if (target === null) {
-                npcDialogInstance.showNPCChooseDialog();
-              } else {
-                npcDialogInstance.switchToNpc(target);
-              }
-            } catch (e) {
-              try {
-                logguer?.error("NPCDialog tabs: troca de aba falhou:", e);
-              } catch (e2) {}
-            }
+              npcDialogInstance.switchToNpc(key);
+            } catch (e) {}
           });
-          return b;
-        };
-        bar.appendChild(
-          mkBtn(
-            "⌂",
-            "__home__",
-            String(activeName || "").toLowerCase() === "__home__",
-          ),
-        );
-        npcDialogInstance.npcs.forEach((npc: NPC) => {
-          bar.appendChild(
-            mkBtn(
-              npc.name,
-              npc.name.toLowerCase(),
-              npc.name.toLowerCase() === String(activeName || "").toLowerCase(),
-            ),
-          );
+          rail.appendChild(b);
         });
-        host.insertBefore(bar, host.firstChild);
+        const body = document.createElement("div");
+        body.className = "npc-rail-body";
+        Array.from(host.childNodes).forEach((k: any) => body.appendChild(k));
+        host.appendChild(rail);
+        host.appendChild(body);
+        host.classList.add("has-rail");
         try {
-          el.setAttribute("data-npc-tabs", "1");
+          el.setAttribute("data-npc-rail", "1");
         } catch (e) {}
-      } catch (e) {}
+        return true;
+      } catch (e) {
+        return false;
+      }
+    };
+    const attempt = (el: any, tries: number): void => {
+      if (insert(el)) {
+        try {
+          const appAny: any = app;
+          if (
+            appAny &&
+            !appAny.__npcRailMo &&
+            typeof MutationObserver !== "undefined"
+          ) {
+            const mo = new MutationObserver(() => {
+              try {
+                insert(appAny.element);
+              } catch (e) {}
+            });
+            mo.observe(appAny.element, { childList: true, subtree: true });
+            appAny.__npcRailMo = mo;
+          }
+        } catch (e) {}
+        return;
+      }
+      if (tries > 0) {
+        setTimeout(() => attempt(app && app.element, tries - 1), 60);
+      }
     };
     attempt(app && app.element, 25);
   }

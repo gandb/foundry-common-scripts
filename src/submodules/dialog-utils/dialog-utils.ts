@@ -19,7 +19,9 @@ function ensureDialogStyle(): void {
     const style = document.createElement("style");
     style.id = DIALOG_STYLE_ID;
     document.head.appendChild(style);
-    fetch(DIALOG_STYLE_HREF)
+    // R10: bypass de cache HTTP — o CSS muda em dev e precisa chegar fresco
+    // (as URLs de modulo do Foundry nao tem cache-buster).
+    fetch(DIALOG_STYLE_HREF + "?t=" + Date.now(), { cache: "reload" })
       .then((r) => (r.ok ? r.text() : ""))
       .then((css) => {
         if (css) {

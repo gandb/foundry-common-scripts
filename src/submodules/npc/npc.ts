@@ -357,22 +357,19 @@ export abstract class NPC {
       submit,
       200,
       undefined,
-      400,
+      600,
     );
 
-    // R4: cada NPC tem a SUA janela — ao reabrir, fecha a janela ANTERIOR deste NPC
-    // (nao toca nas janelas dos outros NPCs).
-    try {
-      const previous: any = this.currentDialogApp;
-      if (previous && previous !== appInstance && previous.close) {
-        previous.close();
-      }
-    } catch (e) {}
+    // R10 v3: UMA janela por vez — o novo diálogo entra, e logo depois as
+    // janelas antigas do sistema são fechadas (varredura pós-render = sem gap).
     this.currentDialogApp = appInstance;
 
-    // R10: abas no topo da janela (Home + um botao por NPC; troca sem reset).
+    // R10 v3: rail lateral de fotos (foto à esquerda + nome à direita).
     try {
-      npcDialog.bindTabs(appInstance, this.name);
+      npcDialog.bindRail(appInstance, this.name);
+    } catch (e) {}
+    try {
+      npcDialog.closeOtherDialogs(appInstance);
     } catch (e) {}
 
     loguer.debug("NPC.createDialog:50 - depois de criar dialogo");

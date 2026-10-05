@@ -65,7 +65,7 @@ describe("R10 — switchToNpc (aba sem reset)", () => {
     expect((injectController.resolve("NPCDialog") as any).npcSelected).toBe(a);
   });
 
-  it("bindTabs sem DOM nao lanca", () => {
-    expect(() => dlg.bindTabs(null, "Alfa")).not.toThrow();
+  it("bindRail sem DOM nao lanca", () => {
+    expect(() => dlg.bindRail(null, "Alfa")).not.toThrow();
   });
 });
