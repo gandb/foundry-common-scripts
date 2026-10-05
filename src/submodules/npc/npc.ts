@@ -357,7 +357,7 @@ export abstract class NPC {
       submit,
       200,
       undefined,
-      600,
+      470,
     );
 
     // R10 v3: UMA janela por vez — o novo diálogo entra, e logo depois as

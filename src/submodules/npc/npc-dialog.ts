@@ -367,7 +367,7 @@ export class NPCDialog extends SubModuleBase {
       undefined,
       200,
       undefined,
-      540,
+      470,
     );
 
     // R10 v2: rail lateral de fotos é o único navegador (sem cards, sem tabs).
@@ -529,14 +529,14 @@ export class NPCDialog extends SubModuleBase {
         if (typeof document === "undefined" || !el || !el.querySelector) {
           return false;
         }
-        const host =
-          el.querySelector(".window-content") ||
-          el.querySelector(".dialog-content") ||
-          el;
-        if (!host) {
+        // R10 v4: o grid vive no FORM — rail (col 1), conteúdo (col 2) e o
+        // rodapé ESPANHA a janela inteira (grid-column: 1 / -1) com botões centrados.
+        const form =
+          el.querySelector("form.dialog-form") || el.querySelector("form");
+        if (!form) {
           return false;
         }
-        if (host.querySelector(":scope > .npc-rail")) {
+        if (form.querySelector(":scope > .npc-rail")) {
           return true;
         }
         const npcDialogInstance: NPCDialog = (
@@ -576,12 +576,8 @@ export class NPCDialog extends SubModuleBase {
           });
           rail.appendChild(b);
         });
-        const body = document.createElement("div");
-        body.className = "npc-rail-body";
-        Array.from(host.childNodes).forEach((k: any) => body.appendChild(k));
-        host.appendChild(rail);
-        host.appendChild(body);
-        host.classList.add("has-rail");
+        form.insertBefore(rail, form.firstChild);
+        form.classList.add("has-rail");
         try {
           el.setAttribute("data-npc-rail", "1");
         } catch (e) {}

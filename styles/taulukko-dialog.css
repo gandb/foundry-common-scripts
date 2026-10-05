@@ -117,12 +117,39 @@
   transform: scale(0.98);
 }
 
-/* R10 v3 — rail lateral de fotos (único navegador; grid rígido: corpo NUNCA cai embaixo) */
-.taulukko-dialog .has-rail {
+/* R10 v4 — grid no FORM: rail (col 1) + conteúdo (col 2) + rodapé espanhando a JANELA */
+.taulukko-dialog form.has-rail {
   display: grid !important;
-  grid-template-columns: 150px 1fr;
-  gap: 12px;
+  grid-template-columns: 146px 1fr;
+  column-gap: 12px;
+  row-gap: 6px;
   align-items: start;
+}
+
+.taulukko-dialog form.has-rail > .npc-rail {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.taulukko-dialog form.has-rail > .dialog-content {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  animation: npc-content-in 0.18s ease-out;
+}
+
+.taulukko-dialog form.has-rail > .form-footer {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: flex !important;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.taulukko-dialog form.has-rail > .form-footer > button {
+  flex: 0 0 auto !important;
+  min-width: 96px;
 }
 
 .taulukko-dialog .npc-rail {
@@ -153,20 +180,20 @@
   cursor: pointer;
   color: #c9c9cf;
   font-weight: 700;
-  font-size: 0.92em;
-  letter-spacing: 0.02em;
+  font-size: 0.85em;
+  letter-spacing: 0.01em;
   text-align: left;
   overflow: hidden;
   transition: background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease, color 0.16s ease;
 }
 
 .taulukko-dialog .npc-rail-item img {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   object-fit: cover;
   border-radius: 8px;
   border: 2px solid #c9a24b;
-  flex: 0 0 44px;
+  flex: 0 0 42px;
   display: block !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   transition: border-color 0.16s ease;
@@ -195,11 +222,6 @@
 
 .taulukko-dialog .npc-rail-item-active img {
   border-color: #1c1c20;
-}
-
-.taulukko-dialog .npc-rail-body {
-  min-width: 0;
-  animation: npc-content-in 0.18s ease-out;
 }
 
 @keyframes npc-content-in {
