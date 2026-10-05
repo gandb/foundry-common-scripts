@@ -1,6 +1,6 @@
-// Testes de estabilidade do NPC — R4: roteamento por INSTANCIA.
-// Garante que os metodos usam `this` (o dono da janela) e nao o slot global
-// npcSelected — e que o estado de um NPC nao vaza para o outro.
+// NPC stability tests — R4: per-INSTANCE routing.
+// Ensures the methods use `this` (the window owner) and not the global
+// npcSelected slot — and that one NPC's state does not leak into the other.
 import { injectController } from "taulukko-commons";
 import { NPC } from "../../../submodules/npc/npc";
 
@@ -13,8 +13,8 @@ class FakeNPC extends NPC {
   public async startScreen(): Promise<void> {}
 }
 
-describe("R4 — roteamento por instancia (nao usa o slot global)", () => {
-  it("getAlias usa this, nao o npcSelected", () => {
+describe("R4 — per-instance routing (does not use the global slot)", () => {
+  it("getAlias uses this, not npcSelected", () => {
     const a = new FakeNPC("Alfa");
     const b = new FakeNPC("Beta");
     injectController.registerByName("NPCDialog", {
@@ -25,7 +25,7 @@ describe("R4 — roteamento por instancia (nao usa o slot global)", () => {
     expect(b.getAlias()).toBe("beta");
   });
 
-  it("decrementGroup mexe so na instancia dona", () => {
+  it("decrementGroup touches only the owning instance", () => {
     const a = new FakeNPC("Alfa");
     const b = new FakeNPC("Beta");
     a.groups = new Set(["1", "2"]);
@@ -39,7 +39,7 @@ describe("R4 — roteamento por instancia (nao usa o slot global)", () => {
     expect(Array.from(b.groups)).toEqual(["9"]);
   });
 
-  it("estado (groups) e por instancia desde o inicio", () => {
+  it("state (groups) is per-instance from the start", () => {
     const a = new FakeNPC("Alfa");
     const b = new FakeNPC("Beta");
     a.groups.add("1");

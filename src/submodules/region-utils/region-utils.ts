@@ -1,13 +1,13 @@
 import { Log, injectController } from "taulukko-commons";
 import { SubModuleBase } from "../sub-module-base";
 import type { IGameContext } from "../../common/igame-context";
- 
+
 const REGION_UTILS_REGISTERED_NAMES = {
   MODULE_NAME: "common-assets",
   TOOGLE_VISIBILITY: "common-assets-toogle-visibility-regions",
 };
 
-var regionUtils :  RegionUtils | undefined = undefined;
+var regionUtils: RegionUtils | undefined = undefined;
 
 export class RegionUtils extends SubModuleBase {
   constructor() {
@@ -126,7 +126,7 @@ export class RegionUtils extends SubModuleBase {
 
           regionUtilsInstance.toggleVisibilityRegions();
         },
-        restricted: true, // true = só GM
+        restricted: true, // true = GM only
         reservedModifiers: [], // normalmente vazio
         precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
       },

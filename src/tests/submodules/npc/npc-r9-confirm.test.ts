@@ -1,13 +1,13 @@
-// Testes R9 — tela de confirmacao antes de enviar (Cancelar / Recalcular / Enviar).
-// Enviar dispara speak com a fala sorteada; Recalcular re-sorteia (reabre a tela
-// com o novo texto); Cancelar nao envia nada. Usa um DialogUtils falso que
-// captura os botoes criados, para acionar os callbacks manualmente.
+// R9 tests — pre-send confirmation screen (buttons: Cancelar / Recalcular / Enviar).
+// Enviar fires speak with the rolled line; Recalcular rolls again (reopens the
+// screen with the new text); Cancelar sends nothing. Uses a fake DialogUtils
+// that captures the created buttons, to trigger the callbacks manually.
 import { injectController } from "taulukko-commons";
 import { NPC } from "../../../submodules/npc/npc";
 
 class FakeNPC extends NPC {
   groupToLines = new Map<string, string>();
-  lines: any = { 1: "fala um", 2: "fala dois", 3: "fala tres" };
+  lines: any = { 1: "line one", 2: "line two", 3: "line three" };
   spoken: number[] = [];
   constructor() {
     super("Fake", "fake.webp");
@@ -18,7 +18,7 @@ class FakeNPC extends NPC {
   }
 }
 
-describe("R9 — confirmacao antes de enviar", () => {
+describe("R9 — confirmation before sending", () => {
   let npc: FakeNPC;
   const dialogs: any[] = [];
   const fakeDialogUtils = {
@@ -59,11 +59,11 @@ describe("R9 — confirmacao antes de enviar", () => {
   const btn = (label: string) =>
     lastDialog().buttons.find((b: any) => b.label === label);
 
-  it("Enviar dispara a fala sorteada (ordem dos botoes: Cancelar, Recalcular, Enviar)", async () => {
+  it("Enviar fires the rolled line (button order: Cancelar, Recalcular, Enviar)", async () => {
     (npc as any).confirmTalk(() => 2, 2);
     expect(dialogs.length).toBe(1);
     expect(String(lastDialog().title)).toContain("confirmar fala");
-    expect(String(lastDialog().content)).toContain("fala dois");
+    expect(String(lastDialog().content)).toContain("line two");
     expect(lastDialog().buttons.map((b: any) => b.label)).toEqual([
       "Cancelar",
       "Recalcular",
@@ -73,23 +73,23 @@ describe("R9 — confirmacao antes de enviar", () => {
     expect(npc.spoken).toEqual([2]);
   });
 
-  it("Recalcular re-sorteia, reabre com o novo texto e Enviar manda o novo", async () => {
+  it("Recalcular re-rolls, reopens with the new text and Enviar sends the new one", async () => {
     let calls = 0;
     const pick = () => {
       calls++;
       return calls === 1 ? 1 : 3;
     };
     (npc as any).confirmTalk(pick, pick());
-    expect(String(lastDialog().content)).toContain("fala um");
+    expect(String(lastDialog().content)).toContain("line one");
     btn("Recalcular").callback(null, null, fakeDialogEl);
     expect(calls).toBe(2);
     expect(dialogs.length).toBe(2);
-    expect(String(lastDialog().content)).toContain("fala tres");
+    expect(String(lastDialog().content)).toContain("line three");
     btn("Enviar").callback(null, null, fakeDialogEl);
     expect(npc.spoken).toEqual([3]);
   });
 
-  it("Cancelar nao envia nada", async () => {
+  it("Cancelar sends nothing", async () => {
     (npc as any).confirmTalk(() => 1, 1);
     btn("Cancelar").callback(null, null, fakeDialogEl);
     expect(npc.spoken).toEqual([]);

@@ -20,7 +20,6 @@ export function socketTest() {
     "GameContext",
   ) as IGameContext;
 
-    
   Hooks.once("onReadyCommonSocket", async () => {
     const logguer: Log = injectController.resolve("CommonLogguer");
     logguer.debug("onReadyCommonSocket 20");
@@ -35,7 +34,7 @@ export function socketTest() {
 
     try {
       if (commonSocket.isReadyToSendToGM()) {
-        logguer.debug("Gm esta pronto pra receber mensagens test1");
+        logguer.debug("GM is ready to receive messages test1");
         commonSocket.executeForAll("showMessage", "test1");
         logguer.debug("Depois de usar executeForAll test1");
 
@@ -43,18 +42,20 @@ export function socketTest() {
           logguer.debug(`Before executeAsGM add 5+6`);
           let result = await commonSocket.executeAsGM("add", 5, 6);
           logguer.debug(`The result of executeAsGM add 5+6 is: ${result}`);
-          await commonSocket.executeAsGM("showMessage",
-              "::this message was send by the GM, only players see::");
-          logguer.debug("depois de executeAsGM test2");
+          await commonSocket.executeAsGM(
+            "showMessage",
+            "::this message was send by the GM, only players see::",
+          );
+          logguer.debug("after executeAsGM test2");
         } else {
           commonSocket.executeForAll("showMessage", "test3");
           logguer.debug("Depois de executeForAll");
 
           try {
-            //esta mensagem jamais deveria ser entregue, deveria retornar erro
+            //this message should never be delivered; it should return an error
             logguer.debug("Before executeAsGM test4");
             await commonSocket.executeAsGM("showMessage", "test4");
-            logguer.debug("depois de executeAsGM test4");
+            logguer.debug("after executeAsGM test4");
           } catch (e) {
             logguer.debug(
               "erro ao tentar executar executeAsGM sendo apenas jogador",
@@ -63,17 +64,15 @@ export function socketTest() {
           }
         }
       } else {
-        logguer.debug(
-          "A minha implementacao notou que o gm nao foi carregado ainda 1",
-        );
+        logguer.debug("My implementation noticed the GM is not loaded yet 1");
       }
       logguer.debug("Before executeForAll test5");
       commonSocket.executeForAll("showMessage", "test5");
-      logguer.debug("depois de executeForAll test5");
+      logguer.debug("after executeForAll test5");
 
       logguer.debug("Before executeToGM test6");
       commonSocket.executeToGM("showMessage", "test6");
-      logguer.debug("depois de executeToGM test6");
+      logguer.debug("after executeToGM test6");
 
       let userids: string[] = Array.from(
         (
@@ -87,7 +86,7 @@ export function socketTest() {
 
       userids = userids.filter((id: string) => {
         const logguer: Log = injectController.resolve("CommonLogguer");
-        logguer.debug("id recebido e meu user id", id, gameContext.user?.id);
+        logguer.debug("id received is my user id", id, gameContext.user?.id);
         return id != gameContext.user?.id;
       });
 

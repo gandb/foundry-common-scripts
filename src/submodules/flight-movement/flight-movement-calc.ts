@@ -1,5 +1,5 @@
 /**
- * Funções puras de cálculo de movimento em voo baseadas no Teorema de Pitágoras.
+ * Pure flight movement calculation functions based on the Pythagorean theorem.
  *
  * No D&D 5e, ao voar o personagem se desloca em linha reta (hipotenusa),
  * composta por um componente horizontal (X) e um vertical (Y).
@@ -17,9 +17,9 @@ function roundTo(value: number, decimals: number): number {
 
 /**
  * Calcula a hipotenusa (movimento total) dados os catetos X e Y.
- * @param x Movimento horizontal (deve ser >= 0)
- * @param y Movimento vertical (deve ser >= 0)
- * @returns Hipotenusa arredondada a 2 casas decimais, ou 0 se inputs inválidos
+ * @param x Horizontal movement (must be >= 0)
+ * @param y Vertical movement (must be >= 0)
+ * @returns Hypotenuse rounded to 2 decimal places, or 0 if inputs are invalid
  */
 export function calcHypotenuse(x: number, y: number): number {
   if (x < 0 || y < 0) {
@@ -30,9 +30,9 @@ export function calcHypotenuse(x: number, y: number): number {
 
 /**
  * Calcula um cateto dado a hipotenusa e o outro cateto.
- * @param hypotenuse Movimento total (deve ser >= 0)
- * @param otherCathetus O outro cateto conhecido (deve ser >= 0)
- * @returns Cateto calculado arredondado a 2 casas decimais, ou 0 se impossível
+ * @param hypotenuse Total movement (must be >= 0)
+ * @param otherCathetus The other known leg (must be >= 0)
+ * @returns Computed leg rounded to 2 decimal places, or 0 if impossible
  */
 export function calcCathetus(
   hypotenuse: number,

@@ -7,12 +7,12 @@ import type { IGameContext } from "../../common/igame-context";
 
 let npcDialog: NPCDialog | undefined = undefined;
 
-// R10 — selo de build (diagnóstico de bundle em cache no cliente do usuário):
-// console do jogo → `__npcUiBuild` deve imprimir este valor.
-export const NPC_UI_BUILD = "r10v32-2026-10-05";
+// R10 — build stamp (diagnoses stale bundle cache on the user's client):
+// game console → `__npcUiBuild` should print this value.
+export const NPC_UI_BUILD = "r10v5-2026-10-05";
 
-// R1 — som de UI (hover/clique) sintetizado via WebAudio (sem assets);
-// silencioso se indisponivel. Curto e em volume baixo.
+// R1 — UI sound (hover/click) synthesized via WebAudio (no assets);
+// silent when unavailable. Short and at low volume.
 function playUiSound(kind: "hover" | "click"): void {
   try {
     const w = window as any;
@@ -70,11 +70,14 @@ export class NPCDialog extends SubModuleBase {
     Hooks.on("createChatMessage", async (message: any) => {
       const logguer: Log = injectController.resolve("CommonLogguer");
       try {
-        logguer.debug("createChatMessage recebido...", message);
-        // Verifica se é um evento nosso
+        logguer.debug("createChatMessage received...", message);
+        // Check whether it is one of our events
         if (message.flags?.["npc-talk"]?.type === "npcDialogOnTalk") {
           const data = message.flags["npc-talk"].payload;
-          logguer.debug("[NPC Portrait] Evento recebido dos jogadores:", data);
+          logguer.debug(
+            "[NPC Portrait] Event received from the players:",
+            data,
+          );
 
           NPCPortraitDialog.renderTalk(data);
         }
@@ -93,7 +96,7 @@ export class NPCDialog extends SubModuleBase {
 
       await npcDialog.addNPCButtons(controls);
 
-      //com sockets nao funcionou
+      //sockets approach did not work
       /*
 			(game.socket as any).on('forgotten-realms', (data: any) => {
 				if (data.type === 'npcDialogOnTalk') {
@@ -103,7 +106,7 @@ export class NPCDialog extends SubModuleBase {
 				}
 			});*/
 
-      //com hoooks nao funcionou
+      //hooks approach did not work
 
       /**	Hooks.on('npcDialogOnTalk',async  (data: any) => {
 	
@@ -142,7 +145,7 @@ export class NPCDialog extends SubModuleBase {
       return;
     }
 
-    logguer.debug("Criando botão dos NPCs especiais", controls);
+    logguer.debug("Creating the special NPCs button", controls);
     controls.tokens.tools["npcButton"] = {
       name: "npcButton",
       title: "NPCs Especiais",
@@ -150,14 +153,14 @@ export class NPCDialog extends SubModuleBase {
       button: true,
       toggle: false,
       onChange: () => {
-        logguer.debug("Botão de NPCs especiais pressionado");
+        logguer.debug("Special NPCs button pressed");
 
         npcDialogInstance.showNPCChooseDialog();
-        logguer.debug("Após abrir janela de NPCs especiais");
+        logguer.debug("After opening the special NPCs window");
       },
     };
 
-    logguer.debug("Botão de NPC criado");
+    logguer.debug("NPC button created");
   }
 
   public async showNPCChooseDialog() {
@@ -183,8 +186,8 @@ export class NPCDialog extends SubModuleBase {
     const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
     logguer.debug("On showNPCChooseDialog 05...", dialogUtils);
 
-    // R10 v3: abrir mostra o ÚLTIMO NPC ativo (memória — instância ou localStorage,
-    // sem reset); só abre o hub (rail + dica) quando ninguém foi escolhido ainda.
+    // R10: opening shows the LAST active NPC (memory — instance or localStorage,
+    // no reset); only opens the hub (rail + hint) when nobody was picked yet.
     let lastNpcName: string | null = npcDialogInstance.npcSelected
       ? npcDialogInstance.npcSelected.name
       : null;
@@ -194,21 +197,21 @@ export class NPCDialog extends SubModuleBase {
       } catch (e) {}
     }
     if (lastNpcName) {
-      logguer.debug("Botão NPCs: reabrindo último NPC ativo...", lastNpcName);
+      logguer.debug("NPCs button: reopening last active NPC...", lastNpcName);
       const ok = await npcDialogInstance.switchToNpc(lastNpcName);
       if (ok) {
         return;
       }
     }
 
-    logguer.debug("Botão NPCsespecial pressionado, mostrando diálogo...");
+    logguer.debug("Special NPCs button pressed, showing dialog...");
 
     const title = "NPCs Especiais";
     const style = `
 					.select-npc { padding: 4px 2px; }
 					`;
-    // R10 v2: sem cards e sem tabs de texto — o rail lateral de fotos (bindRail)
-    // é o único navegador. Direita mostra dica quando nenhum NPC está ativo.
+    // R10: no cards, no text tabs — the photo side rail (bindRail)
+    // is the only navigator. The right side shows a hint when no NPC is active.
     const content = `
 					<div class="select-npc">
 					<H1>NPCs Especiais</H1>
@@ -230,7 +233,7 @@ export class NPCDialog extends SubModuleBase {
     });
     buttons.push(dialogUtils.createButton("cancel", "Cancel", false, "screen"));
     // [tmp/debug] Janela de debug: seletor de NPC -> roda o teste de audio correspondente.
-    // Temporario: remover quando o teste de audio terminar. Substitui o loader via console.
+    // Temporary: remove when the audio test is done. Replaces the console loader.
     const runAudioTest = async (filterValue: string) => {
       try {
         const filter =
@@ -252,7 +255,7 @@ export class NPCDialog extends SubModuleBase {
         const src = await resp.text();
         (0, eval)(src);
       } catch (e: any) {
-        logguer.error("Debug falhou:", e);
+        logguer.error("Debug failed:", e);
         ui.notifications?.error("Debug falhou: " + (e?.message || e));
       }
     };
@@ -370,7 +373,7 @@ export class NPCDialog extends SubModuleBase {
       470,
     );
 
-    // R10 v2: rail lateral de fotos é o único navegador (sem cards, sem tabs).
+    // R10: photo side rail is the only navigator (no cards, no text tabs).
     try {
       npcDialogInstance.bindRail(selectionApp, "");
     } catch (e) {}
@@ -412,9 +415,9 @@ export class NPCDialog extends SubModuleBase {
   }
 
   /**
-   * R10 — troca de aba: ativa o NPC SEM resetar o estado dele (groups/screens
-   * preservados — herança do R4). Se a pilha estiver vazia, empilha a raiz.
-   * Retorna false se o nome não corresponder a nenhum NPC registrado.
+   * R10 — tab switch: activates the NPC WITHOUT resetting its state (groups/screens
+   * preserved — inherited from R4). If the stack is empty, pushes the root.
+   * Returns false when the name matches no registered NPC.
    */
   public async switchToNpc(name: string): Promise<boolean> {
     const npcDialogInstance: NPCDialog = (
@@ -428,7 +431,7 @@ export class NPCDialog extends SubModuleBase {
     );
     const npc = key ? npcDialogInstance.npcs.get(key) : undefined;
     if (!npc) {
-      logguer.error("NPCDialog.switchToNpc: NPC desconhecido:", name);
+      logguer.error("NPCDialog.switchToNpc: unknown NPC:", name);
       return false;
     }
     npcDialogInstance.npcSelected = npc;
@@ -443,7 +446,7 @@ export class NPCDialog extends SubModuleBase {
         type: "screen",
       });
     }
-    logguer.debug("NPCDialog.switchToNpc: ativando (sem reset)", npc.name);
+    logguer.debug("NPCDialog.switchToNpc: activating (no reset)", npc.name);
     const top: any = npc.screens.at(-1);
     if (top && top.callback) {
       await top.callback();
@@ -452,11 +455,11 @@ export class NPCDialog extends SubModuleBase {
   }
 
   /**
-   * R10 v3.1 — fecha as janelas de sistema do NPC (classe `taulukko-dialog`)
-   * EXCETO a nova (`keep`), com um respiro para a nova pintar antes (sem gap).
-   * REGRA DURA: só toca em janelas NOSSAS — nunca sheets, sidebar, chat ou
-   * qualquer outra GUI do usuário (bug v3: varria `instances` inteiro e
-   * derrubava a interface toda).
+   * R10 v3.1 — closes the NPC system windows (class `taulukko-dialog`)
+   * EXCEPT the new one (`keep`), with a breath for the new one to paint first (no gap).
+   * HARD RULE: only touches OUR windows — never sheets, sidebar, chat or
+   * any other user GUI (v3 bug: swept all `instances` and
+   * took the whole interface down).
    */
   public closeOtherDialogs(keep: any): void {
     const closeOne = (w: any): void => {
@@ -467,7 +470,7 @@ export class NPCDialog extends SubModuleBase {
         if (w.id === "npc-portrait-dialog") {
           return;
         }
-        // Só NOSSAS janelas: o elemento precisa ter a classe taulukko-dialog.
+        // Only OUR windows: the element must carry the taulukko-dialog class.
         let el: any = null;
         try {
           el = w.element;
@@ -502,26 +505,30 @@ export class NPCDialog extends SubModuleBase {
         if (title.trim() === "Debug") {
           return;
         }
+        // R10 v5: disappears from the paint IMMEDIATELY (display:none) then closes —
+        // the actual removal may cost a frame; the eye does not see the old one.
+        try {
+          if (el && el.style) {
+            el.style.display = "none";
+          }
+        } catch (e) {}
         w.close();
       } catch (e) {}
     };
+    // R10 v5: no delay — old windows vanish in the same tick as the new one.
     try {
-      setTimeout(() => {
-        try {
-          if (typeof foundry === "undefined" || !foundry.applications) {
-            return;
-          }
-          (foundry.applications as any).instances.forEach(closeOne);
-          Object.values(ui.windows || {}).forEach(closeOne);
-        } catch (e) {}
-      }, 60);
+      if (typeof foundry === "undefined" || !foundry.applications) {
+        return;
+      }
+      (foundry.applications as any).instances.forEach(closeOne);
+      Object.values(ui.windows || {}).forEach(closeOne);
     } catch (e) {}
   }
 
   /**
-   * R10 v3 — rail lateral de fotos (foto à esquerda + nome à direita), único
-   * navegador do sistema. Layout em grid (o corpo NUNCA cai embaixo). Um
-   * MutationObserver mantém o rail vivo se o DialogV2 re-renderizar o conteúdo.
+   * R10 — photo side rail (photo on the left + name on the right), the only
+   * navigator of the system. Grid layout (the body NEVER falls below). A
+   * MutationObserver keeps the rail alive if DialogV2 re-renders the content.
    */
   public bindRail(app: any, activeName: string): void {
     const insert = (el: any): boolean => {
@@ -529,8 +536,8 @@ export class NPCDialog extends SubModuleBase {
         if (typeof document === "undefined" || !el || !el.querySelector) {
           return false;
         }
-        // R10 v4: o grid vive no FORM — rail (col 1), conteúdo (col 2) e o
-        // rodapé ESPANHA a janela inteira (grid-column: 1 / -1) com botões centrados.
+        // R10 v4: the grid lives on the FORM — rail (col 1), content (col 2) and the
+        // footer SPANS the whole window (grid-column: 1 / -1) with centered buttons.
         const form =
           el.querySelector("form.dialog-form") || el.querySelector("form");
         if (!form) {

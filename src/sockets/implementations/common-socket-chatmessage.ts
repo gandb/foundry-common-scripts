@@ -4,7 +4,7 @@ import { SubModuleBase } from "../../submodules/sub-module-base";
 import { Log, injectController } from "taulukko-commons";
 import { CommonModule } from "../../common-module";
 import type { IGameContext } from "../../common/igame-context";
-import type { IFoundryAPI } from "../../common/ifoundry-api"; // O caminho para este módulo estava incorreto.
+import type { IFoundryAPI } from "../../common/ifoundry-api"; // The path to this module was incorrect.
 
 const CALLBACK_SYSTEM_CALLBACK: string = "common.socket.chatmessage.callback";
 const RETURN_CONTROL_NAME: string = "ChatSocketReturns";
@@ -108,7 +108,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
       ) as ChatSocket;
 
       try {
-        logguer.debug("createChatMessage recebido...");
+        logguer.debug("createChatMessage received...");
         socket.cleanupRealChatMessage();
         setTimeout(() => socket.cleanupRealChatMessage(), 500);
 
@@ -126,7 +126,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
               .length == 1;
           if (!valid) {
             logguer.debug(
-              "Ignorado pois não é para este usuário :",
+              "Ignored because it is not for this user :",
               socket.gameContext.user?.id,
               ",payload:",
               payload,
@@ -135,17 +135,17 @@ export class ChatSocket extends SubModuleBase implements Socket {
           }
         }
 
-        logguer.debug("[Common Socket Chat Message] Evento recebido:", payload);
+        logguer.debug("[Common Socket Chat Message] Event received:", payload);
 
         if (socket.gameContext.user?.isGM && payload.onlyPlayers) {
           logguer.debug(
-            "[|Common Socket Chat Message] Evento recebido para players e o receptor é GM, evento descartado :",
+            "[|Common Socket Chat Message] Received event is for players and the receiver is GM, event discarded :",
             payload,
           );
           return;
         } else if (!socket.gameContext.user?.isGM && payload.toGM) {
           logguer.debug(
-            "[|Common Socket Chat Message] Evento recebido é pro GM e o receptor não é GM, evento descartado :",
+            "[|Common Socket Chat Message] Received event is for the GM and the receiver is not GM, event discarded :",
             payload,
           );
           return;
@@ -154,7 +154,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
         const callback = socket.getCallback(payload.type);
         if (!callback) {
           logguer.debug(
-            "[|Common Socket Chat Message] Evento recebido não registrado :",
+            "[|Common Socket Chat Message] Received event not registered :",
             payload.type,
           );
           return;
@@ -181,10 +181,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
         );
 
         ret ??= { common_socket_chat_message_system_empty: true };
-        logguer.debug(
-          "createChatMessage, devolvendo pra quem pediu o retorno :",
-          ret,
-        );
+        logguer.debug("createChatMessage, returning to the requester :", ret);
 
         socket.sendMessage(
           CALLBACK_SYSTEM_CALLBACK,
@@ -274,7 +271,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
           : returnsRef
       ) as CacheReturnControl<string, any>;
       if (returns.has(data.requestId)) {
-        logguer.debug("CA: Já foi respondido antes : ", data);
+        logguer.debug("CA: already answered before : ", data);
         return;
       }
       returns.add(data.requestId, data.response);
@@ -346,7 +343,7 @@ export class ChatSocket extends SubModuleBase implements Socket {
     };
 
     logguer.debug(
-      "[Common Socket Chat] Enviando mensagem com payload :",
+      "[Common Socket Chat] Sending message with payload :",
       payload,
     );
 

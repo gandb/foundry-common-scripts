@@ -23,10 +23,10 @@ const mockReturnsControl: any = {
   delete: jest.fn(),
 };
 
-// Variável para armazenar a instância atual do ChatSocket
+// Variable to store the current ChatSocket instance
 let currentChatSocketInstance: any = null;
 
-// Mock do taulukko-commons - define o mock antes do import
+// taulukko-commons mock - define the mock before the import
 jest.mock("taulukko-commons", () => {
   return {
     Log: jest.fn(),
@@ -59,7 +59,7 @@ jest.mock("../../../../src/common-module", () => ({
   CommonModule: jest.fn(),
 }));
 
-// Importar após o mock
+// Import after the mock
 import { ChatSocket } from "../../../../src/sockets/implementations/common-socket-chatmessage";
 
 describe("ChatSocket - onlyPlayers mechanism", () => {
@@ -74,7 +74,7 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
     mockGame.user = { id: "gm1", isGM: true };
     mockGame.users = new Map();
 
-    // Criar nova instância para cada teste
+    // Create a new instance for each test
     chatSocketInstance = new ChatSocket();
     currentChatSocketInstance = chatSocketInstance;
   });
@@ -95,7 +95,7 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
         ["gm1", { id: "gm1", isGM: true }],
       ]);
 
-      // Mock do método sendMessage para capturar os parâmetros
+      // Mock the sendMessage method to capture the parameters
       const sendMessageSpy = jest
         .spyOn(chatSocketInstance as any, "sendMessage")
         .mockResolvedValue("success");
@@ -153,7 +153,7 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
 
     it("should verify that both implementations handle the onlyPlayers flag consistently", () => {
       // SocketLib: define onlyPlayers: true no payload para executeForUsers
-      // ChatSocket: passa onlyPlayers=true como parâmetro para sendMessage
+      // ChatSocket: passes onlyPlayers=true as a parameter to sendMessage
 
       const onlyPlayersFlag = true;
 
@@ -161,7 +161,7 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
       const socketLibPayload = { data: ["test"], onlyPlayers: onlyPlayersFlag };
       expect(socketLibPayload.onlyPlayers).toBe(true);
 
-      // ChatSocket usa o parâmetro onlyPlayers
+      // ChatSocket uses the onlyPlayers parameter
       const chatSocketOnlyPlayersParam = onlyPlayersFlag;
       expect(chatSocketOnlyPlayersParam).toBe(true);
     });
@@ -184,7 +184,7 @@ describe("ChatSocket - onlyPlayers mechanism", () => {
       const callback = jest.fn();
       chatSocketInstance.register("testEvent", callback);
 
-      // Como o register apenas chama setCallback, vamos verificar se o método não lança erro
+      // Since register only calls setCallback, we check that the method does not throw an error
       expect(() =>
         chatSocketInstance.register("testEvent", callback),
       ).not.toThrow();

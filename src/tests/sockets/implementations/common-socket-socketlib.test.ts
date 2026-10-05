@@ -9,7 +9,7 @@ const mockGame: any = {
   modules: new Map([["common-scripts-dnd5ed", { active: true }]]),
 };
 
-// Instância compartilhada para os testes
+// Shared instance for the tests
 let socketLibInstance: SocketLib;
 let mockExecuteForUsers: jest.Mock;
 
@@ -42,7 +42,7 @@ describe("SocketLib", () => {
     };
     mockGame.user = { id: "gm1", isGM: true };
 
-    // Criar nova instância para cada teste
+    // Create a new instance for each test
     socketLibInstance = new SocketLib();
 
     // Mock do socketOriginal para verificar chamadas

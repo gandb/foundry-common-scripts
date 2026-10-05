@@ -1,5 +1,5 @@
-// Testes R10 — troca de aba sem reset (switchToNpc preserva groups/screens).
-// bindTabs sem DOM (jest/node) deve sair em silencio, sem lançar.
+// R10 tests — tab switch without reset (switchToNpc preserves groups/screens).
+// bindTabs without DOM (jest/node) must exit silently, without throwing.
 import { injectController } from "taulukko-commons";
 import { NPC } from "../../../submodules/npc/npc";
 import { NPCDialog } from "../../../submodules/npc/npc-dialog";
@@ -16,7 +16,7 @@ class FakeNPC extends NPC {
   }
 }
 
-describe("R10 — switchToNpc (aba sem reset)", () => {
+describe("R10 — switchToNpc (tab without reset)", () => {
   let dlg: NPCDialog;
   let a: FakeNPC;
   let b: FakeNPC;
@@ -37,7 +37,7 @@ describe("R10 — switchToNpc (aba sem reset)", () => {
     } as any);
   });
 
-  it("troca para o NPC e re-renderiza o topo SEM resetar groups/screens", async () => {
+  it("switches to the NPC and re-renders the top WITHOUT resetting groups/screens", async () => {
     a.groups = new Set(["1", "2"]);
     a.screens = [{ name: "x", callback: async () => {}, type: "screen" }];
     const ok = await dlg.switchToNpc("alfa");
@@ -47,7 +47,7 @@ describe("R10 — switchToNpc (aba sem reset)", () => {
     expect(a.screens.length).toBe(1);
   });
 
-  it("pilha vazia empilha a raiz e chama startScreen", async () => {
+  it("empty stack pushes the root and calls startScreen", async () => {
     b.groups = new Set<string>();
     b.screens = [];
     b.calls = 0;
@@ -58,14 +58,14 @@ describe("R10 — switchToNpc (aba sem reset)", () => {
     expect(b.calls).toBe(1);
   });
 
-  it("nome desconhecido retorna false e nao troca o selecionado", async () => {
+  it("unknown name returns false and does not switch the selected one", async () => {
     (injectController.resolve("NPCDialog") as any).npcSelected = a;
     const ok = await dlg.switchToNpc("Zeta");
     expect(ok).toBe(false);
     expect((injectController.resolve("NPCDialog") as any).npcSelected).toBe(a);
   });
 
-  it("bindRail sem DOM nao lanca", () => {
+  it("bindRail without DOM does not throw", () => {
     expect(() => dlg.bindRail(null, "Alfa")).not.toThrow();
   });
 });

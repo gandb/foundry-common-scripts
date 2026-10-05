@@ -14,8 +14,8 @@ interface NPCPortraitSocketPayload {
 }
 
 /**
- * Classe customizada para exibir um retrato de NPC com diálogo.
- * Funciona como overlay modal sobre o jogo.
+ * Custom class to show an NPC portrait with a dialog.
+ * Works as a modal overlay over the game.
  * Migrado de V1 Application para ApplicationV2 (fix deprecation, task 6).
  */
 const NPCPortraitBase = (
@@ -71,7 +71,7 @@ export class NPCPortraitDialog extends (NPCPortraitBase as any) {
     if (close) {
       close.addEventListener("click", () => this.close());
     }
-    // R8: botao "Ouvir" — cada jogador toca o som da fala na hora que quiser
+    // R8: "Ouvir" button — each player plays the line sound whenever they want
     const playBtn = el?.querySelector?.(".npc-sound-button");
     if (playBtn && this.soundSrc) {
       playBtn.addEventListener("click", () => this.playSound());
@@ -80,7 +80,7 @@ export class NPCPortraitDialog extends (NPCPortraitBase as any) {
 
   /**
    * R8: reproduz o som da fala localmente (apenas o cliente que clicou ouve).
-   * Mesma checagem de arquivo do NPC (HEAD) para falhar em silencio se ausente.
+   * Same NPC file check (HEAD) to fail silently when missing.
    */
   async playSound(): Promise<boolean> {
     if (!this.soundSrc) {
@@ -89,20 +89,18 @@ export class NPCPortraitDialog extends (NPCPortraitBase as any) {
     try {
       const response = await fetch(this.soundSrc, { method: "HEAD" });
       if (!response.ok) {
-        console.warn(
-          `Arquivo não encontrado: ${this.soundSrc} (${response.status})`,
-        );
+        console.warn(`File not found: ${this.soundSrc} (${response.status})`);
         return false;
       }
-      // R8: segundo parametro = socketOptions; false = NAO empurrar para os
-      // outros clientes — apenas este cliente ouve (som sob demanda).
+      // R8: second parameter = socketOptions; false = do NOT push to other
+      // clients — only this client hears it (on-demand sound).
       foundry.audio.AudioHelper.play(
         { src: this.soundSrc, autoplay: true },
         false,
       );
       return true;
     } catch (error: any) {
-      console.error("Erro ao reproduzir o som:", this.soundSrc, error);
+      console.error("Error playing the sound:", this.soundSrc, error);
       return false;
     }
   }
@@ -123,7 +121,7 @@ export class NPCPortraitDialog extends (NPCPortraitBase as any) {
   }
 
   /**
-   * Exibe o diálogo para todos os jogadores
+   * Shows the dialog to all players
    */
   async showToAllPlayers(): Promise<void> {
     let gameContextRef: IGameContext | undefined = undefined;

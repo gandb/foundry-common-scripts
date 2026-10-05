@@ -1,9 +1,9 @@
 /**
- * Interface para abstração da API do Foundry VTT.
- * Permite injeção de dependência e mocking em testes.
+ * Interface for the Foundry VTT API abstraction.
+ * Enables dependency injection and mocking in tests.
  */
 export interface IFoundryAPI {
-  /** Métodos de manipulação de Hooks do Foundry */
+  /** Foundry Hooks manipulation methods */
   hooks: {
     /** Registra um callback para um evento de hook */
     on(event: string, callback: Function): void;
@@ -12,6 +12,6 @@ export interface IFoundryAPI {
     /** Dispara um hook para todos os listeners */
     callAll(event: string, data: any): void;
   };
-  /** Cria uma mensagem de chat no Foundry */
+  /** Creates a chat message on Foundry */
   createChatMessage(payload: any): Promise<any>;
 }

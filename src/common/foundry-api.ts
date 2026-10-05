@@ -1,11 +1,11 @@
 import type { IFoundryAPI } from "./ifoundry-api";
 
 /**
- * Implementação concreta de IFoundryAPI.
- * Abstração sobre a API global do Foundry VTT (Hooks, game, etc).
+ * Concrete implementation of IFoundryAPI.
+ * Abstraction over the Foundry VTT global API (Hooks, game, etc).
  *
  * **Registro DI:** `"FoundryAPI"` via `injectController.registerByName()`
- * **Dependência:** Requer `game` estar disponível ( Foundry VTT runtime)
+ * **Dependency:** Requires `game` to be available (Foundry VTT runtime)
  *
  * @example
  * ```typescript
@@ -27,9 +27,9 @@ export class FoundryAPI implements IFoundryAPI {
   };
 
   /**
-   * Cria uma mensagem de chat no Foundry VTT.
-   * @param payload - Dados da mensagem (content, speaker, etc.)
-   * @returns Promessa com a mensagem criada
+   * Creates a chat message on Foundry VTT.
+   * @param payload - Message data (content, speaker, etc.)
+   * @returns Promise with the created message
    */
   public async createChatMessage(payload: unknown): Promise<unknown> {
     return await (

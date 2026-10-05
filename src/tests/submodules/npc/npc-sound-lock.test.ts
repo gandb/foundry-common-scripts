@@ -1,21 +1,21 @@
-// Testes de estabilidade do NPC — R3: trava de som por NPC (janela de 5s).
-// Cobre: primeiro som toca; segundo do MESMO NPC dentro de 5s e bloqueado;
-// bypass de teste (window.__npcSoundLockBypass) libera; janela expirada libera.
-// Cuidado: `window` e criado/removido POR TESTE para nao vazar para outros
-// arquivos do mesmo worker (o taulukko-commons detecta ambiente na carga).
+// NPC stability tests — R3: per-NPC sound lock (5s window).
+// Covers: first sound plays; second one from the SAME NPC within 5s is blocked;
+// test bypass (window.__npcSoundLockBypass) releases; expired window releases.
+// Careful: `window` is created/removed PER TEST so it does not leak into other
+// files of the same worker (taulukko-commons detects the environment on load).
 import { injectController } from "taulukko-commons";
 import { NPC } from "../../../submodules/npc/npc";
 
 class FakeNPC extends NPC {
   groupToLines = new Map<string, string>();
-  lines: any = { 1: "linha 1", 2: "linha 2" };
+  lines: any = { 1: "line 1", 2: "line 2" };
   constructor() {
     super("Fake", "fake.webp");
   }
   public async startScreen(): Promise<void> {}
 }
 
-describe("R3 — trava de som por NPC (5s)", () => {
+describe("R3 — per-NPC sound lock (5s)", () => {
   let npc: FakeNPC;
   const playMock = jest.fn();
   const realFetch = globalThis.fetch;
@@ -52,7 +52,7 @@ describe("R3 — trava de som por NPC (5s)", () => {
     };
   });
 
-  it("toca o primeiro som e bloqueia o segundo do mesmo NPC dentro de 5s", async () => {
+  it("plays the first sound and blocks the second for the same NPC within 5s", async () => {
     const first = await (npc as any).playSoundWithNoEffect("a.ogg");
     const second = await (npc as any).playSoundWithNoEffect("b.ogg");
     expect(first).toBe(true);
@@ -60,7 +60,7 @@ describe("R3 — trava de som por NPC (5s)", () => {
     expect(playMock).toHaveBeenCalledTimes(1);
   });
 
-  it("permite quando o bypass de teste esta ligado", async () => {
+  it("allows when the test bypass is on", async () => {
     await (npc as any).playSoundWithNoEffect("a.ogg");
     (globalThis as any).window.__npcSoundLockBypass = true;
     const second = await (npc as any).playSoundWithNoEffect("b.ogg");
@@ -68,7 +68,7 @@ describe("R3 — trava de som por NPC (5s)", () => {
     expect(playMock).toHaveBeenCalledTimes(2);
   });
 
-  it("libera de novo apos a janela de 5 segundos", async () => {
+  it("releases again after the 5s window", async () => {
     await (npc as any).playSoundWithNoEffect("a.ogg");
     npc.lastSoundAt = Date.now() - 6000;
     const second = await (npc as any).playSoundWithNoEffect("b.ogg");

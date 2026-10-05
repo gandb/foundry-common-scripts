@@ -132,7 +132,7 @@ export class SocketLib extends SubModuleBase implements Socket {
       throw new Error("socket not loaded");
     }
 
-    // Armazena a instância original para uso local
+    // Stores the original instance for local use
     const returnsControl = new CacheReturnControl<string, any>();
     injectController.registerByName(RETURN_CONTROL_NAME, returnsControl);
 
@@ -311,15 +311,15 @@ export class SocketLib extends SubModuleBase implements Socket {
       );
       if (Array.isArray(data) && data.length == 1) {
         if (data[0].toGM) {
-          logguer.debug("Evento pra gm,event:", eventName);
+          logguer.debug("Event for gm,event:", eventName);
           if (!socketLib.gameContext.user?.isGM) {
-            logguer.debug("Evento pra gm, descartado pois o usuário não é GM");
+            logguer.debug("Event for gm, discarded because the user is not GM");
             return;
           }
           return await callback(...data[0].data);
         }
       }
-      logguer.debug("Evento não é específico pra gm nem apenas para players");
+      logguer.debug("Event is neither gm-specific nor players-only");
       return await callback(...data);
     });
   }

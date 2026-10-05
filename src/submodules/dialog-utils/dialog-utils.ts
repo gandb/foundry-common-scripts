@@ -19,8 +19,8 @@ function ensureDialogStyle(): void {
     const style = document.createElement("style");
     style.id = DIALOG_STYLE_ID;
     document.head.appendChild(style);
-    // R10: bypass de cache HTTP — o CSS muda em dev e precisa chegar fresco
-    // (as URLs de modulo do Foundry nao tem cache-buster).
+    // R10: HTTP cache bypass — the CSS changes in dev and must arrive fresh
+    // (Foundry module URLs have no cache-buster).
     fetch(DIALOG_STYLE_HREF + "?t=" + Date.now(), { cache: "reload" })
       .then((r) => (r.ok ? r.text() : ""))
       .then((css) => {
@@ -133,8 +133,8 @@ export class DialogUtils extends SubModuleBase {
     logguer.debug("Dialog Utils dialog options: ", options);
     const ret = new foundry.applications.api.DialogV2(options);
     try {
-      // R10 v3.2: guarda a promise do render — quem quiser trocar janelas sem
-      // gap pode esperar a nova pintar antes de fechar a antiga.
+      // R10: stores the render promise — callers may wait for the new window
+      // to paint before closing the old one.
       (ret as any)._renderPromise = ret.render({ force: true });
     } catch (e) {
       ret.render({ force: true });

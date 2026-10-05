@@ -1,8 +1,8 @@
-// Stubs de ambiente para o jest (registrado em `setupFiles`, roda ANTES dos
-// imports dos testes). Necessario apenas para permitir IMPORTAR modulos que
-// referenciam globais do Foundry em tempo de carga (ex.: npc-portrait-dialog).
-// Nao declare `window` aqui: o taulukko-commons detecta ambiente na carga e
-// um window falso quebra a inicializacao do injectController.
+// Environment stubs for jest (registered in `setupFiles`, runs BEFORE the
+// test imports). Needed only to allow IMPORTING modules that
+// reference Foundry globals at load time (e.g.: npc-portrait-dialog).
+// Do not declare `window` here: taulukko-commons detects the environment on load and
+// a fake window breaks the injectController initialization.
 (globalThis as any).foundry = (globalThis as any).foundry || {
   applications: {
     api: {

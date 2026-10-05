@@ -1,36 +1,36 @@
 import { IGameContext } from "../igame-context";
 
-//UTILITARIO PARA CORRIGIR URL DE IMAGENS DE NPCS NO MUNDO ATUAL
+//UTILITY TO FIX NPC IMAGE URLS IN THE CURRENT WORLD
 const FIX_NPCs = false;
 
-const newImgPath = "modules/candlekeep-5ed/images/mobs"; //substitua com o caminho desejado
+const newImgPath = "modules/candlekeep-5ed/images/mobs"; //replace with the desired path
 
 Hooks.on("ready", async () => {
   await updateNpcImageBaseUrl(newImgPath);
 });
 
 /**
- * Atualiza a URL base da imagem de todos os NPCs do mundo,
- * mantendo o nome original do arquivo.
+ * Updates the image base URL of every NPC in the world,
+ * keeping the original file name.
  *
- * @param {string} newBaseUrl - A nova base da URL (sem o nome do arquivo).
+ * @param {string} newBaseUrl - The new URL base (without the file name).
  * */
 
 async function updateNpcImageBaseUrl(newBaseUrl: any) {
   if (!FIX_NPCs) {
     return;
   }
-  // Remove barra final se houver
+  // Remove trailing slash if present
   if (newBaseUrl.endsWith("/")) {
     newBaseUrl = newBaseUrl.slice(0, -1);
   }
 
   const { injectController } = require("taulukko-commons");
-  let gameContext:IGameContext | null= null;
+  let gameContext: IGameContext | null = null;
   if (injectController.has("GameContext")) {
     gameContext = injectController.resolve("GameContext") as IGameContext;
   } else if (typeof game !== "undefined") {
-    gameContext = (game as any) as IGameContext;
+    gameContext = game as any as IGameContext;
   }
   if (!gameContext?.actors) {
     ui.notifications.warn("GameContext não disponível.");
@@ -47,11 +47,11 @@ async function updateNpcImageBaseUrl(newBaseUrl: any) {
     const oldImg = npc.img;
     const oldTokenImg = npc.prototypeToken?.texture?.src ?? oldImg;
 
-    // Extrai o nome do arquivo da imagem antiga
+    // Extract the file name from the old image
     const filenamePortrait = oldImg.split("/").pop();
     const filenameToken = oldTokenImg.split("/").pop();
 
-    // Monta a nova URL com a base fornecida e o nome original do arquivo
+    // Build the new URL with the provided base and the original file name
 
     const newPortrait = `${newBaseUrl}/${filenamePortrait}`;
     const newToken = `${newBaseUrl}/${filenameToken}`;

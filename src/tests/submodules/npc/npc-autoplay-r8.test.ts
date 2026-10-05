@@ -1,21 +1,21 @@
-// Testes R8 — som da fala sob demanda: em uso normal NENHUM som toca automaticamente
-// (quem toca e o botao "Ouvir" da tela de fala); testes/depuracao religam o auto-play
-// com window.__npcSoundAutoPlay = true (bateria de audio continua rapida).
-// Cuidado: `window` e criado/removido POR TESTE para nao vazar para outros
-// arquivos do mesmo worker (o taulukko-commons detecta ambiente na carga).
+// R8 tests — on-demand speech sound: in normal use NO sound plays automatically
+// (the "Ouvir" button on the speech screen plays it); tests/debug re-enable auto-play
+// with window.__npcSoundAutoPlay = true (the audio battery stays fast).
+// Careful: `window` is created/removed PER TEST so it does not leak into other
+// files of the same worker (taulukko-commons detects the environment on load).
 import { injectController } from "taulukko-commons";
 import { NPC } from "../../../submodules/npc/npc";
 
 class FakeNPC extends NPC {
   groupToLines = new Map<string, string>();
-  lines: any = { 1: "linha 1", 2: "linha 2" };
+  lines: any = { 1: "line 1", 2: "line 2" };
   constructor() {
     super("Fake", "fake.webp");
   }
   public async startScreen(): Promise<void> {}
 }
 
-describe("R8 — auto-play do som da fala (uso normal x testes)", () => {
+describe("R8 — speech sound auto-play (normal use vs tests)", () => {
   let npc: FakeNPC;
   const playMock = jest.fn();
   const createMock: jest.Mock = jest.fn(async () => ({ id: "m1" }));
@@ -58,13 +58,13 @@ describe("R8 — auto-play do som da fala (uso normal x testes)", () => {
     };
   });
 
-  it("uso normal: a mensagem sai, mas NENHUM som toca sozinho", async () => {
+  it("normal use: the message goes out, but NO sound plays on its own", async () => {
     await (npc as any).speak(1);
     expect(createMock).toHaveBeenCalledTimes(1);
     expect(playMock).not.toHaveBeenCalled();
   });
 
-  it("testes: com __npcSoundAutoPlay=true o som toca automaticamente", async () => {
+  it("tests: with __npcSoundAutoPlay=true the sound plays automatically", async () => {
     (globalThis as any).window.__npcSoundAutoPlay = true;
     (globalThis as any).window.__npcSoundLockBypass = true;
     await (npc as any).speak(1);
@@ -72,7 +72,7 @@ describe("R8 — auto-play do som da fala (uso normal x testes)", () => {
     expect(String(playMock.mock.calls[0][0].src)).toContain("Fake001");
   });
 
-  it("a mensagem carrega soundSrc para o botao Ouvir", async () => {
+  it("the message carries soundSrc for the Ouvir button", async () => {
     await (npc as any).speak(2);
     const sent: any = createMock.mock.calls[0][0];
     expect(sent.flags["npc-talk"].type).toBe("npcDialogOnTalk");

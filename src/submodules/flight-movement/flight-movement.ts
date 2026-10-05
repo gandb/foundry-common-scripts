@@ -4,21 +4,20 @@ import { DialogUtils } from "../dialog-utils/dialog-utils";
 import { calcHypotenuse, calcCathetus } from "./flight-movement-calc";
 
 /**
- * Submodule FlightMovement - Calculadora de Movimento em Voo (D&D 5e).
+ * Submodule FlightMovement - Flight Movement Calculator (D&D 5e).
  *
- * Adiciona um botão em Token Controls que abre um formulário com 3 campos:
- * - Eixo X (movimento horizontal)
- * - Eixo Y (movimento vertical)
- * - Hipotenusa (movimento total)
+ * Adds a button to Token Controls that opens a form with 3 fields:
+ * - Axis X (horizontal movement)
+ * - Axis Y (vertical movement)
+ * - Hypotenuse (total movement)
  *
- * O usuário preenche 2 dos 3 campos e o terceiro é calculado
- * automaticamente pelo Teorema de Pitágoras.
+ * The user fills 2 of the 3 fields and the third is computed
+ * automatically via the Pythagorean theorem.
  */
 
 let flightMovement: FlightMovement | undefined = undefined;
 
 export class FlightMovement extends SubModuleBase {
-
   #requiredHooksLoaded: boolean = false;
 
   constructor() {
@@ -58,7 +57,7 @@ export class FlightMovement extends SubModuleBase {
         : flightMovement
     ) as FlightMovement;
 
-    logguer.debug("FlightMovement: Criando botão de cálculo de voo", controls);
+    logguer.debug("FlightMovement: Creating the flight calc button", controls);
 
     controls.tokens.tools["flightMovementButton"] = {
       name: "flightMovementButton",
@@ -67,12 +66,12 @@ export class FlightMovement extends SubModuleBase {
       button: true,
       toggle: false,
       onClick: () => {
-        logguer.debug("FlightMovement: Botão de voo pressionado");
+        logguer.debug("FlightMovement: Flight button pressed");
         flightMovementInstance.showFlightDialog();
       },
     };
 
-    logguer.debug("FlightMovement: Botão de voo criado");
+    logguer.debug("FlightMovement: Flight button created");
   }
 
   public async showFlightDialog() {
@@ -95,7 +94,7 @@ export class FlightMovement extends SubModuleBase {
 
     const dialogUtils: DialogUtils = injectController.resolve("DialogUtils");
 
-    logguer.debug("FlightMovement: Abrindo diálogo de cálculo de voo");
+    logguer.debug("FlightMovement: Opening the flight calc dialog");
 
     const title = "Calculadora de Movimento em Voo";
 
@@ -143,7 +142,7 @@ export class FlightMovement extends SubModuleBase {
       400,
     );
 
-    logguer.debug("FlightMovement: Diálogo criado");
+    logguer.debug("FlightMovement: Dialog created");
 
     const attachCalcListener = () => {
       const calcBtn = document.getElementById("flight-calc-btn");
@@ -221,16 +220,14 @@ export class FlightMovement extends SubModuleBase {
           inputHyp.classList.remove("flight-result");
         }
 
-        logguer.debug("FlightMovement: Cálculo realizado", {
+        logguer.debug("FlightMovement: Calculation done", {
           x: inputX.value,
           y: inputY.value,
           hyp: inputHyp.value,
         });
       });
 
-      logguer.debug(
-        "FlightMovement: Event listener do botão Calcular atachado",
-      );
+      logguer.debug("FlightMovement: Calculate button event listener attached");
     };
 
     requestAnimationFrame(attachCalcListener);

@@ -211,7 +211,7 @@ export abstract class NPC {
         dialogUtils.createButton("send", "Enviar", true, "action", async () => {
           loguer.debug("NPC.createDialog, before creating send:", this.groups);
 
-          loguer.debug("NPC.createDialog [10]: Escolhido a opcao enviar");
+          loguer.debug("NPC.createDialog [10]: 'send' option chosen");
 
           const rootEl: any =
             appInstance && appInstance.element ? appInstance.element : document;
@@ -222,12 +222,12 @@ export abstract class NPC {
           const result = queryResult?.value;
 
           if (result === null || result === undefined) {
-            loguer.error("NPC.createDialog: Erro ao obter a opcao selecionada");
+            loguer.error("NPC.createDialog: Error getting the selected option");
             return;
           }
 
           loguer.debug(
-            "NPC.createDialog [20]: depois de selecionar o resultado",
+            "NPC.createDialog [20]: after selecting the result",
             result,
           );
 
@@ -301,12 +301,12 @@ export abstract class NPC {
           });
         }),
         dialogUtils.createButton("back", "Voltar", true, "action", async () => {
-          loguer.debug("NPC.screens ao voltar - antes: ", this.screens);
+          loguer.debug("NPC.screens on back - before: ", this.screens);
 
           const previousLastScreen: any = this.screens.at(-2);
           const lastScreen: any = this.screens.pop();
           loguer.debug("lastScreen:", lastScreen);
-          loguer.debug("screens ao voltar - depois: ", this.screens);
+          loguer.debug("screens on back - after: ", this.screens);
 
           if (
             lastScreen &&
@@ -330,14 +330,14 @@ export abstract class NPC {
           true,
           "action",
           async () => {
-            loguer.debug("NPC.Cancelado a tela do ", alias);
+            loguer.debug("NPC.Cancelled screen of ", alias);
           },
         ),
       ];
 
       loguer.debug("NPC.createDialog:25. Create submits", buttons);
 
-      loguer.debug("NPC.createDialog:30 - depois de criar submits");
+      loguer.debug("NPC.createDialog:30 - after creating submits");
     }
 
     const submit = (
@@ -347,7 +347,7 @@ export abstract class NPC {
       callback: any,
     ) => {};
 
-    loguer.debug("NPC.createDialog:40 - antes de criar dialogo");
+    loguer.debug("NPC.createDialog:40 - before creating dialog");
 
     appInstance = dialogUtils.createDialog(
       title,
@@ -360,32 +360,23 @@ export abstract class NPC {
       470,
     );
 
-    // R10 v3: UMA janela por vez — o novo diálogo entra, e logo depois as
-    // janelas antigas do sistema são fechadas (varredura pós-render = sem gap).
+    // R10: ONE window at a time — the new dialog comes in, and right after the
+    // old system windows are closed (same-tick sweep = no gap).
     this.currentDialogApp = appInstance;
 
-    // R10 v3: rail lateral de fotos (foto à esquerda + nome à direita).
+    // R10: photo side rail (photo on the left + name on the right).
     try {
       npcDialog.bindRail(appInstance, this.name);
     } catch (e) {}
+    // R10 v5 (anti-flash): the swap happens in the SAME tick — the new window
+    // is already in the DOM (sync render) and the old ones are hidden right away
+    // (display:none) + closed. No waiting on frames: the old wait left the old
+    // window visible behind the new one for ~1s (the "sub-screen blink").
     try {
-      const rp: any = appInstance && (appInstance as any)._renderPromise;
-      if (rp && typeof rp.then === "function") {
-        rp.then(() => {
-          try {
-            npcDialog.closeOtherDialogs(appInstance);
-          } catch (e) {}
-        }).catch(() => {});
-      } else {
-        npcDialog.closeOtherDialogs(appInstance);
-      }
-    } catch (e) {
-      try {
-        npcDialog.closeOtherDialogs(appInstance);
-      } catch (e2) {}
-    }
+      npcDialog.closeOtherDialogs(appInstance);
+    } catch (e) {}
 
-    loguer.debug("NPC.createDialog:50 - depois de criar dialogo");
+    loguer.debug("NPC.createDialog:50 - after creating dialog");
   }
 
   public abstract startScreen(): Promise<void>;
@@ -493,7 +484,7 @@ export abstract class NPC {
       loguer.debug("combinationKey not found:", combinationKey);
       for (let i = start; i < numbers.length; i++) {
         const newCombinationGroup: Array<number> = [...path, numbers[i]];
-        loguer.debug("novaCombinacao:", newCombinationGroup);
+        loguer.debug("newCombination:", newCombinationGroup);
         combinationKey = newCombinationGroup.join(";");
         ret.push(combinationKey);
         generate(i + 1, newCombinationGroup);
@@ -533,7 +524,7 @@ export abstract class NPC {
 
     loguer.debug("speak:talk:", line);
 
-    loguer.debug("disparando o evento pra todo mundo:");
+    loguer.debug("firing the event to everyone:");
 
     const gameContext: IGameContext = (
       injectController.has("GameContext")
@@ -546,14 +537,14 @@ export abstract class NPC {
       );
     }
 
-    // R8: caminho do som da fala — vai no payload para o botao "Ouvir" da tela de fala
+    // R8: speech sound path — goes in the payload for the "Ouvir" button on the speech screen
     const formatedIndex = lineIndex.toString().padStart(3, "0");
     const name = this.name;
     const src = `modules/forgotten-realms/sounds/npcs/${name}/${formatedIndex}/${name}${formatedIndex}.${this.formatSound}`;
 
-    // Cria uma mensagem invisível que todos recebem
+    // Creates an invisible message that everyone receives
     await ChatMessage.create({
-      content: "NPC Portrait Event", // Invisível pra maioria
+      content: "NPC Portrait Event", // Invisible to most
       whisper: Array.from(
         (
           gameContext.users as {
@@ -574,7 +565,7 @@ export abstract class NPC {
       },
     });
 
-    //com socket nao funcionou
+    //socket approach did not work
     /*
 		if (game.user?.isGM) {
 			(game.socket as any).emit('forgotten-realms', {
@@ -584,17 +575,17 @@ export abstract class NPC {
 		} 
 			*/
 
-    //com hooks nao funcionou
+    //hooks approach did not work
     //Hooks.callAll('npcDialogOnTalk',  {imageUrl:this.imageUrl,npcName:this.name,dialogText:line});
 
-    loguer.debug(" evento disparado pra todo mundo:");
+    loguer.debug(" event fired to everyone:");
 
-    // R8: em uso normal NENHUM som toca sozinho — a tela de fala mostra o botao
-    // "Ouvir" e cada jogador aperta quando quiser. Testes/depuracao religam o
-    // auto-play com window.__npcSoundAutoPlay = true (bateria de audio rapida).
+    // R8: in normal use NO sound plays on its own — the speech screen shows the
+    // "Ouvir" button and each player presses it when they want. Tests/debug re-enable
+    // auto-play with window.__npcSoundAutoPlay = true (keeps the audio battery fast).
     if ((window as any).__npcSoundAutoPlay === true) {
       const ret = await this.playSoundWithNoEffect(src);
-      loguer.debug("Retorno do play:", ret);
+      loguer.debug("Play return:", ret);
     }
   }
 
@@ -624,17 +615,17 @@ export abstract class NPC {
     try {
       const response = await fetch(src, { method: "HEAD" });
       if (!response.ok) {
-        console.warn(`Arquivo não encontrado: ${src} (${response.status})`);
+        console.warn(`File not found: ${src} (${response.status})`);
         return false;
       }
 
-      // R3 — trava de seguranca: nao disparar 2 sons do MESMO NPC em menos de 5s
-      // (protege contra bugs de repeticao; testes usam window.__npcSoundLockBypass).
+      // R3 — safety lock: do not fire 2 sounds of the SAME NPC within 5s
+      // (protects against repetition bugs; tests use window.__npcSoundLockBypass).
       const now = Date.now();
       const bypass = (window as any).__npcSoundLockBypass === true;
       if (!bypass && this.lastSoundAt && now - this.lastSoundAt < 5000) {
         loguer.debug(
-          "NPC.playSoundWithNoEffect: som bloqueado pela trava de 5s do mesmo NPC",
+          "NPC.playSoundWithNoEffect: sound blocked by the same-NPC 5s lock",
         );
         return false;
       }
@@ -677,7 +668,7 @@ export abstract class NPC {
 
     const list0 = await this.getListLinesFromGroup(this.groups);
     // Preferencia pelo contexto CLICADO: se a ultima acao adicionou grupo(s),
-    // prioriza combinacoes que os incluem (fala certa do botao clicado).
+    // prefer combinations that include it (the right line for the clicked button).
     let list = list0;
     try {
       const lastEntry: any = this.screens.at(-1);
@@ -703,7 +694,7 @@ export abstract class NPC {
       loguer.debug("group:", group);
       if (!this.groupToLines.has(group)) {
         loguer.warn(
-          `NPC.send, afterSend:Grupo ${group} não encontrado em groupToLines!`,
+          `NPC.send, afterSend:Group ${group} not found in groupToLines!`,
         );
         continue;
       }
@@ -731,8 +722,8 @@ export abstract class NPC {
 
     loguer.debug("NPC.send, afterSend,lines:", lines);
 
-    // R9: o sorteio vira uma funcao reutilizavel — o botao "Recalcular" da tela
-    // de confirmacao re-sorteia com o MESMO contexto (mesma lista `lines`).
+    // R9: the roll becomes a reusable function — the "Recalcular" button on the
+    // confirmation screen re-rolls with the SAME context (same `lines` list).
     const pickLineIndex = (): number => {
       let randomIndex = Math.abs(Math.round(Math.random() * lines.length));
       randomIndex =
@@ -742,8 +733,8 @@ export abstract class NPC {
 
       let picked = Number.parseInt(lines[randomIndex], 10);
 
-      // Anti-repeticao: evita entregar a MESMA fala em acoes seguidas
-      // quando existe alternativa (lastSpokenIndex por NPC).
+      // Anti-repetition: avoid delivering the SAME line in consecutive actions
+      // when an alternative exists (lastSpokenIndex per NPC).
       if (this.lastSpokenIndex === picked && lines.length > 1) {
         for (let attempt = 0; attempt < 6; attempt++) {
           const retryRaw = Math.abs(Math.round(Math.random() * lines.length));
@@ -788,15 +779,15 @@ export abstract class NPC {
 
     loguer.debug("NPC.send, afterSend:", this.groups);
 
-    // R9 — tela de confirmacao: mostra a fala sorteada ANTES de enviar.
-    // Botoes (Enviar por ultimo): Cancelar · Recalcular · Enviar.
+    // R9 — confirmation screen: shows the rolled line BEFORE sending.
+    // Buttons (Send last): Cancel · Re-roll · Send.
     this.confirmTalk(pickLineIndex, lineIndex);
   }
 
   /**
-   * R9 — tela de confirmacao antes de enviar: mostra o texto sorteado e deixa
-   * Cancelar (nada sai), Recalcular (re-sorteia com o mesmo contexto) ou
-   * Enviar (dispara a fala para todos, com som conforme o R8).
+   * R9 — pre-send confirmation screen: shows the rolled line and lets the user
+   * Cancel (nothing goes out), Re-roll (rolls again with the same context) or
+   * Send (fires the line to everyone, with sound per R8).
    */
   private confirmTalk(pick: () => number, firstIndex: number): void {
     let current = firstIndex;
@@ -816,7 +807,7 @@ export abstract class NPC {
           : loguerRef
       ) as Log;
       if (!dialogUtils) {
-        // Sem DialogUtils nao ha como confirmar — mantem o comportamento antigo.
+        // Without DialogUtils there is no way to confirm — keep the legacy behavior.
         this.speak(current);
         return;
       }
@@ -841,7 +832,7 @@ export abstract class NPC {
               }
             } catch (err) {}
             if (loguer) {
-              loguer.debug("NPC.confirmTalk: cancelado — fala nao enviada");
+              loguer.debug("NPC.confirmTalk: cancelled — line not sent");
             }
           },
         ),
@@ -858,7 +849,7 @@ export abstract class NPC {
             } catch (err) {}
             current = pick();
             if (loguer) {
-              loguer.debug("NPC.confirmTalk: recalcular -> nova fala", current);
+              loguer.debug("NPC.confirmTalk: re-roll -> new line", current);
             }
             show();
           },
@@ -875,7 +866,7 @@ export abstract class NPC {
               }
             } catch (err) {}
             if (loguer) {
-              loguer.debug("NPC.confirmTalk: enviar fala", current);
+              loguer.debug("NPC.confirmTalk: send line", current);
             }
             this.speak(current);
           },

@@ -90,7 +90,7 @@ export class CommonModule extends ModuleBase {
     }
 
     //choose implementation dependes what I want
-    const commonSocket: Socket =  new DummySocket(); //new SocketLib();
+    const commonSocket: Socket = new DummySocket(); //new SocketLib();
     injectController.registerByName("Socket", commonSocket);
   }
 
@@ -129,7 +129,7 @@ export class CommonModule extends ModuleBase {
       throw new Error("Timeout waiting for hooks");
     }
 
-    logguer.debug("Módulo Common Assets waitReady finish with success.");
+    logguer.debug("Common Assets module waitReady finished with success.");
 
     foundry.hooks.callAll("onReadyCommonModule", {});
   }
@@ -178,7 +178,7 @@ export class CommonModule extends ModuleBase {
             "Required dependency 'CommonLogguer' not registered and no fallback available",
           );
         }
-        logguer.info("Módulo Common Assets inicalizando 2...");
+        logguer.info("Common Assets module initializing 2...");
         await commonModule.addInitCommonAssetsChanges();
       });
 
@@ -223,7 +223,7 @@ export class CommonModule extends ModuleBase {
         );
       }
 
-      logguer.info("Módulo Common Assets inicalizando 2...", commonModule);
+      logguer.info("Common Assets module initializing 2...", commonModule);
       await commonModule.addInitCommonAssetsChanges();
     });
 
@@ -278,7 +278,7 @@ export class CommonModule extends ModuleBase {
 
       if (instalatedVersion === commonModule.version) {
         logguer.info(
-          `Módulo Common Assets v.${commonModule.version} carregado com sucesso!`,
+          `Common Assets module v.${commonModule.version} loaded successfully!`,
         );
         return;
       }
@@ -288,9 +288,9 @@ export class CommonModule extends ModuleBase {
         commonModule.version,
       );
 
-      //FIM DE ATUALIZAÇÃO DE VERSÃO
+      //END OF VERSION UPDATE
       logguer.info(
-        `Módulo Common Assets atualizado de ${instalatedVersion} para ${commonModule.version} e carregado com sucesso!`,
+        `Common Assets module updated from ${instalatedVersion} to ${commonModule.version} and loaded successfully!`,
       );
     });
   }
@@ -316,10 +316,10 @@ export class CommonModule extends ModuleBase {
       if (!el) return;
       if (el.querySelector(".common-assets-help")) return;
 
-      const botao = doc.createElement("button");
-      botao.textContent = "?";
-      botao.className = "ui-control icon fa-solid fa-help common-assets-help";
-      botao.addEventListener("click", (event) => {
+      const button = doc.createElement("button");
+      button.textContent = "?";
+      button.className = "ui-control icon fa-solid fa-help common-assets-help";
+      button.addEventListener("click", (event) => {
         event.preventDefault();
         let gameContextRef: IGameContext | undefined = undefined;
         const gameContext: IGameContext = (
@@ -335,9 +335,9 @@ export class CommonModule extends ModuleBase {
         const journal = (
           gameContext.journal as { getName(name: string): unknown }
         ).getName("Como Rolar Dados");
-        logguer.info("Mensagem exibida ao clicar no botão ?");
+        logguer.info("Message shown when clicking the ? button");
         if (!journal) {
-          logguer.error("Journal não instalado!");
+          logguer.error("Journal not installed!");
           return;
         }
         (journal as { sheet: { render(show: boolean): void } }).sheet.render(
@@ -345,8 +345,8 @@ export class CommonModule extends ModuleBase {
         );
       });
 
-      el.appendChild(botao);
-      logguer.info("Botão de ajuda de rolagem criado");
+      el.appendChild(button);
+      logguer.info("Roll help button created");
     };
 
     injectButton();
@@ -355,7 +355,7 @@ export class CommonModule extends ModuleBase {
     if (!target) {
       target = doc.getElementById("sidebar-content");
       logguer.error(
-        "Elemento #chat não encontrado, observando #sidebar-content como fallback",
+        "Element #chat not found, observing #sidebar-content as fallback",
       );
     }
     target ??= doc.body;
@@ -465,7 +465,7 @@ export class CommonModule extends ModuleBase {
     }
 
     logguer.info(
-      `Atualizando da versão : ${previousVersion} para a versão ${lastVersion}`,
+      `Updating from version : ${previousVersion} to version ${lastVersion}`,
     );
   }
 

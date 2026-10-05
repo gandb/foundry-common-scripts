@@ -36,7 +36,7 @@ namespace foundry {
 
             }
             interface DialogV2Options {
-                // tipos das opções
+                // option types
             }
         }
     }
