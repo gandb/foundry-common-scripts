@@ -7,6 +7,10 @@ import type { IGameContext } from "../../common/igame-context";
 
 let npcDialog: NPCDialog | undefined = undefined;
 
+// R10 — selo de build (diagnóstico de bundle em cache no cliente do usuário):
+// console do jogo → `__npcUiBuild` deve imprimir este valor.
+export const NPC_UI_BUILD = "r10v32-2026-10-05";
+
 // R1 — som de UI (hover/clique) sintetizado via WebAudio (sem assets);
 // silencioso se indisponivel. Curto e em volume baixo.
 function playUiSound(kind: "hover" | "click"): void {
@@ -44,6 +48,10 @@ export class NPCDialog extends SubModuleBase {
   constructor() {
     super();
     npcDialog = this;
+    try {
+      (window as any).__npcUiBuild = NPC_UI_BUILD;
+      console.log("[common-scripts] NPC UI build:", NPC_UI_BUILD);
+    } catch (e) {}
   }
   public npcSelected: NPC | any;
   public npcs: Map<string, NPC> = new Map();

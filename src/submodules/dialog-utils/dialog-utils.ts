@@ -132,7 +132,13 @@ export class DialogUtils extends SubModuleBase {
 
     logguer.debug("Dialog Utils dialog options: ", options);
     const ret = new foundry.applications.api.DialogV2(options);
-    ret.render({ force: true });
+    try {
+      // R10 v3.2: guarda a promise do render — quem quiser trocar janelas sem
+      // gap pode esperar a nova pintar antes de fechar a antiga.
+      (ret as any)._renderPromise = ret.render({ force: true });
+    } catch (e) {
+      ret.render({ force: true });
+    }
     return ret;
   }
 }

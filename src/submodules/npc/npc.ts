@@ -369,8 +369,21 @@ export abstract class NPC {
       npcDialog.bindRail(appInstance, this.name);
     } catch (e) {}
     try {
-      npcDialog.closeOtherDialogs(appInstance);
-    } catch (e) {}
+      const rp: any = appInstance && (appInstance as any)._renderPromise;
+      if (rp && typeof rp.then === "function") {
+        rp.then(() => {
+          try {
+            npcDialog.closeOtherDialogs(appInstance);
+          } catch (e) {}
+        }).catch(() => {});
+      } else {
+        npcDialog.closeOtherDialogs(appInstance);
+      }
+    } catch (e) {
+      try {
+        npcDialog.closeOtherDialogs(appInstance);
+      } catch (e2) {}
+    }
 
     loguer.debug("NPC.createDialog:50 - depois de criar dialogo");
   }
